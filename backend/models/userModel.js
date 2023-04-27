@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      required: [true, "Албан тушаалаа оруулна уу?"],
     },
   },
   {

@@ -1,22 +1,20 @@
-import axios from "axios"
-
-const API_URL = "/users/";
+import axios from "axios";
 
 // register user
 const register = async (userData) => {
-    // make post request with user's info(name, password)
-    const response = await axios.post(API_URL, userData);
+  // make post request with user's info(name, password)
+  const response = await axios.post("http://localhost:5000/users/", userData);
 
-    // save user's info in localstorage(name, password, token)
-    if (response.data) {
-        localStorage.setItem("user", JSON.stringify(response.data))
-    }
+  // save user's info in localstorage(name, password, token)
+  if (response.data) {
+    localStorage.setItem("user", JSON.stringify(response.data));
+  }
 
-    return response.data;
-}
+  return response.data;
+};
 
 const authService = {
-    register
-}
+  register,
+};
 
 export default authService;

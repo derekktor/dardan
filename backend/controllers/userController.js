@@ -7,7 +7,7 @@ const User = require("../models/userModel.js");
 const createUser = asyncHandler(async (req, res) => {
     const {name, password, role} = req.body;
 
-    if (!name || !password || !role) {
+    if (!name || !password) {
         res.status(400);
         throw new Error("Ner, password, alban tushaalaa oruulna uu!");
     }
