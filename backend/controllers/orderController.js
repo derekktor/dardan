@@ -49,17 +49,31 @@ const updateOrder = asyncHandler(async (req, res) => {
     throw new Error("Order not found!");
   }
 
-  const updatedOrder = await Order.findByIdAndUpdate(
-    req.params.id,
-    {
-      ...req.body,
-      truck_num: {
-        digits: req.body.truck_num_digits,
-        letters: req.body.truck_num_letters,
+  // check if user exists
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    res.status(401);
+    throw new Error("Hereglegch burtgelgui baina!");
+  }
+
+  let updatedOrder;
+  // limit access to update someone else's record
+  if (user.role === "admin" || order.created_by.toString() === user.id) {
+    updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        truck_num: {
+          digits: req.body.truck_num_digits,
+          letters: req.body.truck_num_letters,
+        },
       },
-    },
-    { new: true }
-  );
+      { new: true }
+    );
+  } else {
+    res.status(401);
+    throw new Error("Ene uildliig hiih erh baihgui baina!");
+  }
 
   res
     .status(200)
@@ -67,7 +81,21 @@ const updateOrder = asyncHandler(async (req, res) => {
 });
 
 const deleteOrder = asyncHandler(async (req, res) => {
-  await Order.findByIdAndDelete(req.params.id);
+  // check if user exists
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    res.status(401);
+    throw new Error("Hereglegch burtgelgui baina!");
+  }
+
+  const order = await Order.findById(req.params.id);
+  // limit access to update someone else's record
+  if (user.role === "admin" || order.created_by.toString() === user.id) {
+    await Order.findByIdAndRemove(req.params.id);
+  } else {
+    res.status(401);
+    throw new Error("Ene uildliig hiih erh baihgui baina!");
+  }
 
   res.status(200).json({ message: `${req.params.id} deleted successfully` });
 });
