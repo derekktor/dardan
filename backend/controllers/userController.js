@@ -3,33 +3,45 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler")
 const User = require("../models/userModel.js");
 
+// register user
 const createUser = asyncHandler(async (req, res) => {
     const {name, password, role} = req.body;
 
     if (!name || !password || !role) {
         res.status(400);
-        throw new Error("Please fill all fields!");
+        throw new Error("Ner, password, alban tushaalaa oruulna uu!");
     }
 
     // check if user exists
     const userExists = await User.findOne({name});
 
     if (userExists) {
+        res.status(400);
         throw new Error(`${name} nertei hereglegch burtgeltei bn!`);
     }
 
     // hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    
     // create user
     const user = await User.create({
         name,
         password: hashedPassword,
         role,
-        token: generateToken(user._id)
     })
-
+    
+    if (user) {
+        res.status(201).json({
+            message: `${name} burtgel amjilttai`,
+            user,
+        token: generateToken(user._id)
+        });
+    } else {
+        res.status(401);
+        throw new Error("Medeelel aldaatai baina!")
+    }
+    
     res.status(200).json({message: "creating user", user})
 })
 

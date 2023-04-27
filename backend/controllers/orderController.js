@@ -1,13 +1,21 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models/orderModel.js");
+const User = require("../models/userModel.js");
 
 const getOrder = asyncHandler(async (req, res) => {
-  const orders = await Order.find();
+  const user = await User.findById(req.user.id);
+  let orders;
+  if (user.role === "admin") {
+    orders = await Order.find();
+  } else if (user.role === "employee") {
+    orders = await Order.find({ created_by: req.user.id });
+  }
   res.status(200).json(orders);
 });
 
 const createOrder = asyncHandler(async (req, res) => {
   const order = await Order.create({
+    created_by: req.user.id,
     truck_num: {
       digits: req.body.truck_num_digits,
       letters: req.body.truck_num_letters,
@@ -44,7 +52,7 @@ const updateOrder = asyncHandler(async (req, res) => {
   const updatedOrder = await Order.findByIdAndUpdate(
     req.params.id,
     {
-    ...req.body,
+      ...req.body,
       truck_num: {
         digits: req.body.truck_num_digits,
         letters: req.body.truck_num_letters,
