@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const truckSchema = mongoose.Schema(
   {
+    created_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User"
+    },
     truck_num: {
       digits: {
         type: String,
@@ -27,7 +32,7 @@ const truckSchema = mongoose.Schema(
     puulelt: {
       type: Boolean
     },
-    hour_forklift_used: {
+    forklift_usage: {
       type: String
     },
     crane_usage: {
