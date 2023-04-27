@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
+import { registerThunk, reset } from "../features/auth/authSlice";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,17 +14,35 @@ const Register = () => {
 
   const { name, password, password2 } = formData;
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value
-    }))
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    alert("Submitted!")
+    alert("Submitted!");
+
+    // check if passwords match
+    if (password !== password2) {
+      toast.error("Nuuts ugnuud taarahgui baina!");
+    } else {
+      const userData = {
+        name, password
+      }
+
+      dispatch(registerThunk(userData));
+    }
   };
 
   return (
