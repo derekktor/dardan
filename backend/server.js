@@ -11,7 +11,7 @@ const app = express()
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use("/users", require("./routes/usersRoute.js"));
-app.use("/trucks", require("./routes/trucksRoute.js"));
+app.use("/orders", require("./routes/ordersRoute.js"));
 app.use(errorHandler)
 
 app.listen(PORT, () => console.log(`Server running: ${PORT}`))
