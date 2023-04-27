@@ -34,7 +34,7 @@ const createUser = asyncHandler(async (req, res) => {
 })
 
 const getMe = asyncHandler(async (req, res) => {
-    res.status(200).json({message: "user info"})
+    res.status(200).json({message: req.user})
 })
 
 const loginUser = asyncHandler(async (req, res) => {
