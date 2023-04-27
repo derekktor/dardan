@@ -27,7 +27,7 @@ const Register = () => {
       toast.error(message);
     }
 
-    // nav to home when logged in or signed in
+    // nav to home when signed in
     if (isSuccess || user) {
       toast.success("Logged in successfully!");
       navigate('/');

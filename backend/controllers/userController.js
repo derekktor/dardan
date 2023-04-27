@@ -56,7 +56,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.status(400);
-        throw new Error("Iim ner deer burtgel baihgui bn!")
+        throw new Error(`${name} ner deer burtgel baihgui baina!`)
     }
 
     if (await bcrypt.compare(password, user.password)) {
