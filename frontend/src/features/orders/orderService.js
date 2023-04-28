@@ -8,8 +8,6 @@ const createOrder = async (orderData, token) => {
     },
   };
 
-  console.log(orderData);
-
   const response = await axios.post(
     "http://localhost:5000/orders",
     orderData,

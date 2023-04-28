@@ -5,12 +5,16 @@ import { createOrderThunk } from "../features/orders/orderSlice";
 
 const OrderForm = () => {
   const [orderData, setOrderData] = useState({
+    client_name: "",
+    date_entered: "",
+    date_left: "",
     truck_num_digits: "",
     truck_num_letters: "",
     load_name: "",
   });
 
-  const { truck_num_digits, truck_num_letters, load_name } = orderData;
+  const { client_name, date_entered, date_left, truck_num_digits, truck_num_letters, load_name } =
+    orderData;
 
   const dispatch = useDispatch();
 
@@ -30,6 +34,7 @@ const OrderForm = () => {
 
     // clear the form
     setOrderData({
+      client_name: "",
       truck_num_digits: "",
       truck_num_letters: "",
       load_name: "",
@@ -39,6 +44,37 @@ const OrderForm = () => {
   return (
     <section className="form">
       <form onSubmit={onSubmit}>
+        <div className="form-group">
+          <label htmlFor="text">Baiguullagiin ner</label>
+          <input
+            type="text"
+            name="client_name"
+            id="client_name"
+            value={client_name}
+            placeholder="Nomin LLC"
+            onChange={onChange}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="text">Avsan on sar odor</label>
+          <input
+            type="date"
+            name="date_entered"
+            id="date_entered"
+            value={date_entered}
+            onChange={onChange}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="text">Garsan on sar odor</label>
+          <input
+            type="date"
+            name="date_left"
+            id="date_left"
+            value={date_left}
+            onChange={onChange}
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="text">Arliin dugaar</label>
           <input

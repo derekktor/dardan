@@ -30,7 +30,8 @@ const createOrder = asyncHandler(async (req, res) => {
     },
     load_name: req.body.load_name,
     // load_weight: req.body.load_weight,
-    // date_left: req.body.date_left,
+    date_entered: req.body.date_entered,
+    date_left: req.body.date_left,
     // tavtsan_ashiglalt: req.body.tavtsan_ashiglalt,
     // puulelt: req.body.puulelt,
     // forklift_usage: req.body.forklift_usage,
@@ -43,7 +44,7 @@ const createOrder = asyncHandler(async (req, res) => {
     // invoice_to_601: req.body.invoice_to_601,
     // amount_w_noat: req.body.amount_w_noat,
     // amount_wo_noat: req.body.amount_wo_noat,
-    // client_name: req.body.client_name,
+    client_name: req.body.client_name,
   });
 
   res.status(200).json(order);

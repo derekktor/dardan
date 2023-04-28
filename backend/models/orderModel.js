@@ -26,6 +26,9 @@ const truckSchema = mongoose.Schema(
     load_weight: {
       type: Number
     },
+    date_entered: {
+      type: Date
+    },
     date_left: {
       type: Date
     },
