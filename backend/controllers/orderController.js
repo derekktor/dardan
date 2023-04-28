@@ -46,7 +46,7 @@ const createOrder = asyncHandler(async (req, res) => {
     // client_name: req.body.client_name,
   });
 
-  res.status(200).json({ message: "Order created", order });
+  res.status(200).json(order);
 });
 
 const updateOrder = asyncHandler(async (req, res) => {
@@ -91,23 +91,23 @@ const updateOrder = asyncHandler(async (req, res) => {
 });
 
 const deleteOrder = asyncHandler(async (req, res) => {
-  // check if user exists
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    res.status(401);
-    throw new Error("Hereglegch burtgelgui baina!");
-  }
-
+  // // check if user exists
+  // const user = await User.findById(req.user.id);
+  // if (!user) {
+  //   res.status(401);
+  //   throw new Error("Hereglegch burtgelgui baina!");
+  // }
+  
   const order = await Order.findById(req.params.id);
   // limit access to update someone else's record
-  if (user.role === "admin" || order.created_by.toString() === user.id) {
-    await Order.findByIdAndRemove(req.params.id);
+  if (req.user.role === "admin" || order.created_by_id.toString() === req.user.id) {
+    await Order.findByIdAndDelete(req.params.id);
   } else {
     res.status(401);
     throw new Error("Ene uildliig hiih erh baihgui baina!");
   }
 
-  res.status(200).json({ message: `${req.params.id} deleted successfully` });
+  res.status(200).json({ message: `${req.params.id} deleted successfully`, id: req.params.id });
 });
 
 module.exports = { getOrder, createOrder, updateOrder, deleteOrder };

@@ -1,11 +1,17 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import OrderForm from "../components/OrderForm";
+import Spinner from "../components/Spinner";
+import { getOrdersThunk, reset } from "../features/orders/orderSlice";
+import OrderItem from "../components/OrderItem";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const {user} = useSelector((state) => state.auth);
+  const {orders, isLoading, isError, message} = useSelector((state) => state.orders);
 
   useEffect(() => {
     // if not logged in, navigate to login page
@@ -13,8 +19,17 @@ const Dashboard = () => {
       navigate("/login");
     }
 
+    dispatch(getOrdersThunk());
+
+    return () => {
+      dispatch(reset())
+    }
     
-  }, [user, navigate])
+  }, [user, navigate, dispatch])
+
+  if (isLoading) {
+    return <Spinner></Spinner>
+  }
 
   return <>
   <section className="heading">
@@ -24,6 +39,15 @@ const Dashboard = () => {
 
   <OrderForm />
   
+  <section className="content">
+    {orders.length > 0 ? (
+      <div className="goals">
+        {orders.map(order => (
+          <OrderItem key={order._id} order={order}/>
+        ))}
+      </div>
+    ) : (<h3>You don't have any orders</h3>)}
+  </section>
   </>
 };
 
