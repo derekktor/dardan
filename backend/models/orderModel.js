@@ -2,10 +2,13 @@ const mongoose = require("mongoose");
 
 const truckSchema = mongoose.Schema(
   {
-    created_by: {
+    created_by_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User"
+    },
+    created_by_name: {
+      type: String,
     },
     truck_num: {
       digits: {

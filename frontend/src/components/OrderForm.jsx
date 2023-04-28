@@ -4,20 +4,36 @@ import { toast } from "react-toastify";
 import { createOrderThunk } from "../features/orders/orderSlice";
 
 const OrderForm = () => {
-  const [truckNum, setTruckNum] = useState("");
-  const [loadName, setLoadName] = useState("");
+  const [orderData, setOrderData] = useState({
+    truck_num_digits: "",
+    truck_num_letters: "",
+    load_name: "",
+  });
+
+  const { truck_num_digits, truck_num_letters, load_name } = orderData;
 
   const dispatch = useDispatch();
+
+  const onChange = (e) => {
+    setOrderData((prevState) => ({
+      ...orderData,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
 
     toast.success("Order submitted!");
 
-    dispatch(createOrderThunk({loadName, truckNum}))
+    dispatch(createOrderThunk(orderData));
 
     // clear the form
-    setLoadName("");
+    setOrderData({
+      truck_num_digits: "",
+      truck_num_letters: "",
+      load_name: "",
+    });
   };
 
   return (
@@ -27,20 +43,33 @@ const OrderForm = () => {
           <label htmlFor="text">Arliin dugaar</label>
           <input
             type="text"
-            name="truckNum"
-            id="truckNum"
-            value={truckNum}
-            onChange={(e) => setTruckNum(e.target.value)}
+            name="truck_num_digits"
+            id="truck_num_digits"
+            value={truck_num_digits}
+            placeholder="1234"
+            onChange={onChange}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="text">Arliin dugaariin useg</label>
+          <input
+            type="text"
+            name="truck_num_letters"
+            id="truck_num_letters"
+            value={truck_num_letters}
+            placeholder="UBA"
+            onChange={onChange}
           />
         </div>
         <div className="form-group">
           <label htmlFor="text">Achaanii ner</label>
           <input
             type="text"
-            name="loadName"
-            id="loadName"
-            value={loadName}
-            onChange={(e) => setLoadName(e.target.value)}
+            name="load_name"
+            id="load_name"
+            value={load_name}
+            placeholder="cements"
+            onChange={onChange}
           />
         </div>
         <button className="btn btn-block" type="submit">
