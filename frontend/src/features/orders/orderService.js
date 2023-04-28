@@ -15,10 +15,10 @@ const createOrder = async (orderData, token) => {
   const orderData2 = {
     truck_num_letters: letters,
     truck_num_digits: digits,
-    loadName,
+    load_name: loadName,
   };
 
-  console.log("orderData: ", orderData2);
+  console.log(orderData2);
 
   const response = await axios.post(
     "http://localhost:5000/orders",
@@ -29,8 +29,22 @@ const createOrder = async (orderData, token) => {
   return response.data;
 };
 
+// get orders
+const getOrders = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get("http://localhost:5000/orders", config);
+
+  return response.data;
+};
+
 const orderService = {
   createOrder,
+  getOrders,
 };
 
 export default orderService;
