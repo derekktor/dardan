@@ -50,15 +50,14 @@ const updateOrder = asyncHandler(async (req, res) => {
   }
 
   // check if user exists
-  const user = await User.findById(req.user.id);
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error("Hereglegch burtgelgui baina!");
   }
 
   let updatedOrder;
   // limit access to update someone else's record
-  if (user.role === "admin" || order.created_by.toString() === user.id) {
+  if (req.user.role === "admin" || order.created_by.toString() === req.user.id) {
     updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
       {
