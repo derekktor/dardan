@@ -42,11 +42,9 @@ const createUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(400).json({ message: "Invalid user data" });
+    return res.status(400).json({ message: "Invalid user data" });
     throw new Error("Medeelel aldaatai baina!");
   }
-
-  res.status(200).json({ message: "creating user", user });
 });
 
 const getMe = asyncHandler(async (req, res) => {
@@ -164,8 +162,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 
   const result = await user.deleteOne();
-
-  const reply = `User ${user.name} with id ${user._id} was deleted successfully`;
+  const reply = `User ${result.name} with id ${user._id} was deleted successfully`;
 
   res.status(200).json({ message: reply });
 });
