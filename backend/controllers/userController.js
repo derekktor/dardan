@@ -123,7 +123,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
   // check for duplicates
   const duplicate = await User.findOne({ name }).lean().exec();
-  if (duplicate && duplicate?._id.toString() !== id) {
+  if (duplicate && duplicate?._id.toString() !== req.params.id) {
     return res.status(409).json({ message: "Username already exists" });
   }
 
@@ -145,11 +145,11 @@ const updateUser = asyncHandler(async (req, res) => {
 // @access Private
 const deleteUser = asyncHandler(async (req, res) => {
   // check if there are any orders created by this user
-  const orders = await Order.findOne({ created_by_id: req.params.id })
+  const order = await Order.findOne({ created_by_id: req.params.id })
     .lean()
     .exec();
 
-  if (orders?.length) {
+  if (order) {
     return res.status(400).json({ message: "User has orders" });
   }
 
