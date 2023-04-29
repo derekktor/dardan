@@ -11,9 +11,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Нууц үгээ оруулна уу?"],
     },
-    role: {
+    roles: [{
       type: String,
-    },
+      default: "employee"
+    }],
+    active: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     timestamps: true,

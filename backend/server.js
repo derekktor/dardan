@@ -1,12 +1,13 @@
+require("dotenv").config({ path: "../.env" });
 const path = require("path");
 const express = require("express");
-const dotenv = require("dotenv").config({path: "../.env"});
-const {logger} = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 const { errorHandler } = require("./middleware/errorMiddleware.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/db.js");
+const mongoose = require("mongoose");
 const PORT = process.env.PORT || 5001;
 
 connectDB();
@@ -21,7 +22,7 @@ app.use(cors(corsOptions));
 // parse cookies
 app.use(cookieParser());
 // look for static files in folder called public
-app.use("/", express.static(path.join(__dirname, "public")))
+app.use("/", express.static(path.join(__dirname, "public")));
 // send root.js file when client sends req
 app.use("/", require("./routes/root.js"));
 // parse any json so the server understands it
@@ -37,11 +38,11 @@ app.all("*", (req, res) => {
   if (req.accepts("html")) {
     res.sendFile(path.join(__dirname, "views", "404.html"));
   } else if (req.accepts("json")) {
-    res.json({ message: "404 Not Found"})
+    res.json({ message: "404 Not Found" });
   } else {
-    res.type("txt").send("404 Not Found")
+    res.type("txt").send("404 Not Found");
   }
-})
+});
 
 // serve frontend
 if (process.env.NODE_ENV === "production") {
@@ -52,10 +53,21 @@ if (process.env.NODE_ENV === "production") {
     )
   );
 } else {
-    app.get("/", (req, res) => res.send("Please set to production"))
+  app.get("/", (req, res) => res.send("Please set to production"));
 }
 
 // error handler middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`Server running: ${PORT}`));
+mongoose.connection.once("open", () => {
+  console.log(`MongoDB connected`);
+  app.listen(PORT, () => console.log(`Server running: ${PORT}`));
+});
+
+mongoose.connection.on("error", (err) => {
+  console.log("MongoDB Error:\n", err);
+  logEvents(
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    "mongoErrLog.log"
+  );
+});

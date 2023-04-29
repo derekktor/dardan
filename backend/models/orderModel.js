@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
-const truckSchema = mongoose.Schema(
+const orderSchema = mongoose.Schema(
   {
     created_by_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -77,4 +78,10 @@ const truckSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Truck", truckSchema);
+orderSchema.plugin(AutoIncrement, {
+  inc_field: "ticket",
+  id: "ticketNums",
+  start_seq: 1
+})
+
+module.exports = mongoose.model("Truck", orderSchema);
