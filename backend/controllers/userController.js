@@ -1,34 +1,38 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel.js");
+const Order = require("../models/orderModel.js");
 
-// register user
+// @desc Register a user or create new user
+// @route POST /users
+// @access Public
 const createUser = asyncHandler(async (req, res) => {
-  const { name, password, role } = req.body;
+  const { name, password, roles } = req.body;
 
-  if (!name || !password) {
-    res.status(400);
+  // check if client correctly filled all info
+  if (!name || !password || !Array.isArray(roles) || !roles.length) {
+    return res.status(400).json({ message: "Please fill in every field!" });
     throw new Error("Ner, password, alban tushaalaa oruulna uu!");
   }
 
   // check if user exists
-  const userExists = await User.findOne({ name });
+  const userExists = await User.findOne({ name }).lean().exec();
 
   if (userExists) {
-    res.status(400);
+    return res.status(409).json({ message: "Duplicate username" });
     throw new Error(`${name} nertei hereglegch burtgeltei bn!`);
   }
 
   // hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  // const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   // create user
   const user = await User.create({
     name,
     password: hashedPassword,
-    role,
+    roles,
   });
 
   if (user) {
@@ -38,7 +42,7 @@ const createUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(401);
+    res.status(400).json({ message: "Invalid user data" });
     throw new Error("Medeelel aldaatai baina!");
   }
 
@@ -74,39 +78,96 @@ const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "logging in user" });
 });
 
+// @desc Get all users
+// @route GET /users
+// @access Private
 const getUsers = asyncHandler(async (req, res) => {
-  if (req.user && req.user.role === "admin") {
-    const users = await User.find();
-    res.status(200).json({ message: "showing users", users });
-  } else {
-    res.status(400);
-    throw new Error("Uuchlaarai, tand hereglegchdiin medeelliig harah erh baihgui baina!")
+  const users = await User.find().select("-password").lean();
+
+  // check if there are any users
+  if (!users?.length) {
+    return res.status(400).json({ message: "No users found!" });
   }
+
+  res.status(200).json({ message: "showing users", users });
+  // if (req.user && req.user.roles.includes("admin")) {
+  //   const users = await User.find().select("-password").lean();
+
+  //   // check if there are any users
+  //   if (!users?.length) {
+  //     return res.status(400).json({ message: "No users found!" });
+  //   }
+
+  //   res.status(200).json({ message: "showing users", users });
+  // }
 });
 
+// @desc Update user
+// @route PATCH /users/id
+// @access Private
 const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const { name, password, roles } = req.body;
 
+  // check if info entered is valid
+  if (!name || !Array.isArray(roles) || !roles.length) {
+    return res.status(400).json({ message: "Please provide every detail!" });
+  }
+
+  const user = await User.findById(req.params.id).exec();
+
+  // check if user exists
   if (!user) {
-    res.status(400);
+    return res.status(400).json({ message: "User doesn't exist!" });
     throw new Error("User not found!");
   }
 
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
+  // check for duplicates
+  const duplicate = await User.findOne({ name }).lean().exec();
+  if (duplicate && duplicate?._id.toString() !== id) {
+    return res.status(409).json({ message: "Username already exists" });
+  }
 
-  res
-    .status(200)
-    .json({ message: `updating user ${req.params.id}`, updatedUser });
+  user.name = name;
+  user.roles = roles;
+
+  if (password) {
+    // hash password
+    user.password = await bcrypt.hash(password, 10);
+  }
+
+  const updatedUser = await user.save();
+
+  res.status(200).json({ message: `Updated user ${name}`, updatedUser });
 });
 
+// @desc Delete user
+// @route DELETE /users/id
+// @access Private
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndDelete(req.params.id);
+  // check if there are any orders created by this user
+  const orders = await Order.findOne({ created_by_id: req.params.id })
+    .lean()
+    .exec();
 
-  res
-    .status(200)
-    .json({ message: `successfully deleted user ${req.params.id}` });
+  if (orders?.length) {
+    return res.status(400).json({ message: "User has orders" });
+  }
+
+  // const user = await User.findByIdAndDelete(req.params.id);
+  const user = await User.findById(req.params.id).exec();
+
+  // check if user exists
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: "User with given id doesn't exist!" });
+  }
+
+  const result = await user.deleteOne();
+
+  const reply = `User ${user.name} with id ${user._id} was deleted successfully`;
+
+  res.status(200).json({ message: reply });
 });
 
 const generateToken = (id) => {

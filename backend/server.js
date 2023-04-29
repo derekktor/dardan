@@ -23,13 +23,14 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 // look for static files in folder called public
 app.use("/", express.static(path.join(__dirname, "public")));
-// send root.js file when client sends req
-app.use("/", require("./routes/root.js"));
 // parse any json so the server understands it
 app.use(express.json());
 // parse parameters sent request body
 app.use(express.urlencoded({ extended: false }));
 
+// ROUTES
+// send root.js file when client sends req
+app.use("/", require("./routes/root.js"));
 app.use("/users", require("./routes/usersRoute.js"));
 app.use("/orders", require("./routes/ordersRoute.js"));
 // send 404 page
