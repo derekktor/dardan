@@ -14,8 +14,9 @@ const EditUserForm = () => {
     id: user._id,
     name: user.name,
     password: user.password,
-    roles: user.roles,
   });
+
+  const [roles, setRoles] = useState([user.roles]);
 
   const onChange = (e) => {
     setUserData((prev) => ({
@@ -27,6 +28,7 @@ const EditUserForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    console.log(userData);
     dispatch(updateUserThunk(userData));
     navigate(`/users/${id}`);
   };
@@ -58,8 +60,8 @@ const EditUserForm = () => {
           <input
             type="text"
             name="roles"
-            value={userData.roles}
-            onChange={onChange}
+            value={roles}
+            onChange={(e) => setRoles([e.target.value])}
           />
         </div>
 

@@ -12,15 +12,16 @@ const Order = require("../models/orderModel.js");
 const getUsers = asyncHandler(async (req, res) => {
   // const users = await User.find().select("-password").lean();
   const users = await User.find().lean();
-
+  
   // check if there are any users
   if (!users?.length) {
     return res.status(200).json({ message: "No users found!", users });
   }
-
+  
+  const usersRenamed = users.map(user => ({...user, id: user._id}))
   res
     .status(200)
-    .json({ message: "showing users", numbers: users.length, data: users });
+    .json({ message: "showing users", numbers: users.length, data: usersRenamed });
   // if (req.user && req.user.roles.includes("admin")) {
   //   const users = await User.find().select("-password").lean();
 
@@ -73,7 +74,7 @@ const createUser = asyncHandler(async (req, res) => {
   if (user) {
     res.status(200).json({
       message: `${name} нэр дээр бүртгэл үүслээ`,
-      data: user,
+      data: {...user.toObject(), id: user._id},
       token: generateToken(user._id),
     });
   } else {
@@ -176,7 +177,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: `${updatedUser.name} хэрэглэгчийн мэдээллийг өөрчиллөө`,
-    data: updatedUser,
+    data: {...updatedUser.toObject(), id: updatedUser._id},
   });
 });
 
