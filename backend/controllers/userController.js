@@ -39,7 +39,7 @@ const getUsers = asyncHandler(async (req, res) => {
 // @desc      Registers user
 // @access    Public
 const createUser = asyncHandler(async (req, res) => {
-  const { name, password } = req.body;
+  const { name, password, roles } = req.body;
 
   // check if client correctly filled all info
   // if (!name || !password || !Array.isArray(roles) || !roles.length) {
@@ -67,6 +67,7 @@ const createUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     password: hashedPassword,
+    roles: roles ? roles : ""
   });
 
   if (user) {

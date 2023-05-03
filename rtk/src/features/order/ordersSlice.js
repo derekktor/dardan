@@ -108,7 +108,7 @@ const ordersSlice = createSlice({
       })
       .addCase(deleteOrderThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        const { id } = action.payload;
+        const { _id: id } = action.payload.data;
         // get list of orders where the deleted order doesnt exist
         const orders = state.orders.filter((order) => {
           const orderId = JSON.stringify(order._id).replace(/"/g, "");

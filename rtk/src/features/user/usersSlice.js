@@ -12,9 +12,13 @@ const initialState = {
 export const fetchUsersThunk = createAsyncThunk("users/fetch", async () => {
   try {
     const response = await axios.get(USERS_URL);
-      return response.data.users;
+    const { status, data } = response;
+    if (status < 200 || status >= 300) {
+      throw new Error(data.message);
+    }
+    return data.data;
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error.response.data.message);
     return error.message;
   }
 });
@@ -24,14 +28,13 @@ export const createUserThunk = createAsyncThunk(
   async (userData) => {
     try {
       const response = await axios.post(USERS_URL, userData);
-      console.log(response)
-      if (response.status === 200) {
-          return response.data;
-      } else {
-        throw new Error(response.data.message)
+      const { status, data } = response;
+      if (status < 200 || status >= 300) {
+        throw new Error(data.message);
       }
+      return data.data;
     } catch (error) {
-        throw new Error(error.message)
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -40,24 +43,37 @@ export const updateUserThunk = createAsyncThunk(
   "users/update",
   async (userData) => {
     try {
+      const dataSent = {
+        ...userData,
+        roles: [userData.roles],
+      };
+
       const response = await axios.patch(
         USERS_URL + "/" + userData.id,
-        userData
+        dataSent
       );
-      return response.data;
+
+      const { status, data } = response;
+      if (status < 200 || status >= 300) {
+        throw new Error(data.message);
+      }
+      return data.data;
     } catch (error) {
-      return error.message;
+      throw new Error(error.response.data.message);
     }
   }
 );
 
 export const deleteUserThunk = createAsyncThunk("users/delete", async (id) => {
   try {
-    console.log(id);
     const response = await axios.delete(USERS_URL + "/" + id);
-    return response.data;
+    const { status, data } = response;
+    if (status < 200 || status >= 300) {
+      throw new Error(data.message);
+    }
+    return data.data;
   } catch (error) {
-    return error.message;
+    throw new Error(error.response.data.message);
   }
 });
 
@@ -83,7 +99,7 @@ const usersSlice = createSlice({
       })
       .addCase(createUserThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.users.push(action.payload.user);
+        state.users.push(action.payload);
       })
       .addCase(createUserThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -94,15 +110,16 @@ const usersSlice = createSlice({
       })
       .addCase(updateUserThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
+        const { _id: id } = action.payload;
         const users = JSON.parse(
           JSON.stringify(
             state.users.filter((user) => {
               const userId = JSON.stringify(user._id).replace(/"/g, "");
-              return userId !== action.payload.updatedUser._id;
+              return userId !== id;
             })
           )
         );
-        state.users = [...users, action.payload.updatedUser];
+        state.users = [...users, action.payload];
       })
       .addCase(updateUserThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -113,8 +130,7 @@ const usersSlice = createSlice({
       })
       .addCase(deleteUserThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        const { id } = action.payload;
-        console.log(action.payload)
+        const { _id: id } = action.payload;
         // get list of orders where the deleted order doesnt exist
         const users = state.users.filter((user) => {
           const orderId = JSON.stringify(user._id).replace(/"/g, "");
@@ -122,9 +138,6 @@ const usersSlice = createSlice({
         });
         // update the users to the one above
         state.users = users;
-        console.log(users);
-        console.log(state.users);
-        console.log(users);
       })
       .addCase(deleteUserThunk.rejected, (state, action) => {
         state.status = "rejected";

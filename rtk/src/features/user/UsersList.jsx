@@ -20,7 +20,7 @@ const UsersList = () => {
   const usersElement = users.length === 0 ? (<h1>There are no users!</h1>) : users.map((user) => (
     <div key={user._id} className="users">
       <h4>{user.name}</h4>
-      <p>{user.role ? user.role : user.roles}</p>
+      <p>{user.roles}</p>
       <Link to={`/users/${user._id}`}>More</Link>
       <Link to={`/users/edit/${user._id}`}>Edit</Link>
       <button onClick={() => handleDelete(user._id)}>Delete</button>

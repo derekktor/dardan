@@ -17,7 +17,7 @@ const SingleUser = () => {
   return (
     <div>
       <h2>User Info: {user.name}</h2>
-      <p>{user.role ? user.role : user.roles}</p>
+      <p>{user.roles}</p>
       <Link to={`/users/edit/${user._id}`}>Edit</Link>
       <button onClick={handleDelete}>Delete</button>
     </div>

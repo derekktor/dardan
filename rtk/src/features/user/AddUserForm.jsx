@@ -10,7 +10,7 @@ const AddUserForm = () => {
   const [userData, setUserData] = useState({
     name: "",
     password: "",
-    role: "",
+    roles: "",
   });
   
   const onChange = (e) => {
@@ -41,7 +41,7 @@ const AddUserForm = () => {
         </div>
         <div>
           <label htmlFor="roles">Roles:</label>
-          <input type="text" name="role" value={userData.role} onChange={onChange}/>
+          <input type="text" name="roles" value={userData.roles} onChange={onChange}/>
         </div>
         <button type="submit">Submit</button>
       </form>
