@@ -2,9 +2,11 @@ const asyncHandler = require("express-async-handler");
 const Order = require("../models/orderModel.js");
 const User = require("../models/userModel.js");
 
-// @desc Get orders created by the user currently logged in or all orders if the user has role of admin
-// @route GET /orders
-// @access Public
+// @route     GET /orders
+// @payload   {  }
+// @response  { message, numbers, orders }
+// @access    Public
+// @desc      Get orders created by the user currently logged in or all orders if the user has role of admin
 const getOrders = asyncHandler(async (req, res) => {
   // const user = await User.findById(req.user.id);
 
@@ -21,9 +23,20 @@ const getOrders = asyncHandler(async (req, res) => {
   //   throw new Error("Invalid role!");
   // }
 
-  res.status(200).json(orders);
+  res
+    .status(200)
+    .json({
+      message: "Бүртгэлүүдийг үзүүлж байна",
+      length: orders.length,
+      orders,
+    });
 });
 
+// @route     POST /orders
+// @payload   { client_name, load_name }
+// @response  { message, numbers, orders }
+// @access    Public
+// @desc      Creates new order
 const createOrder = asyncHandler(async (req, res) => {
   // destructure req body
   const { client_name, load_name } = req.body;
@@ -32,7 +45,7 @@ const createOrder = asyncHandler(async (req, res) => {
   if (!client_name || !load_name) {
     return res
       .status(400)
-      .json({ message: "Please fill in every information!" });
+      .json({ message: "Хэрэгтэй бүх мэдээллийг оруулна уу" });
   }
 
   // create order in mongodb
@@ -40,7 +53,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // if order is created, notify
   if (newOrder) {
-    res.status(200).json({ message: "New order created", newOrder });
+    res.status(200).json({ message: "Бүртгэл нэмэгдлээ", newOrder });
   } else {
     return res.status(400).json({ message: "Order data is invalid" });
   }
@@ -48,9 +61,11 @@ const createOrder = asyncHandler(async (req, res) => {
   res.json({ message: "Create order" });
 });
 
-// // @desc Create order
-// // @route POST /orders
-// // @access Public
+// @route     POST /orders
+// @payload   { client_name, load_name }
+// @response  { message, numbers, orders }
+// @access    Public
+// @desc      Create order
 // const createOrder = asyncHandler(async (req, res) => {
 //   const { load_name, client_name, truck_num_digits, truck_num_letters } =
 //     req.body;
@@ -89,7 +104,6 @@ const createOrder = asyncHandler(async (req, res) => {
 //     // amount_w_noat: req.body.amount_w_noat,
 //     // amount_wo_noat: req.body.amount_wo_noat,
 //   });
-//   console.log("order2");
 
 //   if (order) {
 //     res.status(200).json({ message: "order created successfully", order });
@@ -98,9 +112,11 @@ const createOrder = asyncHandler(async (req, res) => {
 //   }
 // });
 
-// @desc Update order info
-// @route PATCH /orders/id
-// @access Public
+// @route     PATCH /orders/id
+// @payload   { load_name, client_name }
+// @response  { message, data }
+// @access    Public
+// @desc      Update order info
 const updateOrder = asyncHandler(async (req, res) => {
   const {
     truck_num_digits,
@@ -113,15 +129,14 @@ const updateOrder = asyncHandler(async (req, res) => {
 
   // check if data entered is valid
   // if (!truck_num_digits || !truck_num_letters || !load_name || !date_entered || !date_left) {
-  if (!load_name || !client_name) {
-    return res.status(400).json({ message: "Please enter every info" });
+  if (!(load_name || client_name)) {
+    return res.status(400).json({ message: "Өөрчлөлт хийнэ үү" });
   }
 
-  const order = await Order.findById(req.params.id);
-
   // check if order exists
+  const order = await Order.findById(req.params.id);
   if (!order) {
-    return res.status(400).json({ message: "Order not found!" });
+    return res.status(400).json({ message: "Бүртгэл олдсонгүй" });
     throw new Error("Order not found!");
   }
 
@@ -131,8 +146,8 @@ const updateOrder = asyncHandler(async (req, res) => {
   //   throw new Error("Hereglegch burtgelgui baina!");
   // }
 
-  order.load_name = load_name;
-  order.client_name = client_name;
+  order.load_name = load_name ? load_name : order.load_name;
+  order.client_name = client_name ? client_name : order.client_name;
 
   // let updatedOrder;
   // // limit access to update someone else's record
@@ -151,12 +166,17 @@ const updateOrder = asyncHandler(async (req, res) => {
   const updatedOrder = await order.save();
   res
     .status(200)
-    .json({ message: `updating Order ${req.params.id}`, updatedOrder });
+    .json({
+      message: `${req.params.id} дугаартай бүртгэлийн мэдээллийг өөрчиллөө`,
+      data: updatedOrder,
+    });
 });
 
-// @desc Delete order
-// @route DELETE /orders/id
-// @access Public
+// @route     DELETE /orders/id
+// @payload   {  }
+// @response  { message, data }
+// @access    Public
+// @desc      Delete order
 const deleteOrder = asyncHandler(async (req, res) => {
   // // check if user exists
   // const user = await User.findById(req.user.id);
@@ -167,9 +187,9 @@ const deleteOrder = asyncHandler(async (req, res) => {
 
   const order = await Order.findById(req.params.id).exec();
   const result = await order.deleteOne();
-  const reply = `Order ${result.load_name} with id ${result._id} was deleted successfully`;
+  const reply = `${result._id} дугаартай ${result.load_name} бүртгэл устгагдлаа`;
 
-  res.status(200).json({ message: reply });
+  res.status(200).json({ message: reply, data: result})
   // limit access to update someone else's record
   // if (
   //   req.user.roles.includes("admin") ||

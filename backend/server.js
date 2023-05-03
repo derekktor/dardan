@@ -1,4 +1,7 @@
-require("dotenv").config({ path: "../.env" });
+// if starting server from backend folder
+// const dotenv = require("dotenv").config({ path: "../.env" });
+// if starting server from root folder
+const dotenv = require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const { logger, logEvents } = require("./middleware/logger");
@@ -18,7 +21,8 @@ const app = express();
 // log every req sent to the server
 app.use(logger);
 // enable cross origin resource sharing, so others can access the server's resources`
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 // parse cookies
 app.use(cookieParser());
 // look for static files in folder called public
