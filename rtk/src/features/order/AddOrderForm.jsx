@@ -28,7 +28,7 @@ const AddOrderForm = () => {
 
   return (
     <div>
-      <h1>Add Post</h1>
+      <h2>Бүртгэл нэмэх</h2>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="client_name">Client:</label>

@@ -29,7 +29,7 @@ const AddUserForm = () => {
 
   return (
     <div>
-      <h1>Add User</h1>
+      <h2>Хэрэглэгч нэмэх</h2>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="name">Name:</label>

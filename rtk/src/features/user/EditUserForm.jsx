@@ -35,7 +35,7 @@ const EditUserForm = () => {
 
   return (
     <div>
-      <h1>Edit User</h1>
+      <h2>Хэрэглэгчийн мэдээллийг өөрчлөх</h2>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="name">Name:</label>

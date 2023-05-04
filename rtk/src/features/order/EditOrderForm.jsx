@@ -34,7 +34,7 @@ const EditOrderForm = () => {
 
   return (
     <div>
-      <h1>Edit Order</h1>
+      <h2>Бүртгэлийн мэдээллийг өөрчлөх</h2>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="client_name">Client:</label>

@@ -23,12 +23,14 @@ const getOrders = asyncHandler(async (req, res) => {
   //   throw new Error("Invalid role!");
   // }
 
+  const ordersRenamed = orders.map(order => ({...order.toObject(), id: order._id}));
+
   res
     .status(200)
     .json({
       message: "Бүртгэлүүдийг үзүүлж байна",
       length: orders.length,
-      orders,
+      data: ordersRenamed,
     });
 });
 
@@ -53,12 +55,10 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // if order is created, notify
   if (newOrder) {
-    res.status(200).json({ message: "Бүртгэл нэмэгдлээ", newOrder });
+    res.status(200).json({ message: "Бүртгэл нэмэгдлээ", data: newOrder });
   } else {
     return res.status(400).json({ message: "Order data is invalid" });
   }
-  // else, throw error
-  res.json({ message: "Create order" });
 });
 
 // @route     POST /orders
@@ -164,11 +164,12 @@ const updateOrder = asyncHandler(async (req, res) => {
   // }
 
   const updatedOrder = await order.save();
+  updatedOrder.id = updatedOrder._id;
   res
     .status(200)
     .json({
       message: `${req.params.id} дугаартай бүртгэлийн мэдээллийг өөрчиллөө`,
-      data: updatedOrder,
+      data: {...updatedOrder.toObject(), id: updatedOrder._id},
     });
 });
 

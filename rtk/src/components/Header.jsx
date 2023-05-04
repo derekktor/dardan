@@ -1,11 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getCount, increaseCount } from "../features/user/usersSlice";
 
 const Header = () => {
-  const dispatch = useDispatch();
-  const count = useSelector(getCount);
-
   return (
     <header>
       <ul>
@@ -29,13 +24,6 @@ const Header = () => {
             </li>
           </ul>
         </li>
-        <button
-          onClick={() => {
-            dispatch(increaseCount());
-          }}
-        >
-          {count}
-        </button>
       </ul>
     </header>
   );

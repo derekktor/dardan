@@ -1,20 +1,31 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 
 const ORDERS_URL = "http://localhost:5000/orders";
 
-const initialState = {
-  orders: [],
+const ordersAdapter = createEntityAdapter({
+  sortComparer: (a, b) => b.updatedAt.localeCompare(a.updatedAt),
+});
+
+const initialState = ordersAdapter.getInitialState({
   status: "idle",
   error: "",
-};
+});
 
 export const fetchOrdersThunk = createAsyncThunk("orders/fetch", async () => {
   try {
     const response = await axios.get(ORDERS_URL);
-    return response.data.orders;
+    const { status, data } = response;
+    if (status < 200 || status >= 300) {
+      throw new Error(data.message);
+    }
+    return data.data;
   } catch (error) {
-    return error.message;
+    throw new Error(error.response.data.message);
   }
 });
 
@@ -23,9 +34,13 @@ export const createOrderThunk = createAsyncThunk(
   async (orderData) => {
     try {
       const response = await axios.post(ORDERS_URL, orderData);
-      return response.data;
+      const { status, data } = response;
+      if (status < 200 || status >= 300) {
+        throw new Error(data.message);
+      }
+      return data.data;
     } catch (error) {
-      return error.message;
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -38,9 +53,13 @@ export const updateOrderThunk = createAsyncThunk(
         `${ORDERS_URL}/${orderData.id}`,
         orderData
       );
-      return response.data.data;
+      const { status, data } = response;
+      if (status < 200 || status >= 300) {
+        throw new Error(data.message);
+      }
+      return data.data;
     } catch (error) {
-      return error.message;
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -50,9 +69,13 @@ export const deleteOrderThunk = createAsyncThunk(
   async (orderId) => {
     try {
       const response = await axios.delete(`${ORDERS_URL}/${orderId}`);
-      return response.data;
+      const { status, data } = response;
+      if (status < 200 || status >= 300) {
+        throw new Error(data.message);
+      }
+      return data.data;
     } catch (error) {
-      return error.message;
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -68,7 +91,7 @@ const ordersSlice = createSlice({
       })
       .addCase(fetchOrdersThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.orders = action.payload;
+        ordersAdapter.upsertMany(state, action.payload);
       })
       .addCase(fetchOrdersThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -79,7 +102,7 @@ const ordersSlice = createSlice({
       })
       .addCase(createOrderThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.orders.push(action.payload.newOrder);
+        ordersAdapter.addOne(state, action.payload);
       })
       .addCase(createOrderThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -90,14 +113,7 @@ const ordersSlice = createSlice({
       })
       .addCase(updateOrderThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        // const order = state.orders.filter(order => order._id !== action.payload._id)
-        const { _id } = action.payload;
-        // grab orders where the edited order doesnt exist and then add the returning updatedOrder to the previously updated orders
-        const orders = state.orders.filter((order) => {
-          const orderId = JSON.stringify(order._id).replace(/"/g, "");
-          return orderId !== _id;
-        });
-        state.orders = [...orders, action.payload];
+        ordersAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateOrderThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -108,14 +124,8 @@ const ordersSlice = createSlice({
       })
       .addCase(deleteOrderThunk.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        const { _id: id } = action.payload.data;
-        // get list of orders where the deleted order doesnt exist
-        const orders = state.orders.filter((order) => {
-          const orderId = JSON.stringify(order._id).replace(/"/g, "");
-          return orderId !== id;
-        });
-        // update the orders to the one above
-        state.orders = orders;
+        const { _id: id } = action.payload;
+        ordersAdapter.removeOne(state, id);
       })
       .addCase(deleteOrderThunk.rejected, (state, action) => {
         state.status = "rejected";
@@ -124,12 +134,9 @@ const ordersSlice = createSlice({
   },
 });
 
-export const selectAllOrders = (state) => state.orders.orders;
-export const selectOrderById = (state, orderId) => {
-  return state.orders.orders.find((order) => {
-    return order._id === orderId;
-  });
-};
+export const { selectAll: selectAllOrders, selectById: selectOrderById } =
+  ordersAdapter.getSelectors((state) => state.orders);
+
 export const selectOrdersStatus = (state) => state.orders.status;
 export const selectOrdersError = (state) => state.orders.error;
 export default ordersSlice.reducer;
