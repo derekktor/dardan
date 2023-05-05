@@ -14,18 +14,19 @@ const UsersList = () => {
     error,
   } = useGetUsersQuery();
 
+  const {ids} = users ? users : { ids: []};
+  // const ids = useSelector(selectUserIds)
 
-  const userIds = useSelector(selectUserIds)
 
   let content;
   if (isLoading) {
     content = <h3>Уншиж байна...</h3>;
   } else if (isSuccess) {
-    content = userIds.map((userId) => (
+    content = ids.map((userId) => (
       <UserExcerpt key={userId} userId={userId} />
     ));
   } else if (isError) {
-    content = <h3>{error}</h3>;
+    content = <h3>{error?.data?.message}</h3>;
   }
 
   return (

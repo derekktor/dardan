@@ -22,6 +22,7 @@ const getUsers = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json({ message: "showing users", numbers: users.length, data: usersRenamed });
+    // .json({ message: "showing users", numbers: users.length, data: users });
   // if (req.user && req.user.roles.includes("admin")) {
   //   const users = await User.find().select("-password").lean();
 

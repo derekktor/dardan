@@ -41,9 +41,10 @@ const SingleUser = () => {
   //   content = <h4>{error}</h4>
   // }
 
+
   return (
     <div>
-      <h2>Хэрэглэгчийн нэр: {user.name}</h2>
+      <h2><span style={{fontSize: "14px"}}>Хэрэглэгчийн нэр: </span>{user.name}</h2>
       <p>{user.roles}</p>
       <Link to={`/users/edit/${userId}`}>Edit</Link>
       <button onClick={() => handleDelete(userId)}>Delete</button>
