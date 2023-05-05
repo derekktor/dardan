@@ -15,19 +15,21 @@ const OrderExcerpt = ({ orderId }) => {
       await deleteOrder(orderId).unwrap();
       navigate("/orders");
     } catch (error) {
-        console.error("Бүртгэлийг устгаж чадсангүй", error);
+      console.error("Бүртгэлийг устгаж чадсангүй", error);
     }
   };
 
-  return (
-    <div className="orders">
-      <h3>Client: {order.client_name}</h3>
-      <p>Load: {order.load_name}</p>
-      <Link to={`${orderId}`}>More</Link>
-      <Link to={`edit/${orderId}`}>Edit</Link>
-      <button onClick={() => handleDelete(orderId)}>Delete</button>
-    </div>
-  );
+  if (order) {
+    return (
+      <div className="orders">
+        <h3>Client: {order.client_name}</h3>
+        <p>Load: {order.load_name}</p>
+        <Link to={`${orderId}`}>More</Link>
+        <Link to={`edit/${orderId}`}>Edit</Link>
+        <button onClick={() => handleDelete(orderId)}>Delete</button>
+      </div>
+    );
+  } else return null;
 };
 
 export default OrderExcerpt;
