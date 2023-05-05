@@ -17,10 +17,18 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData) => {
         return ordersAdapter.setAll(initialState, responseData.data);
       },
-      providesTags: (result, error, arg) => [
-        { type: "Order", id: "LIST" },
-        ...result.ids.map((id) => ({ type: "Order", id })),
-      ],
+      validateStatus: (response, result) => {
+        return response.status === 200 && !result.isError;
+      },
+      keepUnusedDataFor: 5, // 5 seconds
+      providesTags: (result, error, arg) => {
+        if (result?.ids) {
+          return [
+            { type: "Order", id: "LIST" },
+            ...result.ids.map((id) => ({ type: "Order", id })),
+          ];
+        } else return [{ type: "Order", id: "LIST" }];
+      },
     }),
     getOrdersByUserId: builder.query({
       query: (id) => `/orders/?userId=${id}`,
