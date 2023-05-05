@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectOrderById } from "./ordersSlice";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDeleteOrderMutation } from "./ordersSlice";
+import { Link } from "react-router-dom";
 
-const SingleOrder = () => {
+const OrderExcerpt = ({ orderId }) => {
   const [deleteOrder] = useDeleteOrderMutation();
   const navigate = useNavigate();
 
-  const { orderId } = useParams();
-  const order = useSelector((state) => selectOrderById(state, String(orderId)));
+  const order = useSelector((state) => selectOrderById(state, orderId));
 
   const handleDelete = async (orderId) => {
     try {
@@ -20,14 +20,14 @@ const SingleOrder = () => {
   };
 
   return (
-    <div>
-      <h1>{orderId}</h1>
-      <h1>{order.client_name}</h1>
+    <div className="orders">
+      <h3>Client: {order.client_name}</h3>
       <p>Load: {order.load_name}</p>
-      <Link to={`/orders/edit/${orderId}`}>Edit</Link>
-      <button onClick={handleDelete}>Delete</button>
+      <Link to={`${orderId}`}>More</Link>
+      <Link to={`edit/${orderId}`}>Edit</Link>
+      <button onClick={() => handleDelete(orderId)}>Delete</button>
     </div>
   );
 };
 
-export default SingleOrder;
+export default OrderExcerpt;

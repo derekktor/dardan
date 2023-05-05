@@ -167,10 +167,9 @@ const updateOrder = asyncHandler(async (req, res) => {
   updatedOrder.id = updatedOrder._id;
   res
     .status(200)
-    .json({
-      message: `${req.params.id} дугаартай бүртгэлийн мэдээллийг өөрчиллөө`,
-      data: {...updatedOrder.toObject(), id: updatedOrder._id},
-    });
+    .json(
+      {...updatedOrder.toObject(), id: updatedOrder._id},
+    );
 });
 
 // @route     DELETE /orders/id

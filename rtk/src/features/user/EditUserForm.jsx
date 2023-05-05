@@ -7,8 +7,15 @@ const EditUserForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { id } = useParams();
-  const user = useSelector((state) => selectUserById(state, id));
+  const { userId } = useParams();
+  const user = useSelector((state) => {
+    console.log("state")
+    console.log(state)
+    console.log("userId")
+    console.log(userId)
+    return selectUserById(state, userId)
+  }
+  );
 
   const [userData, setUserData] = useState({
     id: user._id,
@@ -30,7 +37,7 @@ const EditUserForm = () => {
 
     console.log(userData);
     dispatch(updateUserThunk(userData));
-    navigate(`/users/${id}`);
+    navigate(`/users/${userId}`);
   };
 
   return (

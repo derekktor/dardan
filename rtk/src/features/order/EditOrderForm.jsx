@@ -3,10 +3,15 @@ import { updateOrderThunk, selectOrderById } from "./ordersSlice";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import { useUpdateOrderMutation, useDeleteOrderMutation } from "./ordersSlice";
 
 const EditOrderForm = () => {
+  const [updateOrder, { isLoading }] = useUpdateOrderMutation();
+
   const { orderId } = useParams();
-  const order = useSelector((state) => selectOrderById(state, String(orderId)));
+  const order = useSelector((state) => {
+    return selectOrderById(state, orderId);
+  });
 
   const [orderData, setOrderData] = useState({
     id: order._id,
@@ -14,7 +19,6 @@ const EditOrderForm = () => {
     load_name: order.load_name,
   });
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onChange = (e) => {
@@ -24,12 +28,21 @@ const EditOrderForm = () => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const canSave =
+    [orderData.client_name, orderData.load_name].some(Boolean) && !isLoading;
+
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(updateOrderThunk(orderData));
-    navigate(`/orders/${orderId}`)
-
+    if (canSave) {
+      try {
+        console.log(orderData);
+        await updateOrder(orderData);
+        navigate(`/orders/${orderId}`);
+      } catch (error) {
+        console.error("Бүртгэлийг өөрчилж чадсангүй", error);
+      }
+    }
   };
 
   return (

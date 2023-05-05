@@ -1,45 +1,33 @@
 import { useDispatch, useSelector } from "react-redux";
-import {
-  selectAllOrders,
-} from "./ordersSlice";
+import { selectAllOrders, selectOrderIds } from "./ordersSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { deleteOrderThunk } from "./ordersSlice";
+import { useGetOrdersQuery } from "./ordersSlice";
+import OrderExcerpt from "./OrderExcerpt";
 
 const OrdersList = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { isLoading, isSuccess, isError, error } = useGetOrdersQuery();
 
-  const orders = useSelector(selectAllOrders);
+  // const orders = useSelector(selectAllOrders);
+  const orderIds = useSelector(selectOrderIds);
 
-  const handleDelete = (orderId) => {
-    dispatch(deleteOrderThunk(orderId));
-    navigate("/orders");
-  };
-
-
-  let ordersElement;
-
-  if (orders.length === 0) {
-    ordersElement = <h4>Ямар ч бүртгэл байхгүй байна</h4>;
-  } else {
-    ordersElement = orders.map((order) => (
-      <div key={order._id}>
-        <div className="orders" key={order._id}>
-          <h3>Client: {order.client_name}</h3>
-          <p>Load: {order.load_name}</p>
-          <Link to={`${order._id}`}>More</Link>
-          <Link to={`edit/${order._id}`}>Edit</Link>
-          <button onClick={() => handleDelete(order._id)}>Delete</button>
-        </div>
-      </div>
+  let content;
+  if (isLoading) {
+    content = <h3>Loading...</h3>;
+  } else if (isSuccess) {
+    content = orderIds.map((orderId) => (
+      <OrderExcerpt key={orderId} orderId={orderId}/>
     ));
+  } else if (isError) {
+    content = <h3>{error}</h3>
   }
+
 
   return (
     <div>
       <h1>Бүртгэлүүд</h1>
-      {ordersElement}
+      {content}
     </div>
   );
 };

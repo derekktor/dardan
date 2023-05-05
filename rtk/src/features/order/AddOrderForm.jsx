@@ -2,8 +2,13 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createOrderThunk } from "./ordersSlice";
 import { useNavigate } from "react-router-dom";
+import { useCreateOrderMutation } from "./ordersSlice";
 
 const AddOrderForm = () => {
+  // const [createOrder] = useCreateOrderMutation();
+
+  const [createOrder, { isLoading }] = useCreateOrderMutation();
+
   const [orderData, setOrderData] = useState({
     client_name: "",
     load_name: "",
@@ -19,11 +24,20 @@ const AddOrderForm = () => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const canSave =
+    [orderData.client_name, orderData.load_name].some(Boolean) && !isLoading;
+
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(createOrderThunk(orderData));
-    navigate("/orders")
+    if (canSave) {
+      try {
+        await createOrder(orderData).unwrap();
+        navigate("/orders");
+      } catch (error) {
+        console.error("Бүртгэлийг илгээж чадсангүй", error);
+      }
+    }
   };
 
   return (

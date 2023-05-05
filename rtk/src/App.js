@@ -18,8 +18,8 @@ function App() {
           <Route path="users">
             <Route index element={<UsersList />} />
             <Route path="add" element={<AddUserForm />} />
-            <Route path="edit/:id" element={<EditUserForm />} />
-            <Route path=":id" element={<SingleUser />} />
+            <Route path="edit/:userId" element={<EditUserForm />} />
+            <Route path=":userId" element={<SingleUser />} />
           </Route>
 
           <Route path="orders">
