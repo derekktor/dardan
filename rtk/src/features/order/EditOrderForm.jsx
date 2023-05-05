@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { updateOrderThunk, selectOrderById } from "./ordersSlice";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { useUpdateOrderMutation, useDeleteOrderMutation } from "./ordersSlice";
+import { useUpdateOrderMutation } from "./ordersSlice";
 
 const EditOrderForm = () => {
+  const navigate = useNavigate();
   const [updateOrder, { isLoading }] = useUpdateOrderMutation();
 
   const { orderId } = useParams();
@@ -13,13 +13,13 @@ const EditOrderForm = () => {
     return selectOrderById(state, orderId);
   });
 
+
   const [orderData, setOrderData] = useState({
-    id: order._id,
-    client_name: order.client_name,
-    load_name: order.load_name,
+    id: order?._id || "",
+    client_name: order?.client_name || "",
+    load_name: order?.load_name || "",
   });
 
-  const navigate = useNavigate();
 
   const onChange = (e) => {
     setOrderData((prev) => ({
@@ -36,7 +36,6 @@ const EditOrderForm = () => {
 
     if (canSave) {
       try {
-        console.log(orderData);
         await updateOrder(orderData);
         navigate(`/orders/${orderId}`);
       } catch (error) {

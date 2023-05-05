@@ -1,6 +1,5 @@
 import {configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
-import ordersReducer from "../features/order/ordersSlice";
-import { apiSlice } from "../features/api/apiSlice";
+import { apiSlice } from "./api/apiSlice";
 
 export const store = configureStore({
     reducer: {

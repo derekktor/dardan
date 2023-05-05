@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { selectUserById, updateUserThunk } from "./usersSlice";
+import { selectUserById } from "./usersSlice";
+import { useUpdateUserMutation } from "./usersSlice";
 
 const EditUserForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
 
   const { userId } = useParams();
   const user = useSelector((state) => {
-    console.log("state")
-    console.log(state)
-    console.log("userId")
-    console.log(userId)
     return selectUserById(state, userId)
   }
   );
@@ -32,12 +29,20 @@ const EditUserForm = () => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const canSave = (userData.name || roles) && !isLoading;
+
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(userData);
-    dispatch(updateUserThunk(userData));
-    navigate(`/users/${userId}`);
+    if (canSave) {
+      try {
+        console.log(userData)
+        await updateUser(userData);
+        navigate(`/users/${userId}`);
+      } catch (error) {
+        console.error("Хэрэглэгчийн мэдээллийг өөрчилж чадсангүй", error);
+      }
+    }
   };
 
   return (

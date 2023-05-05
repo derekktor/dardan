@@ -5,17 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useCreateOrderMutation } from "./ordersSlice";
 
 const AddOrderForm = () => {
-  // const [createOrder] = useCreateOrderMutation();
-
+  const navigate = useNavigate();
   const [createOrder, { isLoading }] = useCreateOrderMutation();
 
   const [orderData, setOrderData] = useState({
     client_name: "",
     load_name: "",
   });
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const onChange = (e) => {
     setOrderData((prev) => ({

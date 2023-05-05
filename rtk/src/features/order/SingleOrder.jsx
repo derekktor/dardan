@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectOrderById } from "./ordersSlice";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDeleteOrderMutation } from "./ordersSlice";
@@ -22,10 +22,10 @@ const SingleOrder = () => {
   return (
     <div>
       <h1>{orderId}</h1>
-      <h1>{order.client_name}</h1>
-      <p>Load: {order.load_name}</p>
+      <h1>{order?.client_name}</h1>
+      <p>Load: {order?.load_name}</p>
       <Link to={`/orders/edit/${orderId}`}>Edit</Link>
-      <button onClick={handleDelete}>Delete</button>
+      <button onClick={() => handleDelete(orderId)}>Delete</button>
     </div>
   );
 };

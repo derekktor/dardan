@@ -1,11 +1,10 @@
 import { useState } from "react"
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createUserThunk } from "./usersSlice";
+import { useCreateUserMutation } from "./usersSlice";
 
 const AddUserForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [createUser] = useCreateUserMutation();
 
   const [userData, setUserData] = useState({
     name: "",
@@ -20,11 +19,19 @@ const AddUserForm = () => {
     }))
   }
   
-  const onSubmit = (e) => {
+  const canSave = userData.name || userData.roles;
+  
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(createUserThunk(userData))
-    navigate("/users");
+    if (canSave) {
+      try {
+        await createUser(userData).unwrap();
+        navigate("/users");
+      } catch (error) {
+        console.error("Хэрэглэгчийг үүсгэж чадсангүй", error);
+      }
+    }
   }
 
   return (
