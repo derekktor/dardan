@@ -36,7 +36,7 @@ const EditOrderForm = () => {
     if (canSave) {
       try {
         await updateOrder(orderData);
-        navigate(`/orders/${orderId}`);
+        navigate(`/dash/orders/${orderId}`);
       } catch (error) {
         console.error("Бүртгэлийг өөрчилж чадсангүй", error);
       }

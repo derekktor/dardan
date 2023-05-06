@@ -1,30 +1,34 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteUserThunk, selectUserById, useDeleteUserMutation } from "./usersApiSlice";
+import {
+  deleteUserThunk,
+  selectUserById,
+  useDeleteUserMutation,
+} from "./usersApiSlice";
 // import { useGetOrdersByUserIdQuery } from "../order/ordersSlice";
 
 const SingleUser = () => {
   const navigate = useNavigate();
   const [deleteUser] = useDeleteUserMutation();
   // const {
-    //   data: ordersByUser,
-  //   isLoading, 
+  //   data: ordersByUser,
+  //   isLoading,
   //   isSuccess,
   //   isError,
   //   error
   // } = useGetOrdersByUserIdQuery(userId);
-  
+
   const { userId } = useParams();
-  const user = useSelector(state => selectUserById(state, userId));
+  const user = useSelector((state) => selectUserById(state, userId));
 
   const handleDelete = async () => {
     try {
       await deleteUser(userId).unwrap();
       navigate("/dash/users");
     } catch (error) {
-        console.error("Хэрэглэгчийн мэдээллийг устгаж чадсангүй", error);
+      console.error("Хэрэглэгчийн мэдээллийг устгаж чадсангүй", error);
     }
-  }
+  };
 
   // let content;
   // if (isLoading) {
@@ -43,18 +47,20 @@ const SingleUser = () => {
   if (user) {
     return (
       <div>
-        <h2><span style={{fontSize: "14px"}}>Хэрэглэгчийн нэр: </span>{user.name}</h2>
+        <h2>
+          <span style={{ fontSize: "14px" }}>Хэрэглэгчийн нэр: </span>
+          {user.name}
+        </h2>
         <p>{user.roles}</p>
-        <Link to={`/dash/users/edit/${userId}`}>Edit</Link>
-        <button onClick={() => handleDelete(userId)}>Delete</button>
-        {/* <section>
-          {content}
-        </section> */}
+        <p>Үүсгэсэн: {user.createdAt}</p>
+        <p>Шинэчилсэн: {user.updatedAt}</p>
+        <div className="buttons">
+          <Link to={`/dash/users/edit/${userId}`}>Edit</Link>
+          <button onClick={() => handleDelete(userId)}>Delete</button>
+        </div>
       </div>
     );
   } else return null;
-
-
 };
 
 export default SingleUser;

@@ -62,7 +62,6 @@ import {
           // }
         }),
         transformResponse: (responseData) => {
-          console.log(responseData)
           return responseData;
           // return ordersAdapter.setAll(initialState, responseData);
         },

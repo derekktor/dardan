@@ -17,6 +17,12 @@ const Welcome = () => {
       <p>
         <Link to="/dash/users">View Users</Link>
       </p>
+      <p>
+        <Link to="/dash/orders/add">Add Order</Link>
+      </p>
+      <p>
+        <Link to="/dash/users/add">Add User</Link>
+      </p>
     </section>
   );
   return content;

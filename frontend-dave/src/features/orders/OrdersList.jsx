@@ -3,13 +3,21 @@ import { selectOrderIds, useGetOrdersQuery } from "./ordersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
 
 const OrdersList = () => {
+  const fetchOptions = {
+    // refetch user data every 15s
+    pollingInterval: 15000,
+    // when focus on another window and return, refetch user data
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true
+  }
+
   const {
     data: orders,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useGetOrdersQuery();
+  } = useGetOrdersQuery(null, fetchOptions);
 
   // const orders = useSelector(selectAllOrders);
 
