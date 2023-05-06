@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteUserThunk, selectUserById } from "./usersSlice";
+import { deleteUserThunk, selectUserById, useDeleteUserMutation } from "./usersApiSlice";
 // import { useGetOrdersByUserIdQuery } from "../order/ordersSlice";
-import { useDeleteUserMutation } from "./usersSlice";
 
 const SingleUser = () => {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ const SingleUser = () => {
   const handleDelete = async () => {
     try {
       await deleteUser(userId).unwrap();
-      navigate("/users");
+      navigate("/dash/users");
     } catch (error) {
         console.error("Хэрэглэгчийн мэдээллийг устгаж чадсангүй", error);
     }
@@ -46,7 +45,7 @@ const SingleUser = () => {
       <div>
         <h2><span style={{fontSize: "14px"}}>Хэрэглэгчийн нэр: </span>{user.name}</h2>
         <p>{user.roles}</p>
-        <Link to={`/users/edit/${userId}`}>Edit</Link>
+        <Link to={`/dash/users/edit/${userId}`}>Edit</Link>
         <button onClick={() => handleDelete(userId)}>Delete</button>
         {/* <section>
           {content}

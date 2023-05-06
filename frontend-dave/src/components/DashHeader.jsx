@@ -7,6 +7,8 @@ const DashHeader = () => {
                 <Link to="/dash">
                     <h1 className="dash-header__title">Dardan</h1>
                 </Link>
+                <Link to="/dash/users/add">Add User</Link>
+                <Link to="/dash/orders/add">Add Order</Link>
                 <nav className="dash-header__nav">
                     nav button
                 </nav>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCreateUserMutation } from "./usersSlice";
+import { useCreateUserMutation } from "./usersApiSlice";
 import { ROLES } from "../../config/roles";
 
 const NAME_REGEX = /^[A-z]{2,20}$/;
@@ -28,7 +28,7 @@ const AddUserForm = () => {
         password: "",
       });
       setRoles([]);
-      navigate("/users");
+      navigate("/dash/users");
     }
   }, [isSuccess, navigate]);
 
@@ -56,7 +56,7 @@ const AddUserForm = () => {
     if (canSave) {
       try {
         await createUser({ ...userData, roles }).unwrap();
-        // navigate("/users");
+        navigate("/dash/users");
       } catch (error) {
         console.error("Хэрэглэгчийг үүсгэж чадсангүй", error);
       }

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { selectUserById } from "./usersSlice";
-import { useUpdateUserMutation, useDeleteUserMutation } from "./usersSlice";
+import { selectUserById } from "./usersApiSlice";
+import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice";
 import { ROLES } from "../../config/roles";
 
 const NAME_REGEX = /^[A-z]{2,20}$/;
@@ -14,7 +14,7 @@ const EditUserForm = () => {
   const [
     deleteUser,
     {
-      isLoading: isDelLoadine,
+      isLoading: isDelLoading,
       isSuccess: isDelSuccess,
       isError: isDelError,
       error: delError,
@@ -46,7 +46,7 @@ const EditUserForm = () => {
         password: "",
       });
       setRoles([]);
-      navigate("/users");
+      navigate("/dash/users");
     }
   }, [isSuccess, isDelSuccess, navigate]);
 
@@ -67,6 +67,7 @@ const EditUserForm = () => {
 
   const handleDelete = async () => {
     await deleteUser(userId);
+    navigate(`/dash/users/${userId}`);
   };
 
   // const canSave = (userData.name || roles) && !isLoading;
@@ -79,7 +80,7 @@ const EditUserForm = () => {
       try {
         console.log(userData);
         await updateUser(userData);
-        navigate(`/users/${userId}`);
+        navigate(`/dash/users/${userId}`);
       } catch (error) {
         console.error("Хэрэглэгчийн мэдээллийг өөрчилж чадсангүй", error);
       }
