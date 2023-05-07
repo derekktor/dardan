@@ -8,7 +8,10 @@ const {
   getMe,
   loginUser,
 } = require("../controllers/userController.js");
+const verifyJWT = require("../middleware/verifyJWT.js");
 // const { protect } = require("../middleware/authMiddleware.js");
+
+router.use(verifyJWT);
 
 // router.route("/").get(protect, getUsers).post(createUser);
 router.route("/").get(getUsers).post(createUser);

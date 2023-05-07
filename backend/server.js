@@ -35,6 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 // ROUTES
 // send root.js file when client sends req
 app.use("/", require("./routes/root.js"));
+app.use("/auth", require("./routes/authRoutes.js"));
 app.use("/users", require("./routes/usersRoute.js"));
 app.use("/orders", require("./routes/ordersRoute.js"));
 // send 404 page
