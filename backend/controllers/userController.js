@@ -159,8 +159,6 @@ const updateUser = asyncHandler(async (req, res) => {
   if (name) {
     const duplicate = await User.findOne({ name }).lean().exec();
 
-    console.log(name);
-    console.log(duplicate);
     if (duplicate && duplicate?._id.toString() !== req.params.id) {
       return res.status(409).json({ message: `${name} нэр бүртгэлтэй байна` });
     }

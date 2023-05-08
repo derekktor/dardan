@@ -77,7 +77,6 @@ const EditUserForm = () => {
 
     if (canSave) {
       try {
-        console.log(userData);
         await updateUser(userData);
         navigate(`/users/${userId}`);
       } catch (error) {

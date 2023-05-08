@@ -17,8 +17,6 @@ const DashHeader = () => {
     if (isSuccess) navigate("/");
   }, [isSuccess, navigate]);
 
-  const onLogoutClicked = () => sendLogout();
-
   if (isLoading) return <p>Logging out...</p>;
 
   if (isError) return <p>Алдаа: {error.data?.message}</p>;

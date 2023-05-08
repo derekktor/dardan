@@ -20,11 +20,11 @@ const app = express();
 // MIDDLEWARES
 // log every req sent to the server
 app.use(logger);
-// enable cross origin resource sharing, so others can access the server's resources`
-// app.use(cors(corsOptions));
-app.use(cors());
 // parse cookies
 app.use(cookieParser());
+// enable cross origin resource sharing, so others can access the server's resources`
+app.use(cors(corsOptions));
+// app.use(cors());
 // look for static files in folder called public
 app.use("/", express.static(path.join(__dirname, "public")));
 // parse any json so the server understands it

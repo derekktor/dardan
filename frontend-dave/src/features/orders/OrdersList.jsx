@@ -17,7 +17,7 @@ const OrdersList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetOrdersQuery(null, fetchOptions);
+  } = useGetOrdersQuery("ordersQuery", fetchOptions);
 
   // const orders = useSelector(selectAllOrders);
 

@@ -14,7 +14,7 @@ const authSlice = createSlice({
     }
 });
 
-export const selectCurrentToken = state => state.token
+export const selectCurrentToken = state => state.auth.token
 
 export const { setCredentials, logOut } = authSlice.actions
 

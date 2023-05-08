@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "./authApiSlice";
 import { setCredentials } from "./authSlice";
+import usePersist from "../../hooks/usePersist";
 
 const Login = () => {
   const userRef = useRef();
@@ -11,6 +12,8 @@ const Login = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
+
+  const [persist, setPersist] = usePersist();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,11 +32,11 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const { accessToken } = await login({name, password}).unwrap();
-      dispatch(setCredentials({accessToken}));
+      const { accessToken } = await login({ name, password }).unwrap();
+      dispatch(setCredentials({ accessToken }));
       setName("");
       setPassword("");
-      navigate("/dash")
+      navigate("/dash");
     } catch (error) {
       if (!error.status) {
         setErrMsg("No Server Response");
@@ -48,6 +51,8 @@ const Login = () => {
       errRef.current.focus();
     }
   };
+
+  const handleToggle = () => setPersist((prev) => !prev);
 
   if (isLoading) return <p>Уншиж байна...</p>;
 
@@ -91,6 +96,16 @@ const Login = () => {
             />
           </div>
           <button type="submit">Нэвтрэх</button>
+          <label htmlFor="persist">
+            <input
+              type="checkbox"
+              className="form__checkbox"
+              id="persist"
+              onChange={handleToggle}
+              checked={persist}
+            />
+            Trust this device
+          </label>
         </form>
       </main>
       <footer>

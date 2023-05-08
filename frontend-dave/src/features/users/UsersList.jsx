@@ -16,7 +16,7 @@ const UsersList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery(null, fetchOptions);
+  } = useGetUsersQuery("usersQuery", fetchOptions);
 
   const { ids } = users ? users : { ids: [] };
   // const ids = useSelector(selectUserIds)

@@ -34,7 +34,7 @@ const login = asyncHandler(async (req, res) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "1m",
+      expiresIn: "1d",
     }
   );
 
@@ -44,13 +44,13 @@ const login = asyncHandler(async (req, res) => {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "7d",
     }
   );
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true, // accessible only by web server
-    // secure: true, // https
+    secure: true, // https
     sameSite: "None", // cross site cookie
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
@@ -67,7 +67,9 @@ const refresh = (req, res) => {
   const cookies = req.cookies;
 
   if (!cookies?.jwt)
-    return res.status(401).json({ message: "There's no jwt in cookie" });
+    return res
+      .status(401)
+      .json({ message: "No Cookie: There's no jwt in cookie" });
 
   const refreshToken = cookies.jwt;
 
@@ -90,7 +92,7 @@ const refresh = (req, res) => {
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "1d" }
       );
 
       res.json({ accessToken });
