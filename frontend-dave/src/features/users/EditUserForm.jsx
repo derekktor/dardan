@@ -65,12 +65,6 @@ const EditUserForm = () => {
     setRoles(values);
   };
 
-  const handleDelete = async () => {
-    await deleteUser(userId);
-    navigate(`/dash/users/${userId}`);
-  };
-
-  // const canSave = (userData.name || roles) && !isLoading;
   const canSave = [roles.length, isNameValid].every(Boolean) && !isLoading;
 
   const onSubmit = async (e) => {
@@ -103,7 +97,7 @@ const EditUserForm = () => {
           <h2>Хэрэглэгчийн мэдээллийг өөрчлөх</h2>
           <form onSubmit={onSubmit}>
             <div>
-              <label htmlFor="name">Name:</label>
+              <label htmlFor="name">Нэр:</label>
               <input
                 type="text"
                 name="name"
@@ -112,7 +106,7 @@ const EditUserForm = () => {
               />
             </div>
             <div>
-              <label htmlFor="password">Password:</label>
+              <label htmlFor="password">Нууц үг:</label>
               <input
                 type="text"
                 name="password"

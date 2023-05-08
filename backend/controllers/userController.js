@@ -46,12 +46,11 @@ const createUser = asyncHandler(async (req, res) => {
   // check if client correctly filled all info
   // if (!name || !password || !Array.isArray(roles) || !roles.length) {
   if (!name || !password) {
-    // throw new Error("Ner, password, alban tushaalaa oruulna uu!");
     return res.status(408).json({ message: "Нэр болон нууц үгийг оруулна уу" });
   }
 
   // check if user exists
-  const userExists = await User.findOne({ name }).lean().exec();
+  const userExists = await User.findOne({ name }).collation({locale: "en", strength: 2}).lean().exec();
 
   if (userExists) {
     return res.status(409).json({

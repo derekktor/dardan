@@ -1,8 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { updateOrderThunk, selectOrderById, useUpdateOrderMutation } from "./ordersApiSlice";
+import { selectOrderById, useUpdateOrderMutation } from "./ordersApiSlice";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import useAuth from "../../hooks/useAuth";
 
 const EditOrderForm = () => {
   const navigate = useNavigate();

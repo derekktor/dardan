@@ -1,25 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  deleteUserThunk,
-  selectUserById,
-  useDeleteUserMutation,
-} from "./usersApiSlice";
-// import { useGetOrdersByUserIdQuery } from "../order/ordersSlice";
+import { selectUserById, useDeleteUserMutation } from "./usersApiSlice";
+// import { useGetOrdersByUserIdQuery } from "../orders/ordersApiSlice";
 
 const SingleUser = () => {
   const navigate = useNavigate();
   const [deleteUser] = useDeleteUserMutation();
+
+  const { userId } = useParams();
+  const user = useSelector((state) => selectUserById(state, userId));
+
   // const {
   //   data: ordersByUser,
   //   isLoading,
   //   isSuccess,
   //   isError,
-  //   error
+  //   error,
   // } = useGetOrdersByUserIdQuery(userId);
-
-  const { userId } = useParams();
-  const user = useSelector((state) => selectUserById(state, userId));
 
   const handleDelete = async () => {
     try {
@@ -32,16 +29,16 @@ const SingleUser = () => {
 
   // let content;
   // if (isLoading) {
-  //   content = <h4>Loading...</h4>
+  //   content = <h4>Loading...</h4>;
   // } else if (isSuccess) {
-  //   const {ids, entities} = ordersByUser;
-  //   content = ids.map(userId => (
+  //   const { ids, entities } = ordersByUser;
+  //   content = ids.map((userId) => (
   //     <li key={userId}>
-  //         <Link to={`/orders/${userId}`}>{entities[userId].client_name}</Link>
+  //       <Link to={`/orders/${userId}`}>{entities[userId].client_name}</Link>
   //     </li>
-  //   ))
+  //   ));
   // } else if (isError) {
-  //   content = <h4>{error}</h4>
+  //   content = <h4>{error}</h4>;
   // }
 
   if (user) {
@@ -58,6 +55,7 @@ const SingleUser = () => {
           <Link to={`/dash/users/edit/${userId}`}>Edit</Link>
           <button onClick={() => handleDelete(userId)}>Delete</button>
         </div>
+        {/* <div>{content}</div> */}
       </div>
     );
   } else return null;

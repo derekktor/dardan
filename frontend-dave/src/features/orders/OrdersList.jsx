@@ -1,17 +1,17 @@
-import { useSelector } from "react-redux";
-import { selectOrderIds, useGetOrdersQuery } from "./ordersApiSlice";
+import { useGetOrdersQuery } from "./ordersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
 import useAuth from "../../hooks/useAuth";
 
 const OrdersList = () => {
-  const {name, isAdmin} = useAuth();
+  const { name, isAdmin } = useAuth();
+
   const fetchOptions = {
     // refetch user data every 2m
     pollingInterval: 120000,
     // when focus on another window and return, refetch user data
     refetchOnFocus: true,
-    refetchOnMountOrArgChange: true
-  }
+    refetchOnMountOrArgChange: true,
+  };
 
   const {
     data: orders,
@@ -20,8 +20,6 @@ const OrdersList = () => {
     isError,
     error,
   } = useGetOrdersQuery("ordersQuery", fetchOptions);
-
-  // const orders = useSelector(selectAllOrders);
 
   let content;
   if (isLoading) {
@@ -33,12 +31,16 @@ const OrdersList = () => {
     if (isAdmin) {
       filteredIds = [...ids];
     } else {
-      filteredIds = ids.filter(orderId => entities[orderId].created_by_name === name)
+      filteredIds = ids.filter(
+        (orderId) => entities[orderId].created_by_name === name
+      );
     }
 
-    content = filteredIds?.length && filteredIds.map((orderId) => (
-      <OrderExcerpt key={orderId} orderId={orderId} />
-    ));
+    content =
+      filteredIds?.length &&
+      filteredIds.map((orderId) => (
+        <OrderExcerpt key={orderId} orderId={orderId} />
+      ));
   } else if (isError) {
     content = <h3>{error?.data?.message}</h3>;
   }

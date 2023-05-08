@@ -8,30 +8,35 @@ const User = require("../models/userModel.js");
 // @access    Public
 // @desc      Get orders created by the user currently logged in or all orders if the user has role of admin
 const getOrders = asyncHandler(async (req, res) => {
-  // const user = await User.findById(req.user.id);
-
   let orders;
 
-  orders = await Order.find();
-  // show all orders if its admin
-  // if (user.roles.includes("admin")) {
-  //   orders = await Order.find();
-  // } else if (user.role === "employee") {
-  //   orders = await Order.find({ created_by_id: req.user.id });
+  // // check for query strings
+  // if (req.query) {
+  //   const userId = req.query.userId;
+  //   const user = await User.findById(userId);
+
+  //   // check if userExists
+  //   if (!user) {
+  //     return res.status(400).json({ message: `${userId} дугаартай хэрэглэгч олдсонгүй`})
+  //   }
+
+  //   orders = await Order.find({ created_by_name: user.name});
   // } else {
-  //   return res.status(400).json({ message: "Invalid role!" });
-  //   throw new Error("Invalid role!");
+  //   orders = await Order.find();
   // }
 
-  const ordersRenamed = orders.map(order => ({...order.toObject(), id: order._id}));
+  orders = await Order.find();
 
-  res
-    .status(200)
-    .json({
-      message: "Бүртгэлүүдийг үзүүлж байна",
-      length: orders.length,
-      data: ordersRenamed,
-    });
+  const ordersRenamed = orders.map((order) => ({
+    ...order.toObject(),
+    id: order._id,
+  }));
+
+  res.status(200).json({
+    message: "Бүртгэлүүдийг үзүүлж байна",
+    length: orders.length,
+    data: ordersRenamed,
+  });
 });
 
 // @route     POST /orders
@@ -51,7 +56,11 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 
   // create order in mongodb
-  const newOrder = await Order.create({ client_name, load_name, created_by_name});
+  const newOrder = await Order.create({
+    client_name,
+    load_name,
+    created_by_name,
+  });
 
   // if order is created, notify
   if (newOrder) {
@@ -165,11 +174,7 @@ const updateOrder = asyncHandler(async (req, res) => {
 
   const updatedOrder = await order.save();
   updatedOrder.id = updatedOrder._id;
-  res
-    .status(200)
-    .json(
-      {...updatedOrder.toObject(), id: updatedOrder._id},
-    );
+  res.status(200).json({ ...updatedOrder.toObject(), id: updatedOrder._id });
 });
 
 // @route     DELETE /orders/id
@@ -189,7 +194,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
   const result = await order.deleteOne();
   const reply = `${result._id} дугаартай ${result.load_name} бүртгэл устгагдлаа`;
 
-  res.status(200).json({ message: reply, data: result})
+  res.status(200).json({ message: reply, data: result });
   // limit access to update someone else's record
   // if (
   //   req.user.roles.includes("admin") ||
