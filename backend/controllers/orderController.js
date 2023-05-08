@@ -41,7 +41,7 @@ const getOrders = asyncHandler(async (req, res) => {
 // @desc      Creates new order
 const createOrder = asyncHandler(async (req, res) => {
   // destructure req body
-  const { client_name, load_name } = req.body;
+  const { client_name, load_name, created_by_name } = req.body;
 
   // check if required data is filled
   if (!client_name || !load_name) {
@@ -51,7 +51,7 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 
   // create order in mongodb
-  const newOrder = await Order.create({ client_name, load_name });
+  const newOrder = await Order.create({ client_name, load_name, created_by_name});
 
   // if order is created, notify
   if (newOrder) {

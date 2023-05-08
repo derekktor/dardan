@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 const DashFooter = () => {
-  const {name, status} = useAuth();
+  const {userId, name, status} = useAuth();
 
   const navigate = useNavigate();
   const { pathname } = useLocation();

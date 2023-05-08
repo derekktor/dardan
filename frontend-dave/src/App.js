@@ -14,37 +14,44 @@ import EditOrderForm from "./features/orders/EditOrderForm";
 import SingleOrder from "./features/orders/SingleOrder";
 import Prefetch from "./features/auth/Prefetch";
 import PersistLogin from "./features/auth/PersistLogin";
+import RequireAuth from "./features/auth/RequireAuth";
+import { ROLES } from "./config/roles";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        {/* Public routes */}
         <Route index element={<Public />} />
-
         <Route path="login" element={<Login />} />
-
+        {/* Protected routes */}
         <Route element={<PersistLogin />}>
-          <Route element={<Prefetch />}>
-            <Route path="dash" element={<DashLayout />}>
-              <Route index element={<Welcome />} />
+          <Route
+            element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}
+          >
+            <Route element={<Prefetch />}>
+              <Route path="dash" element={<DashLayout />}>
+                <Route index element={<Welcome />} />
 
-              <Route path="orders">
-                <Route index element={<OrdersList />} />
-                <Route path="add" element={<AddOrderForm />} />
-                <Route path="edit/:orderId" element={<EditOrderForm />} />
-                <Route path=":orderId" element={<SingleOrder />} />
-              </Route>
+                <Route path="orders">
+                  <Route index element={<OrdersList />} />
+                  <Route path="add" element={<AddOrderForm />} />
+                  <Route path="edit/:orderId" element={<EditOrderForm />} />
+                  <Route path=":orderId" element={<SingleOrder />} />
+                </Route>
 
-              <Route path="users">
-                <Route index element={<UsersList />} />
-                <Route path=":userId" element={<SingleUser />} />
-                <Route path="add" element={<AddUserForm />} />
-                <Route path="edit/:userId" element={<EditUserForm />} />
+                <Route element={<RequireAuth allowedRoles={[ROLES.admin]} />}>
+                  <Route path="users">
+                    <Route index element={<UsersList />} />
+                    <Route path=":userId" element={<SingleUser />} />
+                    <Route path="add" element={<AddUserForm />} />
+                    <Route path="edit/:userId" element={<EditUserForm />} />
+                  </Route>
+                </Route>
               </Route>
             </Route>
           </Route>
         </Route>
-
         {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Route>
     </Routes>

@@ -3,8 +3,8 @@ import UserExcerpt from "./UserExcerpt";
 
 const UsersList = () => {
   const fetchOptions = {
-    // refetch user data every 60s
-    pollingInterval: 60000,
+    // refetch user data every 4min
+    pollingInterval: 240000,
     // when focus on another window and return, refetch user data
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true

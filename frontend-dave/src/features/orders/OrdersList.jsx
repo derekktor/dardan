@@ -1,11 +1,13 @@
 import { useSelector } from "react-redux";
 import { selectOrderIds, useGetOrdersQuery } from "./ordersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
+import useAuth from "../../hooks/useAuth";
 
 const OrdersList = () => {
+  const {name, isAdmin} = useAuth();
   const fetchOptions = {
-    // refetch user data every 15s
-    pollingInterval: 15000,
+    // refetch user data every 2m
+    pollingInterval: 120000,
     // when focus on another window and return, refetch user data
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true
@@ -25,8 +27,16 @@ const OrdersList = () => {
   if (isLoading) {
     content = <h3>Loading...</h3>;
   } else if (isSuccess) {
-    const { ids } = orders ? orders : { ids: [] };
-    content = ids.map((orderId) => (
+    const { ids, entities } = orders ? orders : { ids: [] };
+
+    let filteredIds;
+    if (isAdmin) {
+      filteredIds = [...ids];
+    } else {
+      filteredIds = ids.filter(orderId => entities[orderId].created_by_name === name)
+    }
+
+    content = filteredIds?.length && filteredIds.map((orderId) => (
       <OrderExcerpt key={orderId} orderId={orderId} />
     ));
   } else if (isError) {

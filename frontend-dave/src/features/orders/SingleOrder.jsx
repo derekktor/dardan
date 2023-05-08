@@ -14,7 +14,7 @@ const SingleOrder = () => {
       await deleteOrder(orderId).unwrap();
       navigate("/dash/orders");
     } catch (error) {
-        console.error("Бүртгэлийг устгаж чадсангүй", error);
+      console.error("Бүртгэлийг устгаж чадсангүй", error);
     }
   };
 
@@ -23,8 +23,13 @@ const SingleOrder = () => {
       <h1>{orderId}</h1>
       <h1>{order?.client_name}</h1>
       <p>Load: {order?.load_name}</p>
-      <Link to={`/dash/orders/edit/${orderId}`}>Edit</Link>
-      <button onClick={() => handleDelete(orderId)}>Delete</button>
+      <p>Created by: {order?.created_by_name}</p>
+      <p>Created at: {order?.createdAt}</p>
+      <p>Updated at: {order?.updatedAt}</p>
+      <div className="buttons">
+        <Link to={`/dash/orders/edit/${orderId}`}>Edit</Link>
+        <button onClick={() => handleDelete(orderId)}>Delete</button>
+      </div>
     </div>
   );
 };

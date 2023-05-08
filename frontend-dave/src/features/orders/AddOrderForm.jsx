@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const AddOrderForm = () => {
+  const {name} = useAuth();
+
   const navigate = useNavigate();
   const [createOrder, { isLoading }] = useCreateOrderMutation();
 
@@ -26,7 +29,8 @@ const AddOrderForm = () => {
 
     if (canSave) {
       try {
-        await createOrder(orderData).unwrap();
+        const orderDataWithCreator = {...orderData, created_by_name: name}
+        await createOrder(orderDataWithCreator).unwrap();
         navigate("/dash/orders");
       } catch (error) {
         console.error("Бүртгэлийг илгээж чадсангүй", error);
