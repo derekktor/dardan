@@ -1,13 +1,20 @@
 import { useSelector } from "react-redux";
 import { selectOrderById, useDeleteOrderMutation } from "./ordersApiSlice";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const SingleOrder = () => {
+  const { isAdmin } = useAuth();
+
   const [deleteOrder] = useDeleteOrderMutation();
   const navigate = useNavigate();
 
   const { orderId } = useParams();
   const order = useSelector((state) => selectOrderById(state, String(orderId)));
+
+  // TODO
+  // const createdAt = new Date(order?.createdAt).toLocaleString("en-US", {})
+  // const updatedAt = new Date(order?.updatedAt).toLocaleString("en-US", {})
 
   const handleDelete = async (orderId) => {
     try {
@@ -28,7 +35,9 @@ const SingleOrder = () => {
       <p>Updated at: {order?.updatedAt}</p>
       <div className="buttons">
         <Link to={`/dash/orders/edit/${orderId}`}>Edit</Link>
-        <button onClick={() => handleDelete(orderId)}>Delete</button>
+        {isAdmin && (
+          <button onClick={() => handleDelete(orderId)}>Delete</button>
+        )}
       </div>
     </div>
   );

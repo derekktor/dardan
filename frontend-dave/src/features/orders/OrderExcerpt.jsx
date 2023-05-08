@@ -2,8 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectOrderById, useDeleteOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const OrderExcerpt = ({ orderId }) => {
+  const { isAdmin } = useAuth();
+
   const [deleteOrder] = useDeleteOrderMutation();
   const navigate = useNavigate();
 
@@ -25,8 +28,10 @@ const OrderExcerpt = ({ orderId }) => {
         <p>Load: {order.load_name}</p>
         <div className="buttons">
           <Link to={`${orderId}`}>More</Link>
-          <Link to={`edit/${orderId}`}>Edit</Link>
-          <button onClick={() => handleDelete(orderId)}>Delete</button>
+          {isAdmin && <Link to={`edit/${orderId}`}>Edit</Link>}
+          {isAdmin && (
+            <button onClick={() => handleDelete(orderId)}>Delete</button>
+          )}
         </div>
       </div>
     );
