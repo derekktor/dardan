@@ -10,6 +10,9 @@ const Prefetch = () => {
         const orders = store.dispatch(extendedOrdersApiSlice.endpoints.getOrders.initiate());
         const users = store.dispatch(extendedUsersApiSlice.endpoints.getUsers.initiate());
 
+        // store.dispatch(extendedOrdersApiSlice.util.prefetch("getOrders", "ordersList", { force: true }))
+        // store.dispatch(extendedUsersApiSlice.util.prefetch("getUsers", "usersList", { force: true }))
+
         return () => {
             console.log("unsubscribing");
             orders.unsubscribe();

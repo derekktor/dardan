@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import { selectOrderById, useDeleteOrderMutation } from "./ordersApiSlice";
+import { useDeleteOrderMutation, useGetOrdersQuery } from "./ordersApiSlice";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { memo } from "react";
 import useAuth from "../../hooks/useAuth";
 
 const SingleOrder = () => {
@@ -10,7 +10,13 @@ const SingleOrder = () => {
   const navigate = useNavigate();
 
   const { orderId } = useParams();
-  const order = useSelector((state) => selectOrderById(state, String(orderId)));
+  // const order = useSelector((state) => selectOrderById(state, String(orderId)));
+
+  const { order } = useGetOrdersQuery("ordersList", {
+    selectFromResult: ({ data }) => ({
+      order: data?.entities[orderId],
+    }),
+  });
 
   // TODO
   // const createdAt = new Date(order?.createdAt).toLocaleString("en-US", {})
@@ -43,4 +49,5 @@ const SingleOrder = () => {
   );
 };
 
-export default SingleOrder;
+const memoizedOrder = memo(SingleOrder);
+export default memoizedOrder;

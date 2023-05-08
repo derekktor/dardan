@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { selectOrderIds } from "./ordersSlice";
 import { useGetOrdersQuery } from "./ordersSlice";
 import OrderExcerpt from "./OrderExcerpt";
 

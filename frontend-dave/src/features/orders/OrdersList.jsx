@@ -19,7 +19,7 @@ const OrdersList = () => {
     isSuccess,
     isError,
     error,
-  } = useGetOrdersQuery("ordersQuery", fetchOptions);
+  } = useGetOrdersQuery("ordersList", fetchOptions);
 
   let content;
   if (isLoading) {

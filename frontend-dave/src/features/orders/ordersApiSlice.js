@@ -10,12 +10,14 @@ const initialState = ordersAdapter.getInitialState();
 export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
-      query: () => "/orders",
+      query: () => ({
+        url: "/orders",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
       transformResponse: (responseData) => {
         return ordersAdapter.setAll(initialState, responseData.data);
-      },
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
       },
       keepUnusedDataFor: 5, // 5 seconds
       providesTags: (result, error, arg) => {

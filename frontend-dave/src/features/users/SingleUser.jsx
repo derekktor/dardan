@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { selectUserById, useDeleteUserMutation } from "./usersApiSlice";
+import { useDeleteUserMutation, useGetUsersQuery } from "./usersApiSlice";
+import { memo } from "react";
 // import { useGetOrdersByUserIdQuery } from "../orders/ordersApiSlice";
 
 const SingleUser = () => {
@@ -8,7 +8,13 @@ const SingleUser = () => {
   const [deleteUser] = useDeleteUserMutation();
 
   const { userId } = useParams();
-  const user = useSelector((state) => selectUserById(state, userId));
+  // const user = useSelector((state) => selectUserById(state, userId));
+
+  const { user } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      user: data?.entities[userId],
+    }),
+  });
 
   // const {
   //   data: ordersByUser,
@@ -61,4 +67,5 @@ const SingleUser = () => {
   } else return null;
 };
 
-export default SingleUser;
+const memoizedUser = memo(SingleUser);
+export default memoizedUser;
