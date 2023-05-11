@@ -1,7 +1,7 @@
 // if starting server from backend folder
-// const dotenv = require("dotenv").config({ path: "../.env" });
+const dotenv = require("dotenv").config({ path: "../.env" });
 // if starting server from root folder
-const dotenv = require("dotenv").config();
+// const dotenv = require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const { logger, logEvents } = require("./middleware/logger");

@@ -136,7 +136,7 @@ a:focus-visible {
   top: 0;
   z-index: 1;
   background-color: var(--BGCOLOR);
-  padding: 0 0.5em;
+  padding: 1em 0.5em;
   border-bottom: 1px solid var(--BORDER-COLOR);
 }
 
@@ -226,6 +226,43 @@ tr {
 }
 
 /* ||  ORDER */
+.order-info-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.order-info-container > div {
+  border: 1px solid white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+}
+
+.order-info-container > div > div {
+  border-bottom: 1px solid rgba(255,255,255,.2)
+}
+
+.hint {
+  border: 1px dashed white;
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+}
+
+.add-order-form-container form > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 5px;
+}
+
 .blocks {
   padding: 20px;
   border: 1px solid white;
@@ -399,4 +436,58 @@ tr {
   .form__action-buttons {
     position: static;
   }
+}
+
+.edit-order-form {
+  display: flex;
+  flex-direction: column;
+  margin: 2vh 10vw;
+  gap: 10px;
+}
+
+.edit-order-form > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.dash-header__nav > * {
+  border: 1px solid white;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.dash-header__nav > *:hover {
+  border: 1px solid black;
+  color: black;
+  background-color: rgba(255,255,255,.5);
 }

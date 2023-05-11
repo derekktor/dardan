@@ -45,6 +45,10 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: initialOrder,
       }),
+      transformResponse: (responseData) => {
+        console.log(responseData)
+        return responseData
+      },
       invalidatesTags: [{ type: "Order", id: "LIST" }],
     }),
     updateOrder: builder.mutation({

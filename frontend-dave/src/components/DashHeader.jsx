@@ -40,10 +40,12 @@ const DashHeader = () => {
           <h1 className="dash-header__title">Dardan</h1>
         </Link>
         <nav className="dash-header__nav">
-          {isAdmin && <Link to="/dash/users/add">User+</Link>}
-          <Link to="/dash/orders/add">Order+</Link>
+          {isAdmin && <Link to="/dash/users">Хэрэглэгчид</Link>}
+          {isAdmin && <Link to="/dash/users/add">Хэрэглэгч нэмэх</Link>}
+          <Link to="/dash/orders/">Бүртгэлүүд</Link>
+          <Link to="/dash/orders/add">Бүртгэл нэмэх</Link>
           <button className="" title="log out" onClick={() => sendLogout()}>
-            Log Out
+          Гарах
           </button>
         </nav>
       </div>

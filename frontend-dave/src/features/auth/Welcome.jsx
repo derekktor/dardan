@@ -16,19 +16,19 @@ const Welcome = () => {
       <h1>Өдрийн мэнд! {name}</h1>
       {isAdmin && (
         <p>
-          <Link to="/dash/users">Users</Link>
+          <Link to="/dash/users">Хэрэглчид</Link>
         </p>
       )}
       {isAdmin && (
         <p>
-          <Link to="/dash/users/add">User+</Link>
+          <Link to="/dash/users/add">Хэрэглэгч нэмэх</Link>
         </p>
       )}
       <p>
-        <Link to="/dash/orders">Orders</Link>
+        <Link to="/dash/orders">Бүртгэлүүд</Link>
       </p>
       <p>
-        <Link to="/dash/orders/add">Order+</Link>
+        <Link to="/dash/orders/add">Бүртгэл нэмэх</Link>
       </p>
     </section>
   );

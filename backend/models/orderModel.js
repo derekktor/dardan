@@ -1,17 +1,14 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const orderSchema = mongoose.Schema(
   {
-    created_by_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      // required: true,
-      ref: "User",
-    },
     created_by_name: {
       type: String,
     },
-    truck_num: {
+    date_entered: {
+      type: Date, // 04/12/2022
+    },
+    truck_id: {
       digits: {
         type: String,
         // required: [true, "Арлын дугаарын тоог оруулна уу!"],
@@ -27,26 +24,23 @@ const orderSchema = mongoose.Schema(
     load_weight: {
       type: Number,
     },
-    date_entered: {
-      type: Date,
-    },
     date_left: {
-      type: Date,
+      type: Date, // 04/20/2022
     },
     tavtsan_ashiglalt: {
-      type: String,
+      type: String, // gadna_tavtsan || aguulah_tavtsan
     },
     puulelt: {
       type: Boolean,
     },
     forklift_usage: {
-      type: String,
+      type: String, // once || [0-9]
     },
     crane_usage: {
-      type: Number,
+      type: Number, // 0 - ashiglaagui || 1 - hooson orgolt, 100k || 2 - achaatai orgolt, 250k
     },
     fine1: {
-      type: Boolean,
+      type: Boolean, 
     },
     fine2: {
       type: Boolean,
@@ -72,6 +66,9 @@ const orderSchema = mongoose.Schema(
     client_name: {
       type: String,
     },
+    stage: {
+      type: Number // 0 || 1 || 2 - done
+    }
   },
   {
     timestamps: true,

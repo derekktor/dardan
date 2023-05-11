@@ -46,10 +46,18 @@ const getOrders = asyncHandler(async (req, res) => {
 // @desc      Creates new order
 const createOrder = asyncHandler(async (req, res) => {
   // destructure req body
-  const { client_name, load_name, created_by_name } = req.body;
+  const {
+    // initial
+    created_by_name,
+    date_entered,
+    truck_id_digits,
+    truck_id_letters,
+    load_name,
+    load_weight,
+  } = req.body;
 
   // check if required data is filled
-  if (!client_name || !load_name) {
+  if (!load_name) {
     return res
       .status(400)
       .json({ message: "Хэрэгтэй бүх мэдээллийг оруулна уу" });
@@ -57,9 +65,14 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // create order in mongodb
   const newOrder = await Order.create({
-    client_name,
-    load_name,
     created_by_name,
+    date_entered,
+    truck_id: {
+      digits: truck_id_digits,
+      letters: truck_id_letters,
+    },
+    load_name,
+    load_weight,
   });
 
   // if order is created, notify
@@ -70,57 +83,6 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 });
 
-// @route     POST /orders
-// @payload   { client_name, load_name }
-// @response  { message, numbers, orders }
-// @access    Public
-// @desc      Create order
-// const createOrder = asyncHandler(async (req, res) => {
-//   const { load_name, client_name, truck_num_digits, truck_num_letters } =
-//     req.body;
-
-//   // check if necessary fields are filled in
-//   if (!load_name || !client_name) {
-//     return res.status(400).json({ message: "Please fill in every field!" });
-//   }
-//   console.log(load_name, client_name, truck_num_digits);
-
-//   // create order
-//   const order = await Order.create({
-//     // truck_num: {
-//     //   digits: truck_num_digits,
-//     //   letters: truck_num_letters,
-//     // },
-//     truck_num_digits,
-//     truck_num_letters,
-//     load_name,
-//     client_name,
-//     // created_by_id: req.user.id,
-//     // created_by_name: req.user.name,
-//     // load_weight: req.body.load_weight,
-//     // date_entered: req.body.date_entered,
-//     // date_left: req.body.date_left,
-//     // tavtsan_ashiglalt: req.body.tavtsan_ashiglalt,
-//     // puulelt: req.body.puulelt,
-//     // forklift_usage: req.body.forklift_usage,
-//     // crane_usage: req.body.crane_usage,
-//     // fine1: req.body.fine1,
-//     // fine2: req.body.fine2,
-//     // other1: req.body.other1,
-//     // other2: req.body.other2,
-//     // invoice_to_302: req.body.invoice_to_302,
-//     // invoice_to_601: req.body.invoice_to_601,
-//     // amount_w_noat: req.body.amount_w_noat,
-//     // amount_wo_noat: req.body.amount_wo_noat,
-//   });
-
-//   if (order) {
-//     res.status(200).json({ message: "order created successfully", order });
-//   } else {
-//     return res.status(400).json({ message: "Invalid order data" });
-//   }
-// });
-
 // @route     PATCH /orders/id
 // @payload   { load_name, client_name }
 // @response  { message, data }
@@ -128,12 +90,26 @@ const createOrder = asyncHandler(async (req, res) => {
 // @desc      Update order info
 const updateOrder = asyncHandler(async (req, res) => {
   const {
-    truck_num_digits,
-    truck_num_letters,
-    load_name,
-    client_name,
     date_entered,
+    truck_id,
+    load_name,
+    load_weight,
     date_left,
+    tavtsan_ashiglalt,
+    puulelt,
+    forklift_usage,
+    crane_usage,
+    fine1,
+    fine2,
+    other1,
+    other2,
+    invoice_to_302,
+    invoice_to_601,
+    amount_w_noat,
+    amount_wo_noat,
+    client_name,
+    last_edited_by,
+    stage
   } = req.body;
 
   // check if data entered is valid
@@ -146,31 +122,43 @@ const updateOrder = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id);
   if (!order) {
     return res.status(400).json({ message: "Бүртгэл олдсонгүй" });
-    throw new Error("Order not found!");
   }
 
-  // // check if user exists
-  // if (!req.user) {
-  //   return res.status(401).json({ message: "Hereglegch burtgelgui baina!" });
-  //   throw new Error("Hereglegch burtgelgui baina!");
-  // }
+  let craneNum;
+  switch (crane_usage) {
+    case "no":
+      craneNum = 0;
+      break;
+    case "hooson":
+      craneNum = 1;
+      break;
+    case "achaatai":
+      craneNum = 2;
+      break;
+  }
 
+  order.date_entered = date_entered ? date_entered : order.date_entered;
+  order.truck_id = truck_id ? truck_id : order.truck_id;
   order.load_name = load_name ? load_name : order.load_name;
+  order.load_weight = load_weight ? load_weight : order.load_weight;
+  order.date_left = date_left ? date_left : order.date_left;
+  order.tavtsan_ashiglalt = tavtsan_ashiglalt
+    ? tavtsan_ashiglalt
+    : order.tavtsan_ashiglalt;
+  order.puulelt = puulelt ? puulelt : order.puulelt;
+  order.forklift_usage = forklift_usage ? forklift_usage : order.forklift_usage;
+  order.crane_usage = craneNum;
+  order.fine1 = fine1 ? fine1 : order.fine1;
+  order.fine2 = fine2 ? fine2 : order.fine2;
+  order.other1 = other1 ? other1 : order.other1;
+  order.other2 = other2 ? other2 : order.other2;
+  order.invoice_to_302 = invoice_to_302 ? invoice_to_302 : order.invoice_to_302;
+  order.invoice_to_601 = invoice_to_601 ? invoice_to_601 : order.invoice_to_601;
+  order.amount_w_noat = amount_w_noat ? amount_w_noat : order.amount_w_noat;
+  order.amount_wo_noat = amount_wo_noat ? amount_wo_noat : order.amount_wo_noat;
   order.client_name = client_name ? client_name : order.client_name;
-
-  // let updatedOrder;
-  // // limit access to update someone else's record
-  // if (
-  //   req.user.roles.includes("admin") ||
-  //   order.created_by_id.toString() === req.user.id
-  // ) {
-  //   updatedOrder = await order.save();
-  // } else {
-  //   return res
-  //     .status(401)
-  //     .json({ message: "Ene uildliig hiih erh baihgui bn!" });
-  //   throw new Error("Ene uildliig hiih erh baihgui baina!");
-  // }
+  order.last_edited_by = last_edited_by ? last_edited_by : order.last_edited_by;
+  order.stage = stage ? stage : order.stage;
 
   const updatedOrder = await order.save();
   updatedOrder.id = updatedOrder._id;
