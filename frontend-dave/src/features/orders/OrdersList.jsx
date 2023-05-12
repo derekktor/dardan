@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { Calendar } from "react-date-range";
 import format from "date-fns/format";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaQuestionCircle } from "react-icons/fa";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -17,7 +17,9 @@ const OrdersList = () => {
 
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false);
+  const [hintVisible, setHintVisible] = useState(false);
   const refOne = useRef(null);
+  const refHint = useRef(null);
 
   const fetchOptions = {
     // refetch user data every 2m
@@ -104,6 +106,7 @@ const OrdersList = () => {
   const hideOnEscape = (e) => {
     if (e.key === "Escape") {
       setOpen(false);
+      setHintVisible(false);
     }
   };
 
@@ -111,39 +114,78 @@ const OrdersList = () => {
     if (refOne.current && !refOne.current.contains(e.target)) {
       setOpen(false);
     }
+
+    if (refHint.current && !refHint.current.contains(e.target)) {
+      setHintVisible(false);
+    }
   };
   return (
-    <div className="flex-col">
-      <h1>Бүртгэлүүд</h1>
-      <div className="flex-row align-center space-evenly gap10 mb">
-        <input
-          className="round-border"
-          type="text"
-          value={searchValue}
-          onChange={handleKeyChange}
-          style={{ flex: 3 }}
-        />
-        <span onClick={() => setOpen((open) => !open)} style={{ flex: 1 }}>
-          <FaCalendarAlt />
-        </span>
-      </div>
-      <div ref={refOne}>
-        {open && (
-          <Calendar
-            className="calendarElement"
-            date={new Date()}
-            onChange={handleDateSelect}
+    <>
+      {hintVisible && (
+        <div id="hintDisplay" className="">
+          <div ref={refHint}>
+            <h3>Тусламж</h3>
+            <div>
+              <h4>
+                <i>&gt;12/31/2022</i>
+              </h4>
+              <p>12/31/2022-оос хойш хийгдсэн бүртгэлүүдийг харах</p>
+            </div>
+            <div>
+              <h4>
+                <i>&lt;12/31/2022</i>
+              </h4>
+              <p>12/31/2022-оос өмнө хийгдсэн бүртгэлүүдийг харах</p>
+            </div>
+            <div>
+              <h4>
+                <i>-төмөр</i>
+              </h4>
+              <p>төмөр гэсэн ачаатай бүртгэлүүдийг харах</p>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex-col">
+        <h1>Бүртгэлүүд</h1>
+        <div className="flex-row align-center space-evenly gap10 mb">
+          <input
+            className="round-border"
+            type="text"
+            value={searchValue}
+            onChange={handleKeyChange}
+            style={{ flex: 3 }}
           />
-        )}
+          <div style={{ flex: 1 }}>
+            <span
+              style={{ marginRight: "10px", cursor: "pointer" }}
+              onClick={() => setOpen((open) => !open)}
+            >
+              <FaCalendarAlt />
+            </span>
+            <span style={{cursor: "pointer"}} onClick={() => setHintVisible((hintVisible) => !hintVisible)}>
+              <FaQuestionCircle />
+            </span>
+          </div>
+        </div>
+        <div ref={refOne}>
+          {open && (
+            <Calendar
+              className="calendarElement"
+              date={new Date()}
+              onChange={handleDateSelect}
+            />
+          )}
+        </div>
+        <div className="orders-grid m align-center">
+          <h4>Арлын дугаар</h4>
+          <h4>Орсон огноо</h4>
+          <h4>Барааны нэр</h4>
+          <h4>Buttons</h4>
+          {content}
+        </div>
       </div>
-      <div className="orders-grid m align-center">
-        <h4>Арлын дугаар</h4>
-        <h4>Орсон огноо</h4>
-        <h4>Барааны нэр</h4>
-        <h4>Buttons</h4>
-        {content}
-      </div>
-    </div>
+    </>
   );
 };
 

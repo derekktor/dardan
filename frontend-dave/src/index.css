@@ -85,7 +85,7 @@ select {
 
 a {
   text-decoration: none;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 a,
@@ -242,7 +242,7 @@ tr {
 }
 
 .order-info-container > div > div {
-  border-bottom: 1px solid rgba(255,255,255,.2)
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .hint {
@@ -280,7 +280,7 @@ input {
   color: black;
   padding: 5px 20px;
   border-radius: 10px;
-  transition: .3s;
+  transition: 0.3s;
   cursor: pointer;
   border: none;
 }
@@ -500,7 +500,7 @@ input {
 .dash-header__nav > *:hover {
   border: 1px solid black;
   color: black;
-  background-color: rgba(255,255,255,.5);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .border {
@@ -517,4 +517,39 @@ input {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px 2px;
+}
+
+#hintDisplay {
+  position: fixed;
+  display: flex;
+  width: 110vw;
+  height: 100vh;
+  left: -10px;
+  top: -10px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+#hintDisplay > div {
+  background-color: white;
+  padding: 50px;
+  text-align: left;
+}
+
+#hintDisplay > div > div {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+#hintDisplay > div > div > h4 {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 2px 10px;
+  margin-bottom: 5px;
+}
+
+.hidden {
+  display: none!important;
 }

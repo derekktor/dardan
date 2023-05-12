@@ -20,7 +20,7 @@ const Welcome = () => {
       <h1>Өдрийн мэнд! {name}</h1>
       {isAdmin && (
         <p>
-          <Link to="/dash/users">Хэрэглчид</Link>
+          <Link to="/dash/users">Хэрэглэгчид</Link>
         </p>
       )}
       {isAdmin && (
