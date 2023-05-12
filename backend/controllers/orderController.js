@@ -48,7 +48,7 @@ const createOrder = asyncHandler(async (req, res) => {
   // destructure req body
   const {
     // initial
-    created_by_name,
+    created_by,
     date_entered,
     truck_id_digits,
     truck_id_letters,
@@ -65,14 +65,13 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // create order in mongodb
   const newOrder = await Order.create({
-    created_by_name,
+    created_by,
     date_entered,
-    truck_id: {
-      digits: truck_id_digits,
-      letters: truck_id_letters,
-    },
+    truck_id_digits,
+    truck_id_letters,
     load_name,
     load_weight,
+    stage: 0,
   });
 
   // if order is created, notify
@@ -91,11 +90,12 @@ const createOrder = asyncHandler(async (req, res) => {
 const updateOrder = asyncHandler(async (req, res) => {
   const {
     date_entered,
-    truck_id,
+    truck_id_digits,
+    truck_id_letters,
     load_name,
     load_weight,
     date_left,
-    tavtsan_ashiglalt,
+    tavtsan_usage,
     puulelt,
     forklift_usage,
     crane_usage,
@@ -124,34 +124,24 @@ const updateOrder = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Бүртгэл олдсонгүй" });
   }
 
-  let craneNum;
-  switch (crane_usage) {
-    case "no":
-      craneNum = 0;
-      break;
-    case "hooson":
-      craneNum = 1;
-      break;
-    case "achaatai":
-      craneNum = 2;
-      break;
-  }
+  console.log(fine1, fine2, other1, other2)
 
   order.date_entered = date_entered ? date_entered : order.date_entered;
-  order.truck_id = truck_id ? truck_id : order.truck_id;
+  order.truck_id_digits = truck_id_digits ? truck_id_digits : order.truck_id_digits;
+  order.truck_id_letters = truck_id_letters ? truck_id_letters : order.truck_id_letters;
   order.load_name = load_name ? load_name : order.load_name;
   order.load_weight = load_weight ? load_weight : order.load_weight;
   order.date_left = date_left ? date_left : order.date_left;
-  order.tavtsan_ashiglalt = tavtsan_ashiglalt
-    ? tavtsan_ashiglalt
-    : order.tavtsan_ashiglalt;
-  order.puulelt = puulelt ? puulelt : order.puulelt;
+  order.tavtsan_usage = tavtsan_usage
+    ? tavtsan_usage
+    : order.tavtsan_usage;
+  order.puulelt = puulelt ? puulelt : false;
   order.forklift_usage = forklift_usage ? forklift_usage : order.forklift_usage;
-  order.crane_usage = craneNum;
-  order.fine1 = fine1 ? fine1 : order.fine1;
-  order.fine2 = fine2 ? fine2 : order.fine2;
-  order.other1 = other1 ? other1 : order.other1;
-  order.other2 = other2 ? other2 : order.other2;
+  order.crane_usage = crane_usage ? crane_usage : order.crane_usage;
+  order.fine1 = fine1 ? fine1 : false;
+  order.fine2 = fine2 ? fine2 : false;
+  order.other1 = other1 ? other1 : false;
+  order.other2 = other2 ? other2 : false;
   order.invoice_to_302 = invoice_to_302 ? invoice_to_302 : order.invoice_to_302;
   order.invoice_to_601 = invoice_to_601 ? invoice_to_601 : order.invoice_to_601;
   order.amount_w_noat = amount_w_noat ? amount_w_noat : order.amount_w_noat;
@@ -159,6 +149,8 @@ const updateOrder = asyncHandler(async (req, res) => {
   order.client_name = client_name ? client_name : order.client_name;
   order.last_edited_by = last_edited_by ? last_edited_by : order.last_edited_by;
   order.stage = stage ? stage : order.stage;
+
+  console.log(order.fine1, order.fine2, order.other1, order.other2)
 
   const updatedOrder = await order.save();
   updatedOrder.id = updatedOrder._id;

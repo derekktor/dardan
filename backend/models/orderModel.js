@@ -2,21 +2,17 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema(
   {
-    created_by_name: {
+    created_by: {
       type: String,
     },
     date_entered: {
-      type: Date, // 04/12/2022
+      type: Date, 
     },
-    truck_id: {
-      digits: {
-        type: String,
-        // required: [true, "Арлын дугаарын тоог оруулна уу!"],
-      },
-      letters: {
-        type: String,
-        // required: [true, "Арлын дугаарын үсгийг оруулна уу!"],
-      },
+    truck_id_digits: {
+      type: String,
+    },
+    truck_id_letters: {
+      type: String,
     },
     load_name: {
       type: String,
@@ -25,22 +21,22 @@ const orderSchema = mongoose.Schema(
       type: Number,
     },
     date_left: {
-      type: Date, // 04/20/2022
+      type: Date, 
     },
-    tavtsan_ashiglalt: {
-      type: String, // gadna_tavtsan || aguulah_tavtsan
+    tavtsan_usage: {
+      type: String, // '0' || gadna_tavtsan || aguulah_tavtsan
     },
     puulelt: {
       type: Boolean,
     },
     forklift_usage: {
-      type: String, // once || [0-9]
+      type: String, // 'neg' || [0-9]
     },
     crane_usage: {
       type: Number, // 0 - ashiglaagui || 1 - hooson orgolt, 100k || 2 - achaatai orgolt, 250k
     },
     fine1: {
-      type: Boolean, 
+      type: Boolean,
     },
     fine2: {
       type: Boolean,
@@ -67,8 +63,8 @@ const orderSchema = mongoose.Schema(
       type: String,
     },
     stage: {
-      type: Number // 0 || 1 || 2 - done
-    }
+      type: Number, // 0 || 1 - done
+    },
   },
   {
     timestamps: true,

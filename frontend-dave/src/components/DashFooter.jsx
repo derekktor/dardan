@@ -23,10 +23,10 @@ const DashFooter = () => {
   }
 
   const content = (
-    <footer className="dash-footer">
+    <footer className="dash-footer py">
       {goHomeBtn}
-      <p>Current User: {name}</p>
-      <p>Status: {status}</p>
+      <p>Хэрэглэгч: {name}</p>
+      <p>Статус: {status}</p>
     </footer>
   );
   return content;

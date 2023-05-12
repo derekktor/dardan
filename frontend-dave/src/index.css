@@ -10,18 +10,18 @@
 
 :root {
   /* COLORS */
-  --BGCOLOR: #0f172a;
-  --BORDER-COLOR: #fff;
-  --COLOR: #fff;
+  --BGCOLOR: #ffffff;
+  --BORDER-COLOR: #000000;
+  --COLOR: #000000;
   --ERROR: firebrick;
-  --INACTIVE: lightgray;
-  --LINK-COLOR: whitesmoke;
-  --LINK-HOVER: rgba(245, 245, 245, 0.9);
+  --INACTIVE: rgb(125, 125, 125);
+  --LINK-COLOR: rgb(49, 49, 49);
+  --LINK-HOVER: rgb(48, 40, 62);
   --NOTE-BGCOLOR: hsla(240, 64%, 27%, 0.65);
   --STATUS-COMPLETE: limegreen;
   --STATUS-OPEN: firebrick;
   --TABLE-BGCOLOR: #fff;
-  --TABLE-COLOR: #000;
+  --TABLE-COLOR: white;
 }
 
 /* || UTILITY CLASSES */
@@ -64,10 +64,9 @@ body {
   min-height: 100vh;
   background-color: var(--BGCOLOR);
   color: var(--COLOR);
-  background-image: url("./img/background.jpg");
+  background-attachment: fixed;
   background-size: cover;
   background-position: top right;
-  background-blend-mode: multiply;
 }
 
 input,
@@ -191,7 +190,7 @@ tr {
   font-size: 1rem;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: repeat(1fr, 4);
   color: var(--TABLE-COLOR);
   gap: 0.1em;
 }
@@ -247,7 +246,7 @@ tr {
 }
 
 .hint {
-  border: 1px dashed white;
+  border: 1px dashed gray;
   padding: 20px;
   margin-bottom: 10px;
   border-radius: 20px;
@@ -273,6 +272,7 @@ input {
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+  gap: 5px;
 }
 
 .buttons > * {
@@ -293,28 +293,6 @@ input {
 .buttons > *:visited {
   background-color: white;
   color: navy;
-}
-
-
-
-/* ||  NOTE */
-
-.note__created,
-.note__updated,
-.note__username {
-  display: none;
-}
-
-.note__status {
-  font-weight: bold;
-}
-
-.note__status--open {
-  color: var(--STATUS-OPEN);
-}
-
-.note__status--completed {
-  color: var(--STATUS-COMPLETE);
 }
 
 /* || FORM - GENERAL */
@@ -472,12 +450,41 @@ input {
   justify-content: space-between;
 }
 
+.space-evenly {
+  justify-content: space-evenly;
+}
+
+.gap10 {
+  gap: 10px;
+}
+
 .text-right {
   text-align: right;
 }
 
 .float-right {
   float: right;
+}
+
+.round-border {
+  border-radius: 10px;
+}
+
+.mb {
+  margin-bottom: 10px;
+}
+
+.m {
+  margin: 10px;
+}
+
+.p {
+  padding: 10px;
+}
+
+.py {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .dash-header__nav > * {
@@ -490,4 +497,14 @@ input {
   border: 1px solid black;
   color: black;
   background-color: rgba(255,255,255,.5);
+}
+
+.border {
+  border: 1px solid white;
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px 2px;
 }

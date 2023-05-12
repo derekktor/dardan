@@ -2,17 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUpdateOrderMutation, useGetOrdersQuery } from "./ordersApiSlice";
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import moment from "moment";
+import { useEffect } from "react";
 
-const convertDate = (inputDate) => {
-  const date = new Date(inputDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
+const TRUCKLET_REGEX = /^([а-яА-ЯөӨүҮ]{3})?$/;
 
 const EditOrderForm = () => {
-  const {name} = useAuth();
+  const { name } = useAuth();
 
   const navigate = useNavigate();
   const [updateOrder, { isLoading }] = useUpdateOrderMutation();
@@ -24,14 +21,38 @@ const EditOrderForm = () => {
     }),
   });
 
-  const [orderData, setOrderData] = useState({ ...order });
-  const [tavtsan, setTavtsan] = useState("");
-  const [crane, setCrane] = useState(0);
-  const [puulelt, setPuulelt] = useState(false);
-  const [fine1, setFine1] = useState(false);
-  const [fine2, setFine2] = useState(false);
-  const [other1, setOther1] = useState(false);
-  const [other2, setOther2] = useState(false);
+  const [orderData, setOrderData] = useState({
+    ...order,
+    date_left: order?.date_left ? order?.date_left : "",
+    tavtsan_usage: order?.tavtsan_usage ? order?.tavtsan_usage : "",
+    puulelt: order?.puulelt ? order?.puulelt : "",
+    forklift_usage: order?.forklift_usage ? order?.forklift_usage : "",
+    crane_usage: order?.crane_usage ? order?.crane_usage : "",
+    fine1: order?.fine1 ? order?.fine1 : "",
+    fine2: order?.fine2 ? order?.fine2 : "",
+    other1: order?.other1 ? order?.other1 : "",
+    other2: order?.other2 ? order?.other2 : "",
+    invoice_to_302: order?.invoice_to_302 ? order?.invoice_to_302 : "",
+    invoice_to_601: order?.invoice_to_601 ? order?.invoice_to_601 : "",
+    amount_w_noat: order?.amount_w_noat ? order?.amount_w_noat : "",
+    amount_wo_noat: order?.amount_wo_noat ? order?.amount_wo_noat : "",
+    client_name: order?.client_name ? order?.client_name : "",
+  });
+
+  const [truckNumValid, setTruckNumValid] = useState(false);
+  const [truckLetValid, setTruckLetValid] = useState(false);
+
+  useEffect(() => {
+    setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
+  }, [orderData.truck_id_digits]);
+
+  useEffect(() => {
+    setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
+  }, [orderData.truck_id_letters]);
+
+  useEffect(() => {
+    // console.log(orderData.tavtsan_usage)
+  }, [orderData.tavtsan_usage]);
 
   const onChange = (e) => {
     setOrderData((prev) => ({
@@ -40,43 +61,46 @@ const EditOrderForm = () => {
     }));
   };
 
-  const handleTavtsanChange = (e) => {
-    setTavtsan(e.target.value);
+  // const handleTavtsanChange = (e) => {
+  //   setTavtsan(e.target.value);
+  // };
+
+  // const handleCraneChange = (e) => {
+  //   setCrane(e.target.value);
+  // };
+
+  const handleDateChange = (e) => {
+    const date = moment(new Date(e.target.value)).format("YYYY-MM-DD");
+    setOrderData({ ...orderData, [e.target.name]: date });
   };
 
-  const handleCraneChange = (e) => {
-    setCrane(e.target.value);
-  };
-
-  // const canSave =
-  //   [orderData.client_name, orderData.load_name].some(Boolean) && !isLoading;
+  const canSave = [truckLetValid, truckNumValid].every(Boolean) && !isLoading;
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
     const sendingData = {
       ...orderData,
-      tavtsan_ashiglalt: tavtsan,
-      puulelt,
-      crane_usage: crane,
-      fine1,
-      fine2,
-      other1,
-      other2,
       stage: 1,
-      last_edited_by: name
-    }
+      last_edited_by: name,
+    };
 
     console.log(sendingData);
 
-    // if (canSave) {
+    if (new Date(orderData.date_entered) > new Date(orderData.date_left)) {
+      alert("Гарсан огноо орсноосоо эрт байна");
+      setOrderData({ ...orderData, date_left: "" });
+      return;
+    }
+
+    if (canSave) {
       try {
         await updateOrder(sendingData);
         navigate(`/dash/orders/${orderId}`);
       } catch (error) {
         console.error("Бүртгэлийг өөрчилж чадсангүй", error);
       }
-    // }
+    }
   };
 
   return (
@@ -88,8 +112,10 @@ const EditOrderForm = () => {
           <input
             type="date"
             name="date_entered"
-            value={convertDate(orderData.date_entered)}
-            onChange={onChange}
+            value={moment(new Date(orderData.date_entered)).format(
+              "YYYY-MM-DD"
+            )}
+            onChange={handleDateChange}
           />
         </div>
         <div>
@@ -98,7 +124,7 @@ const EditOrderForm = () => {
             type="text"
             placeholder="1234"
             name="truck_id_digits"
-            value={orderData.truck_id.digits}
+            value={orderData.truck_id_digits}
             onChange={onChange}
           />
         </div>
@@ -108,7 +134,7 @@ const EditOrderForm = () => {
             type="text"
             placeholder="УБА"
             name="truck_id_letters"
-            value={orderData.truck_id.letters}
+            value={orderData.truck_id_letters}
             onChange={onChange}
           />
         </div>
@@ -136,19 +162,19 @@ const EditOrderForm = () => {
           <input
             type="date"
             name="date_left"
-            value={orderData.date_left}
-            onChange={onChange}
+            value={moment(new Date(orderData.date_left)).format("YYYY-MM-DD")}
+            onChange={handleDateChange}
           />
         </div>
         <div>
-          <label htmlFor="tavtsan_ashiglalt">Тавцан ашиглалт:</label>
+          <label htmlFor="tavtsan_usage">Тавцан ашиглалт:</label>
           <select
-            name="tavtsan_ashiglalt"
-            id="tavtsan_ashiglalt"
-            onChange={handleTavtsanChange}
-            value={tavtsan}
+            name="tavtsan_usage"
+            id="tavtsan_usage"
+            onChange={onChange}
+            value={orderData.tavtsan_usage}
           >
-            <option value="no">Ашиглаагүй</option>
+            <option value="0">Ашиглаагүй</option>
             <option value="gadna_tavtsan">Гадна тавцан</option>
             <option value="aguulah_tavtsan">Агуулахын тавцан</option>
           </select>
@@ -158,14 +184,16 @@ const EditOrderForm = () => {
           <input
             type="checkbox"
             name="puulelt"
-            checked={puulelt}
-            onChange={() => setPuulelt(!puulelt)}
+            checked={orderData.puulelt}
+            onChange={() =>
+              setOrderData({ ...orderData, puulelt: !orderData.puulelt })
+            }
           />
         </div>
         <div>
           <label htmlFor="forklift_usage">Сэрээт өргөгч:</label>
           <div className="hint">
-            <p>neg - нэг удаагийн өргөлт</p>
+            <p>neg, нэг - нэг удаагийн өргөлт</p>
             <p>1, 2, 3... - ашигласан цагийн тоо</p>
           </div>
           <input
@@ -177,25 +205,27 @@ const EditOrderForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="crane">Авто кран ашиглалт:</label>
+          <label htmlFor="crane_usage">Авто кран ашиглалт:</label>
           <select
-            name="crane"
-            id="crane"
-            onChange={handleCraneChange}
-            value={crane}
+            name="crane_usage"
+            id="crane_usage"
+            onChange={onChange}
+            value={orderData.crane_usage}
           >
-            <option value="no">Ашиглаагүй</option>
-            <option value="hooson">Хоосон өргөлт</option>
-            <option value="achaatai">Ачаатай өргөлт</option>
+            <option value={0}>Ашиглаагүй</option>
+            <option value={1}>Хоосон өргөлт</option>
+            <option value={2}>Ачаатай өргөлт</option>
           </select>
         </div>
         <div>
-          <label htmlFor="fine">Торгууль 1:</label>
+          <label htmlFor="fine1">Торгууль 1:</label>
           <input
             type="checkbox"
             name="fine1"
-            checked={fine1}
-            onChange={() => setFine1(!fine1)}
+            checked={orderData.fine1}
+            onChange={() =>
+              setOrderData({ ...orderData, fine1: !orderData.fine1 })
+            }
           />
         </div>
         <div>
@@ -203,8 +233,10 @@ const EditOrderForm = () => {
           <input
             type="checkbox"
             name="fine2"
-            checked={fine2}
-            onChange={() => setFine2(!fine2)}
+            checked={orderData.fine2}
+            onChange={() =>
+              setOrderData({ ...orderData, fine2: !orderData.fine2 })
+            }
           />
         </div>
         <div>
@@ -212,8 +244,10 @@ const EditOrderForm = () => {
           <input
             type="checkbox"
             name="other1"
-            checked={other1}
-            onChange={() => setOther1(!other1)}
+            checked={orderData.other1}
+            onChange={() =>
+              setOrderData({ ...orderData, other1: !orderData.other1 })
+            }
           />
         </div>
         <div>
@@ -221,8 +255,10 @@ const EditOrderForm = () => {
           <input
             type="checkbox"
             name="other2"
-            checked={other2}
-            onChange={() => setOther2(!other2)}
+            checked={orderData.other2}
+            onChange={() =>
+              setOrderData({ ...orderData, other2: !orderData.other2 })
+            }
           />
         </div>
         <div>
@@ -274,7 +310,9 @@ const EditOrderForm = () => {
             onChange={onChange}
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={!canSave}>
+          Илгээх
+        </button>
       </form>
     </div>
   );

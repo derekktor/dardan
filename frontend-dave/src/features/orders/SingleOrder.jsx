@@ -29,6 +29,14 @@ const getForkliftData = (data) => {
         forklift.text = "Нэг удаагийн өргөлт";
         forklift.price = 20000;
         break;
+      case "нэг":
+        forklift.text = "Нэг удаагийн өргөлт";
+        forklift.price = 20000;
+        break;
+      case "0":
+        forklift.text = "Ашиглаагүй";
+        forklift.price = 0;
+        break;
       default:
         forklift.text = "Ойлгомжгүй";
         forklift.price = 0;
@@ -42,7 +50,7 @@ const getForkliftData = (data) => {
   return forklift;
 };
 
-const getCraneData = (craneData) => {
+export const getCraneData = (craneData) => {
   let crane = { text: "", price: 0 };
 
   switch (craneData) {
@@ -72,10 +80,10 @@ const getTavtsan = (tavtsanData) => {
       tavtsan.price = 20000;
       break;
     case "aguulah_tavtsan":
-      tavtsan.text = "Гадна тавцан";
+      tavtsan.text = "Агуулахын тавцан";
       tavtsan.price = 40000;
       break;
-    case "no":
+    case "0":
       tavtsan.text = "Ашиглаагүй";
       tavtsan.price = 0;
       break;
@@ -84,7 +92,7 @@ const getTavtsan = (tavtsanData) => {
   return tavtsan;
 };
 
-const formatDate = (dateStr) => {
+export const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   return date.toLocaleString("en-US", {
     month: "2-digit",
@@ -171,25 +179,33 @@ const getContentForDaysStayed = (numDays) => {
   let contentDays = [];
   if (numDays >= 1) {
     contentDays.push(
-      `${extra_infos.days.one.text} ${extra_infos.days.one.price}₮`
+      `${extra_infos.days.one.text} ${extra_infos.days.one.price.toLocaleString(
+        "de-CH"
+      )}₮`
     );
   }
 
   if (numDays >= 2) {
     contentDays.push(
-      `${extra_infos.days.two.text} ${extra_infos.days.two.price}₮`
+      `${extra_infos.days.two.text} ${extra_infos.days.two.price.toLocaleString(
+        "de-CH"
+      )}₮`
     );
   }
 
   if (numDays >= 3) {
     contentDays.push(
-      `\n${extra_infos.days.three.text} ${extra_infos.days.three.price}₮`
+      `\n${
+        extra_infos.days.three.text
+      } ${extra_infos.days.three.price.toLocaleString("de-CH")}₮`
     );
   }
 
   if (numDays >= 4) {
     contentDays.push(
-      `\n${extra_infos.days.four.text} ${extra_infos.days.four.price}₮`
+      `\n${
+        extra_infos.days.four.text
+      } ${extra_infos.days.four.price.toLocaleString("de-CH")}₮`
     );
   }
 
@@ -245,7 +261,7 @@ const SingleOrder = () => {
     }),
   });
 
-  const tavtsan = getTavtsan(order?.tavtsan_ashiglalt);
+  const tavtsan = getTavtsan(order?.tavtsan_usage);
   const forklift = getForkliftData(order?.forklift_usage);
   const crane = getCraneData(order?.crane_usage);
 
@@ -262,6 +278,10 @@ const SingleOrder = () => {
     }
   };
 
+  const handleEdit = (orderId) => {
+    navigate(`/dash/orders/edit/${orderId}`)
+  }
+
   let orderContent;
   if (order?.stage === 0) {
     orderContent = (
@@ -273,7 +293,7 @@ const SingleOrder = () => {
         <div>
           <h4>Арлын дугаар</h4>
           <p>
-            {order?.truck_id.digits} {order?.truck_id.letters}
+            {order?.truck_id_digits} {order?.truck_id_letters}
           </p>
         </div>
         <div>
@@ -301,7 +321,7 @@ const SingleOrder = () => {
           <div>
             <h4>Арлын дугаар</h4>
             <p>
-              {order?.truck_id.digits} {order?.truck_id.letters}
+              {order?.truck_id_digits} {order?.truck_id_letters}
             </p>
           </div>
           <div>
@@ -311,10 +331,6 @@ const SingleOrder = () => {
           <div>
             <h4>Ачааны жин</h4>
             <p>{order?.load_weight} тн</p>
-          </div>
-          <div>
-            <h4>Байгууллага, хувь хүний нэр</h4>
-            <p>{order?.client_name}</p>
           </div>
           <div>
             <h4>Тавцан ашиглалт</h4>
@@ -335,34 +351,54 @@ const SingleOrder = () => {
           <div>
             <h4>Торгууль</h4>
             <p>
-              {order?.fine1 ? extra_infos.fine1 : "Үгүй"}
+              {order?.fine1 ? extra_infos.fine.one.text : "Үгүй"}
               <br />
-              {order?.fine2 ? extra_infos.fine2 : "Үгүй"}
+              {order?.fine2 ? extra_infos.fine.two.text : "Үгүй"}
             </p>
           </div>
           <div>
             <h4>Бусад</h4>
             <p>
-              {order?.other1 ? extra_infos.other1 : "Үгүй"}
+              {order?.other1 ? extra_infos.other.one.text : "Үгүй"}
               <br />
-              {order?.other2 ? extra_infos.other2 : "Үгүй"}
+              {order?.other2 ? extra_infos.other.two.text : "Үгүй"}
             </p>
           </div>
           <div>
             <h4>5131240302 дансанд шилжүүлсэн дүн</h4>
-            <p>{order?.invoice_to_302.toLocaleString("de-CH")} ₮</p>
+            <p>
+              {order?.invoice_to_302 &&
+                order?.invoice_to_302.toLocaleString("de-CH")}{" "}
+              ₮
+            </p>
           </div>
           <div>
             <h4>5212124601 дансанд шилжүүлсэн дүн</h4>
-            <p>{order?.invoice_to_601.toLocaleString("de-CH")} ₮</p>
+            <p>
+              {order?.invoice_to_601 &&
+                order?.invoice_to_601.toLocaleString("de-CH")}{" "}
+              ₮
+            </p>
           </div>
           <div>
             <h4>НӨАТ падаан бичсэн дүн</h4>
-            <p>{order?.amount_w_noat.toLocaleString("de-CH")} ₮</p>
+            <p>
+              {order?.amount_w_noat &&
+                order?.amount_w_noat.toLocaleString("de-CH")}{" "}
+              ₮
+            </p>
           </div>
           <div>
             <h4>НӨАТ падаан бичээгүй дүн</h4>
-            <p>{order?.amount_wo_noat.toLocaleString("de-CH")} ₮</p>
+            <p>
+              {order?.amount_wo_noat &&
+                order?.amount_wo_noat.toLocaleString("de-CH")}{" "}
+              ₮
+            </p>
+          </div>
+          <div>
+            <h4>Байгууллага, хувь хүний нэр</h4>
+            <p>{order?.client_name}</p>
           </div>
         </div>
         <div className="numbers">
@@ -379,7 +415,7 @@ const SingleOrder = () => {
                 ))}
               </div>
               <div>
-                <p>{parkingPrice}₮</p>
+                <p>{parkingPrice.toLocaleString("de-CH")}₮</p>
               </div>
             </div>
           </div>
@@ -388,7 +424,7 @@ const SingleOrder = () => {
               <h4>Тавцан ашиглалт</h4>
               <div className="flex-row space-between">
                 <p>{tavtsan.text}</p>
-                <p>{tavtsan.price}₮</p>
+                <p>{tavtsan.price.toLocaleString("de-CH")}₮</p>
               </div>
             </div>
           ) : (
@@ -399,7 +435,7 @@ const SingleOrder = () => {
               <h4>Автомашин пүүлэлт</h4>
               <div className="flex-row space-between">
                 <p>Пүүлэлт</p>
-                <p>{extra_infos.puulelt.price}₮</p>
+                <p>{extra_infos.puulelt.price.toLocaleString("de-CH")}₮</p>
               </div>
             </div>
           )}
@@ -410,14 +446,18 @@ const SingleOrder = () => {
                 <h5>Сэрээт өргөгч</h5>
                 <div>
                   <p>{forklift.text}</p>
-                  <p className="float-right">{forklift.price}₮</p>
+                  <p className="float-right">
+                    {forklift.price.toLocaleString("de-CH")}₮
+                  </p>
                 </div>
               </div>
               <div className="flex-row align-center space-between">
                 <h5>Авто кран</h5>
                 <div>
                   <p>{crane.text}</p>
-                  <p className="float-right">{crane.price}₮</p>
+                  <p className="float-right">
+                    {crane.price.toLocaleString("de-CH")}₮
+                  </p>
                 </div>
               </div>
             </div>
@@ -427,13 +467,13 @@ const SingleOrder = () => {
             {order?.fine1 && (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.one.text}</p>
-                <p>{extra_infos.fine.one.price}₮</p>
+                <p>{extra_infos.fine.one.price.toLocaleString("de-CH")}₮</p>
               </div>
             )}
             {order?.fine2 && (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.two.text}</p>
-                <p>{extra_infos.fine.two.price}₮</p>
+                <p>{extra_infos.fine.two.price.toLocaleString("de-CH")}₮</p>
               </div>
             )}
           </div>
@@ -442,19 +482,19 @@ const SingleOrder = () => {
             {order?.other1 && (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.one.text}</p>
-                <p>{extra_infos.other.one.price}₮</p>
+                <p>{extra_infos.other.one.price.toLocaleString("de-CH")}₮</p>
               </div>
             )}
             {order?.other2 && (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.two.text}</p>
-                <p>{extra_infos.other.two.price}₮</p>
+                <p>{extra_infos.other.two.price.toLocaleString("de-CH")}₮</p>
               </div>
             )}
           </div>
           <div>
             <h3>Нийт дүн</h3>
-            <p>{getTotalPrice(order)}₮</p>
+            <p>{getTotalPrice(order).toLocaleString("de-CH")}₮</p>
           </div>
         </div>
       </>
@@ -464,13 +504,13 @@ const SingleOrder = () => {
   return (
     <div>
       <div className="order-info-container">{orderContent}</div>
-      <p>Created by: {order?.created_by_name}</p>
+      {/* <p>Created by: {order?.created_by}</p>
       <p>Created at: {formatDate(order?.createdAt)}</p>
-      <p>Updated at: {formatDate(order?.updatedAt)}</p>
+      <p>Updated at: {formatDate(order?.updatedAt)}</p> */}
       <div className="buttons">
-        <Link to={`/dash/orders/edit/${orderId}`}>Edit</Link>
+        <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
         {isAdmin && (
-          <button onClick={() => handleDelete(orderId)}>Delete</button>
+          <button onClick={() => handleDelete(orderId)}>Устгах</button>
         )}
       </div>
     </div>

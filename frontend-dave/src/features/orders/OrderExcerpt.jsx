@@ -3,6 +3,7 @@ import { selectOrderById, useDeleteOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { formatDate } from "./SingleOrder";
 
 const OrderExcerpt = ({ orderId }) => {
   const { isAdmin } = useAuth();
@@ -21,19 +22,35 @@ const OrderExcerpt = ({ orderId }) => {
     }
   };
 
+  const handleEdit = (orderId) => {
+    navigate(`/dash/orders/edit/${orderId}`)
+  }
+
+  const handleMore = (orderId) => {
+    navigate(`/dash/orders/${orderId}`)
+  }
+
   if (order) {
     return (
-      <div className="blocks">
-        <h3>Client: {order.client_name}</h3>
-        <p>Load: {order.load_name}</p>
-        <div className="buttons">
-          <Link to={`${orderId}`}>More</Link>
-          {isAdmin && <Link to={`edit/${orderId}`}>Edit</Link>}
-          {isAdmin && (
-            <button onClick={() => handleDelete(orderId)}>Delete</button>
-          )}
+      <>
+        <div>
+          {order.truck_id_digits} {order.truck_id_letters}
         </div>
-      </div>
+        <div>{formatDate(order.date_entered)}</div>
+        <div>{order.load_name}</div>
+        <div>
+          <div className="buttons">
+            {/* <Link to={`${orderId}`}>More</Link>
+            <Link to={`edit/${orderId}`}>Edit</Link> */}
+              <button onClick={() => handleMore(orderId)}>Дэлгэрэнгүй</button>
+              <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
+            {/* {isAdmin && <Link to={`edit/${orderId}`}>Edit</Link>} */}
+            {isAdmin && (
+              <button onClick={() => handleDelete(orderId)}>Устгах</button>
+            )}
+          </div>
+        </div>
+      </>
     );
   } else return null;
 };

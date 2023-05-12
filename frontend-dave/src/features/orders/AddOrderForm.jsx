@@ -3,8 +3,8 @@ import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
-const TRUCKNUM_REGEX = /^[0-9]{4}$/;
-const TRUCKLET_REGEX = /^[а-яА-Я]{3}$/;
+const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
+const TRUCKLET_REGEX = /^()|([а-яА-Я]{3})$/;
 
 const AddOrderForm = () => {
   const { name } = useAuth();
@@ -31,16 +31,17 @@ const AddOrderForm = () => {
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
   }, [orderData.truck_id_letters]);
 
-  useEffect(() => {
-    console.log(`
-      ${orderData.load_name}
-      ${truckLetValid}
-      ${truckNumValid}
-    `)
-  }, [orderData.load_name, truckLetValid, truckNumValid]);
+  // // check validity
+  // useEffect(() => {
+  //   console.log(`
+  //     ${orderData.load_name}
+  //     ${truckLetValid}
+  //     ${truckNumValid}
+  //   `)
+  // }, [orderData.load_name, truckLetValid, truckNumValid]);
 
   const canSave =
-    [orderData.load_name, truckLetValid, truckNumValid].every(Boolean) &&
+    [orderData.truck_id_digits, truckLetValid, truckNumValid].every(Boolean) &&
     !isLoading;
 
   const onChange = (e) => {
@@ -57,8 +58,9 @@ const AddOrderForm = () => {
       try {
         const orderDataComplete = {
           ...orderData,
-          created_by_name: name,
+          created_by: name,
         };
+
         await createOrder(orderDataComplete).unwrap();
         navigate("/dash/orders");
       } catch (error) {
@@ -127,11 +129,3 @@ const AddOrderForm = () => {
 };
 
 export default AddOrderForm;
-
-// TODO
-// 1. automatically set date entered and date left to today
-// 2. show ₮ at the end of currency input
-// garsan orson ognoo
-// teevriin heregsliin dugaar
-// forklift variable price
-// search

@@ -6,8 +6,13 @@ const Welcome = () => {
 
   const date = new Date();
   const today = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "full",
-    timeStyle: "long",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
   }).format(date);
 
   const content = (

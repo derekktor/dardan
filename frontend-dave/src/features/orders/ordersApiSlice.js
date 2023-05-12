@@ -46,7 +46,6 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         body: initialOrder,
       }),
       transformResponse: (responseData) => {
-        console.log(responseData)
         return responseData
       },
       invalidatesTags: [{ type: "Order", id: "LIST" }],
@@ -58,6 +57,7 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         body: initialOrder,
       }),
       transformResponse: (responseData) => {
+        console.log(responseData)
         return responseData;
       },
       invalidatesTags: (result, error, arg) => [{ type: "Order", id: arg.id }],
