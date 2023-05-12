@@ -23,12 +23,12 @@ const OrderExcerpt = ({ orderId }) => {
   };
 
   const handleEdit = (orderId) => {
-    navigate(`/dash/orders/edit/${orderId}`)
-  }
+    navigate(`/dash/orders/edit/${orderId}`);
+  };
 
   const handleMore = (orderId) => {
-    navigate(`/dash/orders/${orderId}`)
-  }
+    navigate(`/dash/orders/${orderId}`);
+  };
 
   if (order) {
     return (
@@ -40,11 +40,8 @@ const OrderExcerpt = ({ orderId }) => {
         <div>{order.load_name}</div>
         <div>
           <div className="buttons">
-            {/* <Link to={`${orderId}`}>More</Link>
-            <Link to={`edit/${orderId}`}>Edit</Link> */}
-              <button onClick={() => handleMore(orderId)}>Дэлгэрэнгүй</button>
-              <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
-            {/* {isAdmin && <Link to={`edit/${orderId}`}>Edit</Link>} */}
+            <button onClick={() => handleMore(orderId)}>Дэлгэрэнгүй</button>
+            <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
             {isAdmin && (
               <button onClick={() => handleDelete(orderId)}>Устгах</button>
             )}

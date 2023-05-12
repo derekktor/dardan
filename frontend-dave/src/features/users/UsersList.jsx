@@ -33,7 +33,12 @@ const UsersList = () => {
   return (
     <>
       <h2>Хэрэглэгчид</h2>
-      <div>{content}</div>
+      <div className="users-grid m align-center">
+        <h4>Нэр</h4>
+        <h4>Статус</h4>
+        <h4>Buttons</h4>
+        {content}
+      </div>
     </>
   );
 };

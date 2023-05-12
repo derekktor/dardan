@@ -32,7 +32,6 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
     getOrdersByUserId: builder.query({
       query: (id) => `/orders/?userId=${id}`,
       transformResponse: (responseData) => {
-        console.log("get orders by id called");
         return ordersAdapter.setAll(initialState, responseData);
       },
       providesTags: (result, error, arg) => {
@@ -57,7 +56,6 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         body: initialOrder,
       }),
       transformResponse: (responseData) => {
-        console.log(responseData)
         return responseData;
       },
       invalidatesTags: (result, error, arg) => [{ type: "Order", id: arg.id }],

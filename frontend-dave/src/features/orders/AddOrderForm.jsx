@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-
-const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
-const TRUCKLET_REGEX = /^()|([а-яА-Я]{3})$/;
+import { TRUCKLET_REGEX, TRUCKNUM_REGEX } from "./EditOrderForm";
 
 const AddOrderForm = () => {
   const { name } = useAuth();

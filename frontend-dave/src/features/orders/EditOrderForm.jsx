@@ -5,8 +5,8 @@ import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useEffect } from "react";
 
-const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
-const TRUCKLET_REGEX = /^([а-яА-ЯөӨүҮ]{3})?$/;
+export const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
+export const TRUCKLET_REGEX = /^([а-яА-ЯөӨүҮ]{3})?$/;
 
 const EditOrderForm = () => {
   const { name } = useAuth();
@@ -84,8 +84,6 @@ const EditOrderForm = () => {
       stage: 1,
       last_edited_by: name,
     };
-
-    console.log(sendingData);
 
     if (new Date(orderData.date_entered) > new Date(orderData.date_left)) {
       alert("Гарсан огноо орсноосоо эрт байна");

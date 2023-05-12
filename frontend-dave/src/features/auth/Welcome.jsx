@@ -11,12 +11,11 @@ const Welcome = () => {
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: false,
   }).format(date);
 
   const content = (
-    <section className="welcome">
+    <section className="welcome m">
       <p>{today}</p>
       <h1>Өдрийн мэнд! {name}</h1>
       {isAdmin && (

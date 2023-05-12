@@ -51,7 +51,7 @@ const OrdersList = () => {
       filteredIds = [...ids];
     } else {
       filteredIds = ids.filter(
-        (orderId) => entities[orderId].created_by_name === name
+        (orderId) => entities[orderId].created_by === name
       );
     }
 

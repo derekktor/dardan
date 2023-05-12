@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDeleteUserMutation } from "./usersApiSlice";
 
 const UserExcerpt = ({ userId }) => {
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const [deleteUser] = useDeleteUserMutation();
   const user = useSelector((state) => selectUserById(state, userId));
 
@@ -15,18 +15,26 @@ const UserExcerpt = ({ userId }) => {
     } catch (error) {}
   };
 
+  const handleEdit = (userId) => {
+    navigate(`/dash/users/edit/${userId}`);
+  };
+
+  const handleMore = (userId) => {
+    navigate(`/dash/users/${userId}`);
+  };
+
   if (user) {
     const userRolesString = user.roles.toString().replaceAll(",", ", ");
     return (
-      <div className="blocks">
+      <>
         <h4>{user.name}</h4>
         <p>{userRolesString}</p>
         <div className="buttons">
-          <Link to={`/dash/users/${userId}`}>More</Link>
-          <Link to={`/dash/users/edit/${userId}`}>Edit</Link>
-          <button onClick={() => handleDelete(userId)}>Delete</button>
+          <button onClick={() => handleMore(userId)}>Дэлгэрэнгүй</button>
+          <button onClick={() => handleEdit(userId)}>Өөрчлөх</button>
+          <button onClick={() => handleDelete(userId)}>Устгах</button>
         </div>
-      </div>
+      </>
     );
   } else return null;
 };

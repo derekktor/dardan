@@ -474,6 +474,10 @@ input {
   margin-bottom: 10px;
 }
 
+.mt {
+  margin-top: 10px;
+}
+
 .m {
   margin: 10px;
 }
@@ -506,5 +510,11 @@ input {
 .orders-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px 2px;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px 2px;
 }

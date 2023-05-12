@@ -261,6 +261,7 @@ const SingleOrder = () => {
     }),
   });
 
+
   const tavtsan = getTavtsan(order?.tavtsan_usage);
   const forklift = getForkliftData(order?.forklift_usage);
   const crane = getCraneData(order?.crane_usage);
