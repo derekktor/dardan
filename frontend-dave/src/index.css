@@ -530,12 +530,14 @@ input {
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
+  
 }
 
 #hintDisplay > div {
   background-color: white;
   padding: 50px;
   text-align: left;
+  border-radius: 20px;
 }
 
 #hintDisplay > div > div {

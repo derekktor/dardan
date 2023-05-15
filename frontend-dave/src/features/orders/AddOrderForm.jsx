@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import { TRUCKLET_REGEX, TRUCKNUM_REGEX } from "./EditOrderForm";
 
 const AddOrderForm = () => {
-  const { name } = useAuth();
+  const { name, userId } = useAuth();
 
   const navigate = useNavigate();
   const [createOrder, { isLoading }] = useCreateOrderMutation();
@@ -56,7 +56,7 @@ const AddOrderForm = () => {
       try {
         const orderDataComplete = {
           ...orderData,
-          created_by: name,
+          created_by: userId,
         };
 
         await createOrder(orderDataComplete).unwrap();

@@ -1,4 +1,5 @@
 import { useGetOrdersQuery } from "./ordersApiSlice";
+import {useGetUsersQuery} from "../users/usersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
@@ -8,12 +9,13 @@ import { FaCalendarAlt, FaQuestionCircle } from "react-icons/fa";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { useResolvedPath } from "react-router-dom";
 
 const DATE_REGEX =
   /^((0[1-9]|1[0-2])|([1-9]|1[0-2]))\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
 
 const OrdersList = () => {
-  const { name, isAdmin } = useAuth();
+  const { name, userId, isAdmin } = useAuth();
 
   const [searchValue, setSearchValue] = useState("");
   const [open, setOpen] = useState(false);
@@ -28,6 +30,8 @@ const OrdersList = () => {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   };
+
+  const {data: users} = useGetUsersQuery();
 
   const {
     data: orders,
@@ -53,7 +57,7 @@ const OrdersList = () => {
       filteredIds = [...ids];
     } else {
       filteredIds = ids.filter(
-        (orderId) => entities[orderId].created_by === name
+        (orderId) => entities[orderId].created_by === userId
       );
     }
 
@@ -63,6 +67,10 @@ const OrdersList = () => {
         .filter((id) => {
           if (searchValue === "") {
             return id;
+          } else if (searchValue.startsWith("/")) {
+            const userName = searchValue.substring(1);
+            let filteredUserId = users.ids.filter(id => users.entities[id].name === userName);
+            return orders.entities[id].created_by.includes(filteredUserId[0]);
           } else if (searchValue.startsWith("-")) {
             const loadName = searchValue.substring(1);
             return orders.entities[id].load_name.includes(loadName);
@@ -142,6 +150,12 @@ const OrdersList = () => {
                 <i>-төмөр</i>
               </h4>
               <p>төмөр гэсэн ачаатай бүртгэлүүдийг харах</p>
+            </div>
+            <div>
+              <h4>
+                <i>/erhemee</i>
+              </h4>
+              <p>erhemee хэрэглэгчийн бүртгэсэн бүртгэлүүдийг харах</p>
             </div>
           </div>
         </div>

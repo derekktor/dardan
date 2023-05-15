@@ -56,6 +56,10 @@ export const extendedUsersApiSlice = apiSlice.injectEndpoints({
         //   updatedAt: new Date().toISOString(),
         // }
       }),
+      transformResponse: (responseData) => {
+        // console.log(responseData);
+        return responseData
+      },
       invalidatesTags: (result, error, arg) => [{ type: "User", id: arg.id }],
     }),
     deleteUser: builder.mutation({

@@ -42,7 +42,7 @@ const SingleUser = () => {
 
   const { ids, entities } = orders ? orders : { ids: [], entities: null };
   const orderIds = ids.filter(
-    (orderId) => entities[orderId].created_by === user.name
+    (orderId) => entities[orderId].created_by === user.id
   );
   let content = orderIds.map((orderId) => (
     <OrderExcerpt key={orderId} orderId={orderId} />

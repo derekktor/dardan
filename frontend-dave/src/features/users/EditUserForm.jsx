@@ -3,11 +3,14 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { selectUserById } from "./usersApiSlice";
 import { useUpdateUserMutation, useDeleteUserMutation } from "./usersApiSlice";
+import useAuth from "../../hooks/useAuth";
 import { ROLES } from "../../config/roles";
 
 const NAME_REGEX = /^[A-z]{2,20}$/;
 
 const EditUserForm = () => {
+  const { isAdmin } = useAuth();
+
   const navigate = useNavigate();
   const [updateUser, { isLoading, isSuccess, isError, error }] =
     useUpdateUserMutation();
@@ -72,8 +75,12 @@ const EditUserForm = () => {
 
     if (canSave) {
       try {
-        await updateUser(userData);
-        navigate(`/dash/users/${userId}`);
+        await updateUser({...userData, roles});
+        if (isAdmin){
+          navigate(`/dash/users/`);
+        } else {
+          navigate("/dash")
+        }
       } catch (error) {
         console.error("Хэрэглэгчийн мэдээллийг өөрчилж чадсангүй", error);
       }
@@ -108,25 +115,27 @@ const EditUserForm = () => {
             <div>
               <label htmlFor="password">Нууц үг:</label>
               <input
-                type="text"
+                type="password"
                 name="password"
                 value={userData.password}
                 onChange={onChange}
               />
             </div>
-            <div>
-              <label htmlFor="roles">Roles:</label>
-              <select
-                name="roles"
-                id="roles"
-                multiple={true}
-                size={2}
-                value={roles}
-                onChange={handleRoles}
-              >
-                {rolesOptions}
-              </select>
-            </div>
+            {isAdmin && (
+              <div>
+                <label htmlFor="roles">Roles:</label>
+                <select
+                  name="roles"
+                  id="roles"
+                  multiple={true}
+                  size={2}
+                  value={roles}
+                  onChange={handleRoles}
+                >
+                  {rolesOptions}
+                </select>
+              </div>
+            )}
 
             <button type="submit" disabled={!canSave}>
               Submit
