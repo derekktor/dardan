@@ -261,7 +261,6 @@ const SingleOrder = () => {
     }),
   });
 
-
   const tavtsan = getTavtsan(order?.tavtsan_usage);
   const forklift = getForkliftData(order?.forklift_usage);
   const crane = getCraneData(order?.crane_usage);
@@ -279,9 +278,11 @@ const SingleOrder = () => {
     }
   };
 
+  console.log(order.fine1);
+
   const handleEdit = (orderId) => {
-    navigate(`/dash/orders/edit/${orderId}`)
-  }
+    navigate(`/dash/orders/edit/${orderId}`);
+  };
 
   let orderContent;
   if (order?.stage === 0) {
@@ -347,7 +348,7 @@ const SingleOrder = () => {
           </div>
           <div>
             <h4>Авто кран ашиглалт</h4>
-            <p>{crane.text}</p>
+            <p>{crane.text !== "" ? crane.text : "Оруулаагүй"}</p>
           </div>
           <div>
             <h4>Торгууль</h4>
@@ -368,38 +369,38 @@ const SingleOrder = () => {
           <div>
             <h4>5131240302 дансанд шилжүүлсэн дүн</h4>
             <p>
-              {order?.invoice_to_302 &&
-                order?.invoice_to_302.toLocaleString("de-CH")}{" "}
-              ₮
+              {order?.invoice_to_302
+                ? `${order?.invoice_to_302.toLocaleString("de-CH")}₮`
+                : "Оруулаагүй"}
             </p>
           </div>
           <div>
             <h4>5212124601 дансанд шилжүүлсэн дүн</h4>
             <p>
-              {order?.invoice_to_601 &&
-                order?.invoice_to_601.toLocaleString("de-CH")}{" "}
-              ₮
+              {order?.invoice_to_601
+                ? `${order?.invoice_to_601.toLocaleString("de-CH")}₮`
+                : "Оруулаагүй"}
             </p>
           </div>
           <div>
             <h4>НӨАТ падаан бичсэн дүн</h4>
             <p>
-              {order?.amount_w_noat &&
-                order?.amount_w_noat.toLocaleString("de-CH")}{" "}
-              ₮
+              {order?.amount_w_noat
+                ? `${order?.amount_w_noat.toLocaleString("de-CH")}₮`
+                : "Оруулаагүй"}
             </p>
           </div>
           <div>
             <h4>НӨАТ падаан бичээгүй дүн</h4>
             <p>
-              {order?.amount_wo_noat &&
-                order?.amount_wo_noat.toLocaleString("de-CH")}{" "}
-              ₮
+              {order?.amount_wo_noat
+                ? `${order?.amount_wo_noat.toLocaleString("de-CH")}₮`
+                : "Оруулаагүй"}
             </p>
           </div>
           <div>
             <h4>Байгууллага, хувь хүний нэр</h4>
-            <p>{order?.client_name}</p>
+            <p>{order?.client_name ? order?.client_name : "Оруулаагүй"}</p>
           </div>
         </div>
         <div className="numbers">
@@ -416,7 +417,11 @@ const SingleOrder = () => {
                 ))}
               </div>
               <div>
-                <p>{parkingPrice.toLocaleString("de-CH")}₮</p>
+                <p>
+                  {parkingPrice
+                    ? `${parkingPrice.toLocaleString("de-CH")}₮`
+                    : "Оруулаагүй"}
+                </p>
               </div>
             </div>
           </div>
@@ -425,7 +430,11 @@ const SingleOrder = () => {
               <h4>Тавцан ашиглалт</h4>
               <div className="flex-row space-between">
                 <p>{tavtsan.text}</p>
-                <p>{tavtsan.price.toLocaleString("de-CH")}₮</p>
+                <p>
+                  {tavtsan.price
+                    ? `${tavtsan.price.toLocaleString("de-CH")}₮`
+                    : "Оруулаагүй"}
+                </p>
               </div>
             </div>
           ) : (
@@ -436,7 +445,11 @@ const SingleOrder = () => {
               <h4>Автомашин пүүлэлт</h4>
               <div className="flex-row space-between">
                 <p>Пүүлэлт</p>
-                <p>{extra_infos.puulelt.price.toLocaleString("de-CH")}₮</p>
+                <p>
+                  {extra_infos.puulelt.price
+                    ? `${extra_infos.puulelt.price.toLocaleString("de-CH")}₮`
+                    : "Оруулаагүй"}
+                </p>
               </div>
             </div>
           )}
@@ -445,19 +458,31 @@ const SingleOrder = () => {
             <div>
               <div className="flex-row align-center space-between">
                 <h5>Сэрээт өргөгч</h5>
-                <div>
-                  <p>{forklift.text}</p>
-                  <p className="float-right">
-                    {forklift.price.toLocaleString("de-CH")}₮
-                  </p>
-                </div>
+                {forklift.text === "Ойлгомжгүй" ? (
+                  <div>
+                    <p>{forklift.text}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p>{forklift.text}</p>
+                    <p className="float-right">
+                      <p>
+                          {forklift.price.toLocaleString("de-CH")}₮
+                      </p>
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="flex-row align-center space-between">
                 <h5>Авто кран</h5>
                 <div>
                   <p>{crane.text}</p>
                   <p className="float-right">
-                    {crane.price.toLocaleString("de-CH")}₮
+                    <p>
+                      {crane.price
+                        ? `${crane.price.toLocaleString("de-CH")}₮`
+                        : "Оруулаагүй"}
+                    </p>
                   </p>
                 </div>
               </div>
@@ -465,37 +490,61 @@ const SingleOrder = () => {
           </div>
           <div>
             <h4>Торгууль</h4>
-            {order?.fine1 && (
+            {order?.fine1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.one.text}</p>
                 <p>{extra_infos.fine.one.price.toLocaleString("de-CH")}₮</p>
               </div>
+            ) : (
+              <div className="flex-row align-center space-between">
+                <p>{extra_infos.fine.one.text}</p>
+                <p>Оруулаагүй</p>
+              </div>
             )}
-            {order?.fine2 && (
+            {order?.fine2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.two.text}</p>
                 <p>{extra_infos.fine.two.price.toLocaleString("de-CH")}₮</p>
+              </div>
+            ) : (
+              <div className="flex-row align-center space-between">
+                <p>{extra_infos.fine.two.text}</p>
+                <p>Байхгүй</p>
               </div>
             )}
           </div>
           <div>
             <h4>Бусад</h4>
-            {order?.other1 && (
+            {order?.other1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.one.text}</p>
                 <p>{extra_infos.other.one.price.toLocaleString("de-CH")}₮</p>
               </div>
+            ) : (
+              <div className="flex-row align-center space-between">
+                <p>{extra_infos.other.one.text}</p>
+                <p>Байхгүй</p>
+              </div>
             )}
-            {order?.other2 && (
+            {order?.other2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.two.text}</p>
                 <p>{extra_infos.other.two.price.toLocaleString("de-CH")}₮</p>
+              </div>
+            ) : (
+              <div className="flex-row align-center space-between">
+                <p>{extra_infos.other.two.text}</p>
+                <p>Байхгүй</p>
               </div>
             )}
           </div>
           <div>
             <h3>Нийт дүн</h3>
-            <p>{getTotalPrice(order).toLocaleString("de-CH")}₮</p>
+            <p>
+              {getTotalPrice(order)
+                ? `${getTotalPrice(order).toLocaleString("de-CH")}₮`
+                : "Оруулаагүй"}
+            </p>
           </div>
         </div>
       </>

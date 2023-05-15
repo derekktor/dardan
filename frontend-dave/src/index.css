@@ -509,8 +509,14 @@ input {
 
 .orders-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1;
   grid-gap: 10px 2px;
+}
+
+.orders-grid > div {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px;
 }
 
 .users-grid {
@@ -554,4 +560,12 @@ input {
 
 .hidden {
   display: none!important;
+}
+
+.order-finished {
+  background-color: rgba(119, 241, 174, 0.322)
+}
+
+.order-unfinished {
+  background-color: rgba(0, 0, 0, 0.129)
 }

@@ -32,7 +32,13 @@ const OrderExcerpt = ({ orderId }) => {
 
   if (order) {
     return (
-      <>
+      <div
+        className={
+          order.stage === 0
+            ? "order-unfinished orders-grid"
+            : "order-finished orders-grid"
+        }
+      >
         <div>
           {order.truck_id_digits} {order.truck_id_letters}
         </div>
@@ -47,7 +53,7 @@ const OrderExcerpt = ({ orderId }) => {
             )}
           </div>
         </div>
-      </>
+      </div>
     );
   } else return null;
 };

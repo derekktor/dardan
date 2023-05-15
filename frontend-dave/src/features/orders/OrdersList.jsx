@@ -1,5 +1,5 @@
 import { useGetOrdersQuery } from "./ordersApiSlice";
-import {useGetUsersQuery} from "../users/usersApiSlice";
+import { useGetUsersQuery } from "../users/usersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
@@ -31,7 +31,7 @@ const OrdersList = () => {
     refetchOnMountOrArgChange: true,
   };
 
-  const {data: users} = useGetUsersQuery();
+  const { data: users } = useGetUsersQuery();
 
   const {
     data: orders,
@@ -69,7 +69,9 @@ const OrdersList = () => {
             return id;
           } else if (searchValue.startsWith("/")) {
             const userName = searchValue.substring(1);
-            let filteredUserId = users.ids.filter(id => users.entities[id].name === userName);
+            let filteredUserId = users.ids.filter(
+              (id) => users.entities[id].name === userName
+            );
             return orders.entities[id].created_by.includes(filteredUserId[0]);
           } else if (searchValue.startsWith("-")) {
             const loadName = searchValue.substring(1);
@@ -135,6 +137,12 @@ const OrdersList = () => {
             <h3>Тусламж</h3>
             <div>
               <h4>
+                <i>1234</i>
+              </h4>
+              <p>1234 гэсэг арлын дугаартай бүртгэлийг гаргаж ирэх</p>
+            </div>
+            <div>
+              <h4>
                 <i>&gt;12/31/2022</i>
               </h4>
               <p>12/31/2022-оос хойш хийгдсэн бүртгэлүүдийг харах</p>
@@ -151,12 +159,14 @@ const OrdersList = () => {
               </h4>
               <p>төмөр гэсэн ачаатай бүртгэлүүдийг харах</p>
             </div>
-            <div>
-              <h4>
-                <i>/erhemee</i>
-              </h4>
-              <p>erhemee хэрэглэгчийн бүртгэсэн бүртгэлүүдийг харах</p>
-            </div>
+            {isAdmin && (
+              <div>
+                <h4>
+                  <i>/bataa</i>
+                </h4>
+                <p>bataa хэрэглэгчийн бүртгэсэн бүртгэлүүдийг харах</p>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -177,7 +187,10 @@ const OrdersList = () => {
             >
               <FaCalendarAlt />
             </span>
-            <span style={{cursor: "pointer"}} onClick={() => setHintVisible((hintVisible) => !hintVisible)}>
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={() => setHintVisible((hintVisible) => !hintVisible)}
+            >
               <FaQuestionCircle />
             </span>
           </div>
@@ -191,11 +204,13 @@ const OrdersList = () => {
             />
           )}
         </div>
-        <div className="orders-grid m align-center">
-          <h4>Арлын дугаар</h4>
-          <h4>Орсон огноо</h4>
-          <h4>Барааны нэр</h4>
-          <h4>Buttons</h4>
+        <div className="orders-grid">
+          <div className="">
+            <h4>Арлын дугаар</h4>
+            <h4>Орсон огноо</h4>
+            <h4>Барааны нэр</h4>
+            <h4>Buttons</h4>
+          </div>
           {content}
         </div>
       </div>
