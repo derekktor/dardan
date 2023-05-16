@@ -179,14 +179,16 @@ const EditOrderForm = () => {
         </div>
         <div>
           <label htmlFor="puulelt">Пүүлэлт:</label>
-          <input
-            type="checkbox"
+          <select
             name="puulelt"
-            checked={orderData.puulelt}
-            onChange={() =>
-              setOrderData({ ...orderData, puulelt: !orderData.puulelt })
-            }
-          />
+            id="puulelt"
+            onChange={onChange}
+            value={orderData.puulelt}
+          >
+            <option value={0}>Ашиглаагүй</option>
+            <option value={1}>Суудлын машин</option>
+            <option value={2}>Бусад</option>
+          </select>
         </div>
         <div>
           <label htmlFor="forklift_usage">Сэрээт өргөгч:</label>

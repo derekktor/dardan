@@ -135,7 +135,7 @@ const updateOrder = asyncHandler(async (req, res) => {
   order.tavtsan_usage = tavtsan_usage
     ? tavtsan_usage
     : order.tavtsan_usage;
-  order.puulelt = puulelt ? puulelt : false;
+  order.puulelt = puulelt ? puulelt : 0
   order.forklift_usage = forklift_usage ? forklift_usage : order.forklift_usage;
   order.crane_usage = crane_usage ? crane_usage : order.crane_usage;
   order.fine1 = fine1 ? fine1 : false;

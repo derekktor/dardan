@@ -92,6 +92,31 @@ const getTavtsan = (tavtsanData) => {
   return tavtsan;
 };
 
+const getPuulelt = (puuleltData) => {
+  let puulelt = { text: "", price: 0 };
+
+  switch (puuleltData) {
+    case 0:
+      puulelt.text = "Ашиглаагүй";
+      puulelt.price = 0;
+      break;
+    case 1:
+      puulelt.text = "Суудлын машин";
+      puulelt.price = 10000;
+      break;
+    case 2:
+      puulelt.text = "Бусад";
+      puulelt.price = 20000;
+      break;
+    default:
+      puulelt.text = "Ойлгомжгүй";
+      puulelt.price = 0;
+      break;
+  }
+
+  return puulelt;
+};
+
 export const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   return date.toLocaleString("en-US", {
@@ -103,7 +128,12 @@ export const formatDate = (dateStr) => {
 
 const extra_infos = {
   puulelt: {
-    price: 10000,
+    sedan: {
+      price: 10000,
+    },
+    others: {
+      price: 20000,
+    },
   },
   fine: {
     one: {
@@ -219,7 +249,7 @@ const getTotalPrice = (order) => {
   const { price: tavtsanPrice } = getTavtsan(order?.tavtsan_ashiglalt);
   const { price: forkliftPrice } = getForkliftData(order?.forklift_usage);
   const { price: cranePrice } = getCraneData(order?.crane_usage);
-  const puuleltPrice = order?.puulelt ? extra_infos.puulelt.price : 0;
+  const { price: puuleltPrice } = getPuulelt(order?.puulelt);
 
   let finePrice = 0;
   if (order?.fine1) {
@@ -264,6 +294,7 @@ const SingleOrder = () => {
   const tavtsan = getTavtsan(order?.tavtsan_usage);
   const forklift = getForkliftData(order?.forklift_usage);
   const crane = getCraneData(order?.crane_usage);
+  const puulelt = getPuulelt(order?.puulelt);
 
   const numDays = getNumDays(order?.date_entered, order?.date_left);
   const contentForDays = getContentForDaysStayed(numDays);
@@ -277,8 +308,6 @@ const SingleOrder = () => {
       console.error("Бүртгэлийг устгаж чадсангүй", error);
     }
   };
-
-  console.log(order.fine1);
 
   const handleEdit = (orderId) => {
     navigate(`/dash/orders/edit/${orderId}`);
@@ -340,7 +369,7 @@ const SingleOrder = () => {
           </div>
           <div>
             <h4>Пүүлэлт</h4>
-            <p>{order?.puulelt ? "Тийм" : "Үгүй"}</p>
+            <p>{puulelt.text ? puulelt.text : "Ашиглаагүй"}</p>
           </div>
           <div>
             <h4>Сэрээт өргөгч</h4>
@@ -440,19 +469,13 @@ const SingleOrder = () => {
           ) : (
             ""
           )}
-          {order?.puulelt && (
-            <div>
-              <h4>Автомашин пүүлэлт</h4>
-              <div className="flex-row space-between">
-                <p>Пүүлэлт</p>
-                <p>
-                  {extra_infos.puulelt.price
-                    ? `${extra_infos.puulelt.price.toLocaleString("de-CH")}₮`
-                    : "Оруулаагүй"}
-                </p>
-              </div>
+          <div>
+            <h4>Автомашин пүүлэлт</h4>
+            <div className="flex-row space-between">
+              <p>{puulelt.text}</p>
+              <p>{puulelt.price.toLocaleString("de-CH")}₮</p>
             </div>
-          )}
+          </div>
           <div>
             <h4>Техник ашиглалтын тариф</h4>
             <div>
@@ -466,9 +489,7 @@ const SingleOrder = () => {
                   <div>
                     <p>{forklift.text}</p>
                     <p className="float-right">
-                      <p>
-                          {forklift.price.toLocaleString("de-CH")}₮
-                      </p>
+                      <p>{forklift.price.toLocaleString("de-CH")}₮</p>
                     </p>
                   </div>
                 )}

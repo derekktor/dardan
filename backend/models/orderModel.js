@@ -27,7 +27,7 @@ const orderSchema = mongoose.Schema(
       type: String, // '0' || gadna_tavtsan || aguulah_tavtsan
     },
     puulelt: {
-      type: Boolean,
+      type: Number, // 0 - hiilgeegui, 1 - suudliin mashin, 2 - busad
     },
     forklift_usage: {
       type: String, // 'neg' || [0-9]
