@@ -44,8 +44,9 @@ const DashHeader = () => {
           {isAdmin && <Link to="/dash/users/add">Хэрэглэгч нэмэх</Link>}
           <Link to="/dash/orders/">Бүртгэлүүд</Link>
           <Link to="/dash/orders/add">Бүртгэл нэмэх</Link>
-          <button className="" title="log out" onClick={() => sendLogout()}>
-          Гарах
+          <Link to="/dash/report">Тайлан</Link>
+          <button title="log out" onClick={() => sendLogout()}>
+            Гарах
           </button>
         </nav>
       </div>

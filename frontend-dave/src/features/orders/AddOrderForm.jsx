@@ -3,6 +3,7 @@ import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { TRUCKLET_REGEX, TRUCKNUM_REGEX } from "./EditOrderForm";
+import moment from "moment";
 
 const AddOrderForm = () => {
   const { name, userId } = useAuth();
@@ -75,7 +76,7 @@ const AddOrderForm = () => {
           <input
             type="date"
             name="date_entered"
-            value={orderData.date_entered}
+            value={moment(orderData.date_entered).format("YYYY-MM-DD")}
             onChange={onChange}
           />
         </div>

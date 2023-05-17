@@ -569,3 +569,27 @@ input {
 .order-unfinished {
   background-color: rgba(0, 0, 0, 0.129)
 }
+
+.report-container {
+  overflow-x: auto;
+  white-space: nowrap;
+  display: grid;
+}
+
+.report-container > div:first-child, .report-container > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(16, 250px);
+  align-items: center;
+  /* text-align: center; */
+}
+
+.report-container > div:first-child > * {
+  word-wrap: break-word;
+}
+
+.report-container > div:nth-child(2) > div {
+  display: grid;
+  grid-template-columns: repeat(16, 250px);
+  padding: 10px 5px;
+  margin: 5px 0px;
+}

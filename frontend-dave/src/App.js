@@ -12,6 +12,10 @@ import SingleUser from "./features/users/SingleUser";
 import AddOrderForm from "./features/orders/AddOrderForm";
 import EditOrderForm from "./features/orders/EditOrderForm";
 import SingleOrder from "./features/orders/SingleOrder";
+import ReportLayout from "./features/report/ReportLayout"
+import ReportDaily from "./features/report/ReportDaily"
+import ReportMonthly from "./features/report/ReportMonthly"
+import ReportAnnual from "./features/report/ReportAnnual"
 import Prefetch from "./features/auth/Prefetch";
 import PersistLogin from "./features/auth/PersistLogin";
 import RequireAuth from "./features/auth/RequireAuth";
@@ -38,6 +42,12 @@ const App = () => {
                   <Route path="add" element={<AddOrderForm />} />
                   <Route path="edit/:orderId" element={<EditOrderForm />} />
                   <Route path=":orderId" element={<SingleOrder />} />
+                </Route>
+
+                <Route path="report" element={<ReportLayout />}>
+                  <Route path="daily" element={<ReportDaily />} />
+                  <Route path="monthly" element={<ReportMonthly />} />
+                  <Route path="annual" element={<ReportAnnual />} />
                 </Route>
 
                 <Route element={<RequireAuth allowedRoles={[ROLES.admin]} />}>

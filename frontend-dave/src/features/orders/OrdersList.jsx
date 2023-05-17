@@ -9,7 +9,6 @@ import { FaCalendarAlt, FaQuestionCircle } from "react-icons/fa";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { useResolvedPath } from "react-router-dom";
 
 const DATE_REGEX =
   /^((0[1-9]|1[0-2])|([1-9]|1[0-2]))\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;

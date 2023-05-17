@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { memo } from "react";
 import useAuth from "../../hooks/useAuth";
 
-const getForkliftData = (data) => {
+export const getForkliftData = (data) => {
   let forklift = {
     text: "",
     price: 0,
@@ -34,16 +34,16 @@ const getForkliftData = (data) => {
         forklift.price = 20000;
         break;
       case "0":
-        forklift.text = "Ашиглаагүй";
+        forklift.text = "-";
         forklift.price = 0;
         break;
       default:
-        forklift.text = "Ойлгомжгүй";
+        forklift.text = "-";
         forklift.price = 0;
     }
   } else {
     forklift.type = "hourly";
-    forklift.text = `${forkliftHours} цаг ашигласан`;
+    forklift.text = `${forkliftHours} цаг`;
     forklift.price = 100000 * forkliftHours;
   }
 
@@ -55,7 +55,7 @@ export const getCraneData = (craneData) => {
 
   switch (craneData) {
     case 0:
-      crane.text = "Ашиглаагүй";
+      crane.text = "Үгүй";
       crane.price = 0;
       break;
     case 1:
@@ -66,12 +66,15 @@ export const getCraneData = (craneData) => {
       crane.text = "Ачаатай өргөлт";
       crane.price = 250000;
       break;
+    default:
+      crane.text = "-";
+      crane.price = 0;
   }
 
   return crane;
 };
 
-const getTavtsan = (tavtsanData) => {
+export const getTavtsan = (tavtsanData) => {
   let tavtsan = { text: "", price: 0 };
 
   switch (tavtsanData) {
@@ -92,12 +95,12 @@ const getTavtsan = (tavtsanData) => {
   return tavtsan;
 };
 
-const getPuulelt = (puuleltData) => {
+export const getPuulelt = (puuleltData) => {
   let puulelt = { text: "", price: 0 };
 
   switch (puuleltData) {
     case 0:
-      puulelt.text = "Ашиглаагүй";
+      puulelt.text = "-";
       puulelt.price = 0;
       break;
     case 1:
@@ -126,7 +129,14 @@ export const formatDate = (dateStr) => {
   });
 };
 
-const extra_infos = {
+export const formatCurrency = (amount) => {
+  if (!amount) {
+    amount = 0;
+  }
+  return `${amount.toLocaleString("de-CH")}₮`;
+};
+
+export const extra_infos = {
   puulelt: {
     sedan: {
       price: 10000,
@@ -175,17 +185,17 @@ const extra_infos = {
   },
 };
 
-const getNumDays = (dateStr1, dateStr2) => {
+export const getNumDays = (dateStr1, dateStr2) => {
   const d1 = new Date(dateStr1);
   const d2 = new Date(dateStr2);
 
   const diffInTime = d2.getTime() - d1.getTime();
   const diffInDays = diffInTime / (24 * 3600 * 1000);
 
-  return diffInDays;
+  return Math.round(diffInDays);
 };
 
-const calculateParkingPrice = (numDays) => {
+export const calculateParkingPrice = (numDays) => {
   let priceParking;
   if (numDays >= 1) {
     priceParking = 25000;
@@ -242,11 +252,11 @@ const getContentForDaysStayed = (numDays) => {
   return contentDays;
 };
 
-const getTotalPrice = (order) => {
+export const getTotalPrice = (order) => {
   const numDays = getNumDays(order?.date_entered, order?.date_left);
   const parkingPrice = calculateParkingPrice(numDays);
 
-  const { price: tavtsanPrice } = getTavtsan(order?.tavtsan_ashiglalt);
+  const { price: tavtsanPrice } = getTavtsan(order?.tavtsan_usage);
   const { price: forkliftPrice } = getForkliftData(order?.forklift_usage);
   const { price: cranePrice } = getCraneData(order?.crane_usage);
   const { price: puuleltPrice } = getPuulelt(order?.puulelt);
@@ -399,7 +409,7 @@ const SingleOrder = () => {
             <h4>5131240302 дансанд шилжүүлсэн дүн</h4>
             <p>
               {order?.invoice_to_302
-                ? `${order?.invoice_to_302.toLocaleString("de-CH")}₮`
+                ? formatCurrency(order.invoice_to_302)
                 : "Оруулаагүй"}
             </p>
           </div>
@@ -407,7 +417,7 @@ const SingleOrder = () => {
             <h4>5212124601 дансанд шилжүүлсэн дүн</h4>
             <p>
               {order?.invoice_to_601
-                ? `${order?.invoice_to_601.toLocaleString("de-CH")}₮`
+                ? formatCurrency(order.invoice_to_601)
                 : "Оруулаагүй"}
             </p>
           </div>
@@ -415,7 +425,7 @@ const SingleOrder = () => {
             <h4>НӨАТ падаан бичсэн дүн</h4>
             <p>
               {order?.amount_w_noat
-                ? `${order?.amount_w_noat.toLocaleString("de-CH")}₮`
+                ? formatCurrency(order.amount_w_noat)
                 : "Оруулаагүй"}
             </p>
           </div>
@@ -423,7 +433,7 @@ const SingleOrder = () => {
             <h4>НӨАТ падаан бичээгүй дүн</h4>
             <p>
               {order?.amount_wo_noat
-                ? `${order?.amount_wo_noat.toLocaleString("de-CH")}₮`
+                ? formatCurrency(order.amount_wo_noat)
                 : "Оруулаагүй"}
             </p>
           </div>
@@ -441,15 +451,13 @@ const SingleOrder = () => {
             <h4>Талбайн хадгалалт /ачаатай ачаагүй машин, чингэлэг/</h4>
             <div className="flex-row align-center space-between">
               <div>
-                {contentForDays.map((d) => (
-                  <p>{d}</p>
+                {contentForDays.map((d, idx) => (
+                  <p key={idx}>{d}</p>
                 ))}
               </div>
               <div>
                 <p>
-                  {parkingPrice
-                    ? `${parkingPrice.toLocaleString("de-CH")}₮`
-                    : "Оруулаагүй"}
+                  {parkingPrice ? formatCurrency(parkingPrice) : "Оруулаагүй"}
                 </p>
               </div>
             </div>
@@ -460,9 +468,7 @@ const SingleOrder = () => {
               <div className="flex-row space-between">
                 <p>{tavtsan.text}</p>
                 <p>
-                  {tavtsan.price
-                    ? `${tavtsan.price.toLocaleString("de-CH")}₮`
-                    : "Оруулаагүй"}
+                  {tavtsan.price ? formatCurrency(tavtsan.price) : "Оруулаагүй"}
                 </p>
               </div>
             </div>
@@ -473,7 +479,7 @@ const SingleOrder = () => {
             <h4>Автомашин пүүлэлт</h4>
             <div className="flex-row space-between">
               <p>{puulelt.text}</p>
-              <p>{puulelt.price.toLocaleString("de-CH")}₮</p>
+              <p>{formatCurrency(puulelt.price)}</p>
             </div>
           </div>
           <div>
@@ -489,7 +495,7 @@ const SingleOrder = () => {
                   <div>
                     <p>{forklift.text}</p>
                     <p className="float-right">
-                      <p>{forklift.price.toLocaleString("de-CH")}₮</p>
+                      <p>{formatCurrency(forklift.price)}</p>
                     </p>
                   </div>
                 )}
@@ -498,13 +504,11 @@ const SingleOrder = () => {
                 <h5>Авто кран</h5>
                 <div>
                   <p>{crane.text}</p>
-                  <p className="float-right">
+                  <div className="float-right">
                     <p>
-                      {crane.price
-                        ? `${crane.price.toLocaleString("de-CH")}₮`
-                        : "Оруулаагүй"}
+                      {crane.price ? formatCurrency(crane.price) : "Оруулаагүй"}
                     </p>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -514,7 +518,7 @@ const SingleOrder = () => {
             {order?.fine1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.one.text}</p>
-                <p>{extra_infos.fine.one.price.toLocaleString("de-CH")}₮</p>
+                <p>{formatCurrency(order.invoice_to_601)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -525,7 +529,7 @@ const SingleOrder = () => {
             {order?.fine2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.two.text}</p>
-                <p>{extra_infos.fine.two.price.toLocaleString("de-CH")}₮</p>
+                <p>{formatCurrency(order.invoice_to_601)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -539,7 +543,7 @@ const SingleOrder = () => {
             {order?.other1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.one.text}</p>
-                <p>{extra_infos.other.one.price.toLocaleString("de-CH")}₮</p>
+                <p>{formatCurrency(order.invoice_to_601)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -550,7 +554,7 @@ const SingleOrder = () => {
             {order?.other2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.two.text}</p>
-                <p>{extra_infos.other.two.price.toLocaleString("de-CH")}₮</p>
+                <p>{formatCurrency(order.invoice_to_601)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -563,7 +567,7 @@ const SingleOrder = () => {
             <h3>Нийт дүн</h3>
             <p>
               {getTotalPrice(order)
-                ? `${getTotalPrice(order).toLocaleString("de-CH")}₮`
+                ? formatCurrency(getTotalPrice(order))
                 : "Оруулаагүй"}
             </p>
           </div>
