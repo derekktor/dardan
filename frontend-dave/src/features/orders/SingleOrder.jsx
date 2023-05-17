@@ -2,6 +2,7 @@ import { useDeleteOrderMutation, useGetOrdersQuery } from "./ordersApiSlice";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { memo } from "react";
 import useAuth from "../../hooks/useAuth";
+import OrderPrint from "./OrderPrint";
 
 export const getForkliftData = (data) => {
   let forklift = {
@@ -323,6 +324,10 @@ const SingleOrder = () => {
     navigate(`/dash/orders/edit/${orderId}`);
   };
 
+  const handlePrint = () => {
+    navigate(`/dash/orders/print/${orderId}`);
+  };
+
   let orderContent;
   if (order?.stage === 0) {
     orderContent = (
@@ -579,11 +584,9 @@ const SingleOrder = () => {
   return (
     <div>
       <div className="order-info-container">{orderContent}</div>
-      {/* <p>Created by: {order?.created_by}</p>
-      <p>Created at: {formatDate(order?.createdAt)}</p>
-      <p>Updated at: {formatDate(order?.updatedAt)}</p> */}
       <div className="buttons">
         <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
+        <button onClick={() => handlePrint(orderId)}>Хэвлэх</button>
         {isAdmin && (
           <button onClick={() => handleDelete(orderId)}>Устгах</button>
         )}

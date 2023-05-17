@@ -593,3 +593,28 @@ input {
   padding: 10px 5px;
   margin: 5px 0px;
 }
+
+.garah-huudas {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.garah-huudas > h3 {
+  text-align: center;
+}
+
+.garah-huudas > div {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.garah-huudas p {
+  border: 1px dashed black;
+  width: 400px;
+  text-align: right;
+  padding: 5px 2px;
+}

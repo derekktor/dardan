@@ -17,14 +17,10 @@ const ReportExcerpt = ({ orderId }) => {
   const forklift = getForkliftData(order.forklift_usage)
   const crane = getCraneData(order.crane_usage)
   
-  console.log(crane)
-  
   const handleNavigateToEdit = () => {
     navigate(`/dash/orders/edit/${orderId}`)
   }
 
-  console.log(order);
-  
   return (
     <div onDoubleClick={handleNavigateToEdit} className={containerClass}>
       <p>{moment(order.date_entered).format("YYYY-MM-DD")}</p>

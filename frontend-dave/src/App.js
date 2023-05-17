@@ -20,6 +20,7 @@ import Prefetch from "./features/auth/Prefetch";
 import PersistLogin from "./features/auth/PersistLogin";
 import RequireAuth from "./features/auth/RequireAuth";
 import { ROLES } from "./config/roles";
+import OrderPrint from "./features/orders/OrderPrint";
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
                   <Route index element={<OrdersList />} />
                   <Route path="add" element={<AddOrderForm />} />
                   <Route path="edit/:orderId" element={<EditOrderForm />} />
+                  <Route path="print/:orderId" element={<OrderPrint />} />
                   <Route path=":orderId" element={<SingleOrder />} />
                 </Route>
 
