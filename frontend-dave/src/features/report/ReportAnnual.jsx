@@ -10,14 +10,20 @@ const ReportAnnual = () => {
   const [year, setYear] = useState(todayYear);
 
   let ids;
+  let idsPrev;
   if (orders) {
     ids = orders.ids.filter((id) => {
       const dOrder = moment(orders.entities[id].date_entered);
       const yOrder = parseInt(dOrder.format("YYYY"));
 
-      const same = year === yOrder;
+      return year === yOrder;
+    });
 
-      return same;
+    idsPrev = orders.ids.filter((id) => {
+      const dOrder = moment(orders.entities[id].date_entered);
+      const yOrder = parseInt(dOrder.format("YYYY")) + 1;
+
+      return year === yOrder;;
     });
   }
 
@@ -39,7 +45,7 @@ const ReportAnnual = () => {
         />
       </div>
       <div>
-        <ReportList orderIds={ids} />
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev}/>
       </div>
     </div>
   );

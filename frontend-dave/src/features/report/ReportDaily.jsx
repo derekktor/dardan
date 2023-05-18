@@ -6,40 +6,86 @@ import moment from "moment";
 const ReportDaily = () => {
   const { data: orders } = useGetOrdersQuery();
 
-  const today = new Date();
-  const [date, setDate] = useState(today);
+  const [selectedDate, setSelectedDate] = useState(moment());
+
+  const handleDateChange = (e) => {
+    let y = selectedDate.format("YYYY");
+    let m = selectedDate.format("MM");
+    let d = selectedDate.format("DD");
+
+    if (e.target.name === "date") {
+      d = e.target.value;
+    } else if (e.target.name === "month") {
+      m = e.target.value;
+    } else if (e.target.name === "year") {
+      y = e.target.value;
+    }
+
+    const newDate = moment(`${y}-${m}-${d}`, "YYYY-MM-DD");
+    setSelectedDate(newDate);
+  };
+
+  const previousDate = selectedDate.clone().subtract(1, "day");
 
   let ids;
+  let idsPrev;
+
   if (orders) {
     ids = orders.ids.filter((id) => {
-      const dInput = moment(date).startOf("day");
-      const dOrder = moment(orders.entities[id].date_entered).startOf("day");
+      const dOrder = moment(orders.entities[id].date_entered);
+      const orderDateFormatted = dOrder.format("YYYY-MM-DD");
 
-      const same = dInput.isSame(dOrder, "day");
+      return orderDateFormatted === selectedDate.format("YYYY-MM-DD");
+    });
 
-      return same;
+    idsPrev = orders.ids.filter((id) => {
+      const dOrder = moment(orders.entities[id].date_entered);
+      const orderDateFormatted = dOrder.format("YYYY-MM-DD");
+
+      return orderDateFormatted === previousDate.format("YYYY-MM-DD");
     });
   }
 
-  const handleDate = (e) => {
-    const date = moment(new Date(e.target.value)).format("YYYY-MM-DD");
-    setDate(date);
-  };
-
   return (
     <div>
-      <div>
-        <label htmlFor="dateInput">Өдөр</label>
-        <input
-          type="date"
-          name="dateInput"
-          value={moment(date).format("YYYY-MM-DD")}
-          onChange={handleDate}
-        />
+      <div className="flex-row gap10">
+        <div>
+          <label htmlFor="dayInput">Өдөр</label>
+          <input
+            type="number"
+            name="date"
+            min={1}
+            max={31}
+            value={selectedDate.date()}
+            onChange={handleDateChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="monthInput">Сар</label>
+          <input
+            type="number"
+            name="month"
+            min={1}
+            max={12}
+            value={selectedDate.month() + 1}
+            onChange={handleDateChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="yearInput">Жил</label>
+          <input
+            type="number"
+            name="year"
+            min={2000}
+            max={3000}
+            value={selectedDate.year()}
+            onChange={handleDateChange}
+          />
+        </div>
       </div>
 
       <div>
-        <ReportList orderIds={ids} />
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev} />
       </div>
     </div>
   );

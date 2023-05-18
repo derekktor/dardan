@@ -12,15 +12,22 @@ const ReportMonthly = () => {
   const [year, setYear] = useState(todayYear);
 
   let ids;
+  let idsPrev;
   if (orders) {
     ids = orders.ids.filter((id) => {
       const dOrder = moment(orders.entities[id].date_entered);
       const mOrder = parseInt(dOrder.format("MM"));
       const yOrder = parseInt(dOrder.format("YYYY"));
 
-      const same = month === mOrder && year === yOrder;
+      return month === mOrder && year === yOrder;
+    });
 
-      return same;
+    idsPrev = orders.ids.filter((id) => {
+      const dOrder = moment(orders.entities[id].date_entered);
+      const mOrder = parseInt(dOrder.format("MM")) + 1;
+      const yOrder = parseInt(dOrder.format("YYYY"));
+
+      return month === mOrder && year === yOrder;
     });
   }
 
@@ -59,7 +66,7 @@ const ReportMonthly = () => {
         </div>
       </div>
       <div>
-        <ReportList orderIds={ids} />
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev}/>
       </div>
     </div>
   );

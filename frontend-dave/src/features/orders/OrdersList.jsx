@@ -60,6 +60,12 @@ const OrdersList = () => {
       );
     }
 
+    filteredIds = filteredIds.sort((a, b) => {
+      const dateA = new Date(entities[a].createdAt);
+      const dateB = new Date(entities[b].createdAt);
+      return dateB - dateA;
+    });
+
     content =
       filteredIds?.length &&
       filteredIds

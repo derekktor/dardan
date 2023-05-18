@@ -20,6 +20,9 @@ const Welcome = () => {
     <section className="welcome m">
       <p>{today}</p>
       <h1>Өдрийн мэнд! {name}</h1>
+      <p>
+        <Link to="/dash/report">Тайлан үзэх</Link>
+      </p>
       {isAdmin && (
         <p>
           <Link to="/dash/users">Хэрэглэгчид</Link>

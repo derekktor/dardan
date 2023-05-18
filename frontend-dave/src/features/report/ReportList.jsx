@@ -2,7 +2,7 @@ import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import ReportExcerpt from "./ReportExcerpt";
 import { formatCurrency } from "../orders/SingleOrder";
 
-const ReportList = ({ orderIds }) => {
+const ReportList = ({ orderIds, orderIdsPrev }) => {
   const { data: orders } = useGetOrdersQuery();
 
   let orderIdsEntered;
@@ -32,7 +32,16 @@ const ReportList = ({ orderIds }) => {
     },
   };
 
+  if (orderIdsPrev) {
+  }
+
   if (orderIds) {
+    orderIds.sort((a, b) => {
+      const dateA = new Date(orders.entities[a].date_entered);
+      const dateB = new Date(orders.entities[b].date_entered);
+      return dateA - dateB;
+    });
+
     orderIdsEntered = orderIds.filter((id) => {
       return orders.entities[id].stage === 1 || orders.entities[id].stage === 0;
     });
@@ -42,7 +51,7 @@ const ReportList = ({ orderIds }) => {
     });
 
     if (orderIds.length === 0) {
-      return <h4>Ямар ч бүртгэл байхгүй байна!</h4>;
+      ordersData = <h4>Ямар ч бүртгэл байхгүй байна!</h4>;
     }
 
     orderIdsEntered.forEach((id) => {
@@ -102,17 +111,22 @@ const ReportList = ({ orderIds }) => {
       stats.totalWeight += thisOrder.load_weight;
     });
 
+    
     ordersData = orderIds.map((id) => <ReportExcerpt key={id} orderId={id} />);
   }
 
   const statsContent = (
     <div className="flex-col space-between">
       <div className="flex-row">
-        <h4>Нийт орсон:</h4>
+        <h4>Хоносон:</h4>
+        <h4>{orderIdsPrev.length}</h4>
+      </div>
+      <div className="flex-row">
+        <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
       <div className="flex-row">
-        <h4>Нийт гарсан:</h4>
+        <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
       </div>
     </div>
@@ -159,10 +173,10 @@ const ReportList = ({ orderIds }) => {
 
   const footer = (
     <>
-      <h4>Орсон огноо</h4>
-      <h4>Гарсан огноо</h4>
-      <h4>Арлын дугаар</h4>
-      <h4>Ачаа, барааны нэр</h4>
+      <h4></h4> {/* Орсон огноо */}
+      <h4></h4> {/* Гарсан огноо */}
+      <h4></h4>{/* Арлын дугаар */}
+      <h4></h4>{/* Ачаа, барааны нэр */}
       <h4>{stats.totalWeight} тн</h4>
       <h4>
         <p>Гадна тавцан - {stats.tavtsan.gadna}</p>
@@ -180,8 +194,8 @@ const ReportList = ({ orderIds }) => {
         <p>Хоосон өргөлт - {stats.crane.hooson}</p>
         <p>Ачаатай өргөлт - {stats.crane.achaatai}</p>
       </h4>
-      <h4>Торгууль</h4>
-      <h4>Бусад</h4>
+      <h4></h4>{/* Торгууль */}
+      <h4></h4>{/* Бусад */}
       <h4>{formatCurrency(stats.totalAmt302)}</h4>
       <h4>{formatCurrency(stats.totalAmt601)}</h4>
       <h4>{formatCurrency(stats.totalAmtWNoat)}</h4>
