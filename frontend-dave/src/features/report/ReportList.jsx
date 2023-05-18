@@ -139,24 +139,24 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
   }
 
   const statsContent = (
-    <div className="flex-col space-between">
-      <div className="flex-row">
+    <div className="stats-grid">
+      <div>
         <h4>Хоносон:</h4>
         <h4>{orderIdsPrev.length}</h4>
       </div>
-      <div className="flex-row">
+      <div>
         <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
-      <div className="flex-row">
+      <div>
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
       </div>
-      <div className="flex-row">
+      <div>
         <h4>Үлдэгдэл:</h4>
         <h4>{formatCurrency(stats.totalRevenuePrev)}</h4>
       </div>
-      <div className="flex-row">
+      <div>
         <h4>Орлого:</h4>
         <h4>{formatCurrency(stats.totalRevenue)}</h4>
       </div>
@@ -237,7 +237,6 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
 
   return (
     <div>
-      <h3>Бүртгэлүүд</h3>
       {statsContent}
       <div className="report-container">
         <div>{header}</div>

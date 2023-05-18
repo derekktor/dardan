@@ -6,9 +6,9 @@ const ReportHeader = () => {
 
   return (
     <div className='flex-row space-evenly'>
-      <button onClick={() => navigate("/dash/report/daily")}>Өдрийн</button>
-      <button onClick={() => navigate("/dash/report/monthly")}>Сарын</button>
-      <button onClick={() => navigate("/dash/report/annual")}>Жилийн</button>
+      <button className='button' onClick={() => navigate("/dash/report/daily")}>Өдрийн</button>
+      <button className='button' onClick={() => navigate("/dash/report/monthly")}>Сарын</button>
+      <button className='button' onClick={() => navigate("/dash/report/annual")}>Жилийн</button>
     </div>
   )
 }

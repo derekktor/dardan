@@ -33,7 +33,7 @@ const ReportAnnual = () => {
 
   return (
     <div>
-      <div>
+      <div className="flex-row gap10 align-center">
         <label htmlFor="yearInput">Жил</label>
         <input
           type="number"

@@ -48,9 +48,13 @@ const ReportDaily = () => {
 
   return (
     <div>
-      <div className="flex-row gap10">
+      <div className="report-daily-grid">
         <div>
           <label htmlFor="dayInput">Өдөр</label>
+          <label htmlFor="monthInput">Сар</label>
+          <label htmlFor="yearInput">Жил</label>
+        </div>
+        <div>
           <input
             type="number"
             name="date"
@@ -59,9 +63,6 @@ const ReportDaily = () => {
             value={selectedDate.date()}
             onChange={handleDateChange}
           />
-        </div>
-        <div>
-          <label htmlFor="monthInput">Сар</label>
           <input
             type="number"
             name="month"
@@ -70,9 +71,6 @@ const ReportDaily = () => {
             value={selectedDate.month() + 1}
             onChange={handleDateChange}
           />
-        </div>
-        <div>
-          <label htmlFor="yearInput">Жил</label>
           <input
             type="number"
             name="year"

@@ -41,9 +41,12 @@ const ReportMonthly = () => {
 
   return (
     <div>
-      <div className="flex-row gap10">
+      <div className="report-monthly-grid">
         <div>
           <label htmlFor="monthInput">Сар</label>
+          <label htmlFor="yearInput">Жил</label>
+        </div>
+        <div>
           <input
             type="number"
             name="monthInput"
@@ -52,9 +55,6 @@ const ReportMonthly = () => {
             value={month}
             onChange={handleMonth}
           />
-        </div>
-        <div>
-          <label htmlFor="yearInput">Жил</label>
           <input
             type="number"
             name="yearInput"
@@ -66,7 +66,7 @@ const ReportMonthly = () => {
         </div>
       </div>
       <div>
-        <ReportList orderIds={ids} orderIdsPrev={idsPrev}/>
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev} />
       </div>
     </div>
   );

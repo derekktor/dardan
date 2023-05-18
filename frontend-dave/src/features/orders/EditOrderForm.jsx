@@ -38,7 +38,9 @@ const EditOrderForm = () => {
     amount_w_noat: order?.amount_w_noat ? order?.amount_w_noat : 0,
     amount_wo_noat: order?.amount_wo_noat ? order?.amount_wo_noat : 0,
     client_name: order?.client_name ? order?.client_name : "",
-    gaaliin_meduulgiin_dugaar: order?.gaaliin_meduulgiin_dugaar ? order?.gaaliin_meduulgiin_dugaar : "",
+    gaaliin_meduulgiin_dugaar: order?.gaaliin_meduulgiin_dugaar
+      ? order?.gaaliin_meduulgiin_dugaar
+      : "",
   });
 
   const [truckNumValid, setTruckNumValid] = useState(false);
@@ -52,7 +54,9 @@ const EditOrderForm = () => {
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
   }, [orderData.truck_id_letters]);
 
-  useEffect(() => {}, [orderData.date_left]);
+  useEffect(() => {
+    console.log(orderData.date_left);
+  }, [orderData.date_left]);
 
   const onChange = (e) => {
     setOrderData((prev) => ({
@@ -328,7 +332,9 @@ const EditOrderForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="gaaliin_meduulgiin_dugaar">Гаалийн мэдүүлгийн дугаар:</label>
+        <label htmlFor="gaaliin_meduulgiin_dugaar">
+          Гаалийн мэдүүлгийн дугаар:
+        </label>
         <input
           type="text"
           name="gaaliin_meduulgiin_dugaar"
@@ -357,6 +363,7 @@ const EditOrderForm = () => {
       <form className="edit-order-form" onSubmit={onSubmit}>
         {content}
         <button
+          className="button"
           type="submit"
           // disabled={!canSave}
         >

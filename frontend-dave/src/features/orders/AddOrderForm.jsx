@@ -120,7 +120,7 @@ const AddOrderForm = () => {
             onChange={onChange}
           />
         </div>
-        <button type="submit" disabled={!canSave}>
+        <button className='button' type="submit" disabled={!canSave}>
           Илгээх
         </button>
       </form>
