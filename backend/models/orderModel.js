@@ -62,6 +62,9 @@ const orderSchema = mongoose.Schema(
     client_name: {
       type: String,
     },
+    gaaliin_meduulgiin_dugaar: {
+      type: String,
+    },
     stage: {
       type: Number, // 0 || 1 - done
     },

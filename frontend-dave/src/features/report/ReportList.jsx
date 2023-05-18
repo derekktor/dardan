@@ -6,9 +6,12 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
   const { data: orders } = useGetOrdersQuery();
 
   let orderIdsEntered;
+  let orderIdsPrevLeft;
   let orderIdsLeft;
   let ordersData;
   let stats = {
+    totalRevenue: 0,
+    totalRevenuePrev: 0,
     totalWeight: 0,
     totalAmt302: 0,
     totalAmt601: 0,
@@ -33,6 +36,21 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
   };
 
   if (orderIdsPrev) {
+    orderIdsPrevLeft = orderIdsPrev.filter((id) => {
+      return orders.entities[id].stage === 1;
+    });
+
+    orderIdsPrevLeft.forEach(id => {
+      const thisOrder = orders.entities[id]; 
+
+      if (thisOrder.invoice_to_302) {
+        stats.totalRevenuePrev += thisOrder.invoice_to_302;
+      }
+
+      if (thisOrder.invoice_to_601) {
+        stats.totalRevenuePrev += thisOrder.invoice_to_601;
+      }
+    })
   }
 
   if (orderIds) {
@@ -84,16 +102,24 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
         stats.crane.achaatai += 1;
       }
 
+      stats.totalWeight += thisOrder.load_weight;
+    });
+
+
+    orderIdsLeft.forEach((id) => {
+      const thisOrder = orders.entities[id];
       if (!thisOrder.invoice_to_302) {
         stats.totalAmt302 += 0;
       } else {
         stats.totalAmt302 += thisOrder.invoice_to_302;
+        stats.totalRevenue += thisOrder.invoice_to_302;
       }
 
       if (!thisOrder.invoice_to_601) {
         stats.totalAmt302 += 0;
       } else {
         stats.totalAmt601 += thisOrder.invoice_to_601;
+        stats.totalRevenue += thisOrder.invoice_to_601;
       }
 
       if (!thisOrder.amount_w_noat) {
@@ -107,10 +133,7 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       } else {
         stats.totalAmtWoNoat += thisOrder.amount_wo_noat;
       }
-
-      stats.totalWeight += thisOrder.load_weight;
     });
-
     
     ordersData = orderIds.map((id) => <ReportExcerpt key={id} orderId={id} />);
   }
@@ -128,6 +151,14 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       <div className="flex-row">
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
+      </div>
+      <div className="flex-row">
+        <h4>Үлдэгдэл:</h4>
+        <h4>{formatCurrency(stats.totalRevenuePrev)}</h4>
+      </div>
+      <div className="flex-row">
+        <h4>Орлого:</h4>
+        <h4>{formatCurrency(stats.totalRevenue)}</h4>
       </div>
     </div>
   );
