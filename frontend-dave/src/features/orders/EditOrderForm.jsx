@@ -246,10 +246,10 @@ const EditOrderForm = () => {
       </div>
       <div>
         <label htmlFor="forklift_usage">Сэрээт өргөгч:</label>
-        <div className="hint">
+        <span className="hint">
           <p>neg, нэг - нэг удаагийн өргөлт</p>
           <p>1, 2, 3... - ашигласан цагийн тоо</p>
-        </div>
+        </span>
         <input
           type="text"
           placeholder="neg, 1, 2, 3..."

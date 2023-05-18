@@ -92,6 +92,7 @@ const AddOrderForm = () => {
         </div>
         <div>
           <label htmlFor="truck_id_letters">Арлын дугаар(үсэг):</label>
+          <span className="hint">Кирилл 3 үсэг байх шаардлагатай</span>
           <input
             type="text"
             placeholder="УБА"
