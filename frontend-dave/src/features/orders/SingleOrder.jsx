@@ -446,6 +446,10 @@ const SingleOrder = () => {
             <h4>Байгууллага, хувь хүний нэр</h4>
             <p>{order?.client_name ? order?.client_name : "Оруулаагүй"}</p>
           </div>
+          <div>
+            <h4>Гаалийн мэдүүлгийн дугаар</h4>
+            <p>{order?.gaaliin_meduulgiin_dugaar ? order?.gaaliin_meduulgiin_dugaar : "Оруулаагүй"}</p>
+          </div>
         </div>
         <div className="numbers">
           <div>

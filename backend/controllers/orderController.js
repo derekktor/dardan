@@ -108,6 +108,7 @@ const updateOrder = asyncHandler(async (req, res) => {
     amount_w_noat,
     amount_wo_noat,
     client_name,
+    gaaliin_meduulgiin_dugaar,
     last_edited_by,
     stage
   } = req.body;
@@ -147,6 +148,7 @@ const updateOrder = asyncHandler(async (req, res) => {
   order.amount_w_noat = amount_w_noat ? amount_w_noat : order.amount_w_noat;
   order.amount_wo_noat = amount_wo_noat ? amount_wo_noat : order.amount_wo_noat;
   order.client_name = client_name ? client_name : order.client_name;
+  order.gaaliin_meduulgiin_dugaar = gaaliin_meduulgiin_dugaar ? gaaliin_meduulgiin_dugaar : order.gaaliin_meduulgiin_dugaar;
   order.last_edited_by = last_edited_by ? last_edited_by : order.last_edited_by;
   order.stage = stage ? stage : order.stage;
 

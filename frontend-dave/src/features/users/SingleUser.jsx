@@ -63,8 +63,6 @@ const SingleUser = () => {
           <p>Эрх:</p>
           <h4>{user.roles}</h4>
         </div>
-        {/*  <p>Үүсгэсэн: {user.createdAt}</p>
-         <p>Шинэчилсэн: {user.updatedAt}</p> */}
         <div className="buttons">
           <button onClick={() => handleEdit(userId)}>Өөрчлөх</button>
           <button onClick={() => handleDelete(userId)}>Устгах</button>

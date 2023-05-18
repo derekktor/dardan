@@ -38,6 +38,7 @@ const EditOrderForm = () => {
     amount_w_noat: order?.amount_w_noat ? order?.amount_w_noat : 0,
     amount_wo_noat: order?.amount_wo_noat ? order?.amount_wo_noat : 0,
     client_name: order?.client_name ? order?.client_name : "",
+    gaaliin_meduulgiin_dugaar: order?.gaaliin_meduulgiin_dugaar ? order?.gaaliin_meduulgiin_dugaar : "",
   });
 
   const [truckNumValid, setTruckNumValid] = useState(false);
@@ -323,6 +324,15 @@ const EditOrderForm = () => {
           type="text"
           name="client_name"
           value={orderData.client_name}
+          onChange={onChange}
+        />
+      </div>
+      <div>
+        <label htmlFor="gaaliin_meduulgiin_dugaar">Гаалийн мэдүүлгийн дугаар:</label>
+        <input
+          type="text"
+          name="gaaliin_meduulgiin_dugaar"
+          value={orderData.gaaliin_meduulgiin_dugaar}
           onChange={onChange}
         />
       </div>
