@@ -8,7 +8,6 @@ const OrderPrint = () => {
   const componentRef = useRef();
   const {orderId} = useParams();
 
-  const {data: orders} = useGetOrdersQuery();
    const { order } = useGetOrdersQuery("ordersList", {
     selectFromResult: ({ data }) => ({
       order: data?.entities[orderId],
@@ -36,7 +35,7 @@ const OrderPrint = () => {
         </div>
         <div>
           <h4>Гаалийн мэдүүлгийн дугаар</h4>
-          <p>...</p>
+          <p>{order.gaaliin_meduulgiin_dugaar ? order.gaaliin_meduulgiin_dugaar : "..."}</p>
         </div>
         <div>
           <h4>Тээврийн хэрэгслийн дугаар</h4>
