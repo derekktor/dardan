@@ -1,8 +1,8 @@
 import { useDeleteOrderMutation, useGetOrdersQuery } from "./ordersApiSlice";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { memo } from "react";
 import useAuth from "../../hooks/useAuth";
-import OrderPrint from "./OrderPrint";
+import moment from "moment";
 
 export const getForkliftData = (data) => {
   let forklift = {
@@ -187,13 +187,10 @@ export const extra_infos = {
 };
 
 export const getNumDays = (order) => {
-  const d1 = new Date(order.date_entered);
-  const d2 = new Date(order.date_left);
+  const d1 = moment(order.date_entered).startOf("day");
+  const d2 = moment(order.date_left).startOf("day");
 
-  const diffInTime = d2.getTime() - d1.getTime();
-  const diffInDays = diffInTime / (24 * 3600 * 1000);
-
-  return Math.round(diffInDays);
+  return d2.diff(d1, "days")
 };
 
 export const calculateParkingPrice = (numDays) => {
