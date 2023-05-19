@@ -125,14 +125,14 @@ const updateOrder = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Бүртгэл олдсонгүй" });
   }
 
-  console.log(fine1, fine2, other1, other2)
+  console.log(date_left, stage)
 
   order.date_entered = date_entered ? date_entered : order.date_entered;
   order.truck_id_digits = truck_id_digits ? truck_id_digits : order.truck_id_digits;
   order.truck_id_letters = truck_id_letters ? truck_id_letters : order.truck_id_letters;
   order.load_name = load_name ? load_name : order.load_name;
   order.load_weight = load_weight ? load_weight : order.load_weight;
-  order.date_left = date_left ? date_left : order.date_left;
+  order.date_left = date_left ? date_left : null;
   order.tavtsan_usage = tavtsan_usage
     ? tavtsan_usage
     : order.tavtsan_usage;
@@ -150,9 +150,9 @@ const updateOrder = asyncHandler(async (req, res) => {
   order.client_name = client_name ? client_name : order.client_name;
   order.gaaliin_meduulgiin_dugaar = gaaliin_meduulgiin_dugaar ? gaaliin_meduulgiin_dugaar : order.gaaliin_meduulgiin_dugaar;
   order.last_edited_by = last_edited_by ? last_edited_by : order.last_edited_by;
-  order.stage = stage ? stage : order.stage;
+  order.stage = stage;
 
-  console.log(order.fine1, order.fine2, order.other1, order.other2)
+  console.log(order.date_left, order.stage)
 
   const updatedOrder = await order.save();
   updatedOrder.id = updatedOrder._id;

@@ -325,6 +325,8 @@ const SingleOrder = () => {
     navigate(`/dash/orders/print/${orderId}`);
   };
 
+  console.log(order)
+
   let orderContent;
   if (order?.stage === 0) {
     orderContent = (

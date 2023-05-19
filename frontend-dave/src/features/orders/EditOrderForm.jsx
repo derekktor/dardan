@@ -66,30 +66,19 @@ const EditOrderForm = () => {
   };
 
   const handleDateChange = (e) => {
-    const date = moment(new Date(e.target.value)).format("YYYY-MM-DD");
+    let date;
+    if (e.target.value === "") {
+      date = null;
+    } else {
+      date = moment(new Date(e.target.value)).format("YYYY-MM-DD");
+    }
     setOrderData({ ...orderData, [e.target.name]: date });
+  
+    console.log(orderData)
   };
 
   const handleClearDateLeft = async (e) => {
-    console.log("handle clear date called");
-
-    setOrderData({ ...orderData, date_left: null });
-
-    let sendingData = {
-      ...orderData,
-      stage: 0,
-    };
-
-    console.log(sendingData);
-
-    if (canSave) {
-      try {
-        await updateOrder(sendingData);
-        navigate(`/dash/orders/${orderId}`);
-      } catch (error) {
-        console.error("Бүртгэлийг өөрчилж чадсангүй", error);
-      }
-    }
+    setOrderData({ ...orderData, date_left: null, stage: 0 });
   };
 
   const canSave = [truckLetValid, truckNumValid].every(Boolean) && !isLoading;
@@ -109,7 +98,10 @@ const EditOrderForm = () => {
 
     console.log(sendingData);
 
-    if (moment(orderData.date_entered).startOf("day") > moment(orderData.date_left).startOf("day")) {
+    if (
+      moment(orderData.date_entered).startOf("day") >
+      moment(orderData.date_left).startOf("day")
+    ) {
       alert("Гарсан огноо орсноосоо эрт байна");
       setOrderData({ ...orderData, date_left: new Date() });
       return;
@@ -233,15 +225,15 @@ const EditOrderForm = () => {
       </div>
       <div>
         <label htmlFor="date_left">Гарсан огноо:</label>
-        <div>
-          <input
-            type="date"
-            name="date_left"
-            value={moment(new Date(orderData.date_left)).format("YYYY-MM-DD")}
-            onChange={handleDateChange}
-          />
-          <button onClick={handleClearDateLeft}>Арилгах</button>
-        </div>
+        <input
+          type="date"
+          name="date_left"
+          value={moment(new Date(orderData.date_left)).format("YYYY-MM-DD")}
+          onChange={handleDateChange}
+        />
+        <button className="button" onClick={handleClearDateLeft}>
+          Арилгах
+        </button>
       </div>
       <div>
         <label htmlFor="tavtsan_usage">Тавцан ашиглалт:</label>
