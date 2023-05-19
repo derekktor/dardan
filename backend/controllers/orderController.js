@@ -57,11 +57,11 @@ const createOrder = asyncHandler(async (req, res) => {
   } = req.body;
 
   // check if required data is filled
-  if (!load_name) {
-    return res
-      .status(400)
-      .json({ message: "Хэрэгтэй бүх мэдээллийг оруулна уу" });
-  }
+  // if (!load_name) {
+  //   return res
+  //     .status(400)
+  //     .json({ message: "Хэрэгтэй бүх мэдээллийг оруулна уу" });
+  // }
 
   // create order in mongodb
   const newOrder = await Order.create({
