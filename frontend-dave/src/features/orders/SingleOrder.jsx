@@ -195,7 +195,7 @@ export const getNumDays = (order) => {
 
 export const calculateParkingPrice = (numDays) => {
   let priceParking;
-  if (numDays >= 1) {
+  if (numDays >= 1 || numDays === 0) {
     priceParking = 25000;
   }
 
@@ -215,7 +215,7 @@ export const calculateParkingPrice = (numDays) => {
 
 const getContentForDaysStayed = (numDays) => {
   let contentDays = [];
-  if (numDays >= 1) {
+  if (numDays >= 1 || numDays === 0) {
     contentDays.push(
       `${extra_infos.days.one.text} ${extra_infos.days.one.price.toLocaleString(
         "de-CH"
@@ -451,7 +451,7 @@ const SingleOrder = () => {
         <div className="numbers">
           <div>
             <h4>Талбайд хоносон хоног</h4>
-            <p>{numDays}</p>
+            <p>{numDays === 0 ? 1 : numDays}</p>
           </div>
           <div>
             <h4>Талбайн хадгалалт /ачаатай ачаагүй машин, чингэлэг/</h4>
@@ -582,6 +582,7 @@ const SingleOrder = () => {
       </>
     );
   }
+
 
   return (
     <div>

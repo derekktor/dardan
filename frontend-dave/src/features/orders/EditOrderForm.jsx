@@ -54,9 +54,9 @@ const EditOrderForm = () => {
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
   }, [orderData.truck_id_letters]);
 
-  useEffect(() => {
-    console.log(orderData.date_left);
-  }, [orderData.date_left]);
+  // useEffect(() => {
+  //   console.log(orderData.date_left);
+  // }, [orderData.date_left]);
 
   const onChange = (e) => {
     setOrderData((prev) => ({
@@ -70,22 +70,46 @@ const EditOrderForm = () => {
     setOrderData({ ...orderData, [e.target.name]: date });
   };
 
-  const canSave =
-    [truckLetValid, truckNumValid, orderData.date_left].every(Boolean) &&
-    !isLoading;
+  const handleClearDateLeft = async (e) => {
+    console.log("handle clear date called");
+
+    setOrderData({ ...orderData, date_left: null });
+
+    let sendingData = {
+      ...orderData,
+      stage: 0,
+    };
+
+    console.log(sendingData);
+
+    if (canSave) {
+      try {
+        await updateOrder(sendingData);
+        navigate(`/dash/orders/${orderId}`);
+      } catch (error) {
+        console.error("Бүртгэлийг өөрчилж чадсангүй", error);
+      }
+    }
+  };
+
+  const canSave = [truckLetValid, truckNumValid].every(Boolean) && !isLoading;
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const sendingData = {
+    let sendingData = {
       ...orderData,
       stage: 1,
       last_edited_by: name,
     };
 
+    if (orderData.date_left === null) {
+      sendingData = { ...sendingData, stage: 0 };
+    }
+
     console.log(sendingData);
 
-    if (new Date(orderData.date_entered) > new Date(orderData.date_left)) {
+    if (moment(orderData.date_entered).startOf("day") > moment(orderData.date_left).startOf("day")) {
       alert("Гарсан огноо орсноосоо эрт байна");
       setOrderData({ ...orderData, date_left: new Date() });
       return;
@@ -105,10 +129,6 @@ const EditOrderForm = () => {
       }
       if (!truckLetValid) {
         toast.error("Арлын дугаарын үсэг буруу байна");
-        navigate(`/dash/orders/edit/${orderId}`);
-      }
-      if (orderData.date_left === "") {
-        toast.error("Гарсан огноог оруулна уу");
         navigate(`/dash/orders/edit/${orderId}`);
       }
     }
@@ -213,12 +233,15 @@ const EditOrderForm = () => {
       </div>
       <div>
         <label htmlFor="date_left">Гарсан огноо:</label>
-        <input
-          type="date"
-          name="date_left"
-          value={moment(new Date(orderData.date_left)).format("YYYY-MM-DD")}
-          onChange={handleDateChange}
-        />
+        <div>
+          <input
+            type="date"
+            name="date_left"
+            value={moment(new Date(orderData.date_left)).format("YYYY-MM-DD")}
+            onChange={handleDateChange}
+          />
+          <button onClick={handleClearDateLeft}>Арилгах</button>
+        </div>
       </div>
       <div>
         <label htmlFor="tavtsan_usage">Тавцан ашиглалт:</label>
