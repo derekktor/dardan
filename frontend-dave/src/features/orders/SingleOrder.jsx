@@ -186,9 +186,9 @@ export const extra_infos = {
   },
 };
 
-export const getNumDays = (dateStr1, dateStr2) => {
-  const d1 = new Date(dateStr1);
-  const d2 = new Date(dateStr2);
+export const getNumDays = (order) => {
+  const d1 = new Date(order.date_entered);
+  const d2 = new Date(order.date_left);
 
   const diffInTime = d2.getTime() - d1.getTime();
   const diffInDays = diffInTime / (24 * 3600 * 1000);
@@ -254,7 +254,7 @@ const getContentForDaysStayed = (numDays) => {
 };
 
 export const getTotalPrice = (order) => {
-  const numDays = getNumDays(order?.date_entered, order?.date_left);
+  const numDays = getNumDays(order);
   const parkingPrice = calculateParkingPrice(numDays);
 
   const { price: tavtsanPrice } = getTavtsan(order?.tavtsan_usage);
@@ -307,7 +307,7 @@ const SingleOrder = () => {
   const crane = getCraneData(order?.crane_usage);
   const puulelt = getPuulelt(order?.puulelt);
 
-  const numDays = getNumDays(order?.date_entered, order?.date_left);
+  const numDays = getNumDays(order);
   const contentForDays = getContentForDaysStayed(numDays);
   const parkingPrice = calculateParkingPrice(numDays);
 
@@ -527,18 +527,18 @@ const SingleOrder = () => {
             {order?.fine1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.one.text}</p>
-                <p>{formatCurrency(order.invoice_to_601)}</p>
+                <p>{formatCurrency(extra_infos.fine.one.price)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.one.text}</p>
-                <p>Оруулаагүй</p>
+                <p>Байхгүй</p>
               </div>
             )}
             {order?.fine2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.fine.two.text}</p>
-                <p>{formatCurrency(order.invoice_to_601)}</p>
+                <p>{formatCurrency(extra_infos.fine.two.price)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -552,7 +552,8 @@ const SingleOrder = () => {
             {order?.other1 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.one.text}</p>
-                <p>{formatCurrency(order.invoice_to_601)}</p>
+                <p>{formatCurrency(extra_infos.other.two.price)}</p>
+
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -563,7 +564,7 @@ const SingleOrder = () => {
             {order?.other2 ? (
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.two.text}</p>
-                <p>{formatCurrency(order.invoice_to_601)}</p>
+                <p>{formatCurrency(extra_infos.other.two.price)}</p>
               </div>
             ) : (
               <div className="flex-row align-center space-between">

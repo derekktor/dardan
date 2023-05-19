@@ -1,6 +1,7 @@
 import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import ReportExcerpt from "./ReportExcerpt";
 import { formatCurrency } from "../orders/SingleOrder";
+import { useState, useRef } from "react";
 
 const ReportList = ({ orderIds, orderIdsPrev }) => {
   const { data: orders } = useGetOrdersQuery();
@@ -37,11 +38,11 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
 
   if (orderIdsPrev) {
     orderIdsPrevLeft = orderIdsPrev.filter((id) => {
-      return orders.entities[id].stage === 1;
+      return orders.entities[id].stage === 0;
     });
 
-    orderIdsPrevLeft.forEach(id => {
-      const thisOrder = orders.entities[id]; 
+    orderIdsPrevLeft.forEach((id) => {
+      const thisOrder = orders.entities[id];
 
       if (thisOrder.invoice_to_302) {
         stats.totalRevenuePrev += thisOrder.invoice_to_302;
@@ -50,7 +51,7 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       if (thisOrder.invoice_to_601) {
         stats.totalRevenuePrev += thisOrder.invoice_to_601;
       }
-    })
+    });
   }
 
   if (orderIds) {
@@ -105,7 +106,6 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       stats.totalWeight += thisOrder.load_weight;
     });
 
-
     orderIdsLeft.forEach((id) => {
       const thisOrder = orders.entities[id];
       if (!thisOrder.invoice_to_302) {
@@ -134,7 +134,7 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
         stats.totalAmtWoNoat += thisOrder.amount_wo_noat;
       }
     });
-    
+
     ordersData = orderIds.map((id) => <ReportExcerpt key={id} orderId={id} />);
   }
 
@@ -151,6 +151,12 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       <div>
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
+      </div>
+      <div>
+        <h4>Одоо байгаа:</h4>
+        <h4>
+          {orderIdsEntered.length + orderIdsPrev.length - orderIdsLeft.length}
+        </h4>
       </div>
       <div>
         <h4>Үлдэгдэл:</h4>
@@ -176,6 +182,8 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       <h4>Авто кран ашиглалт</h4>
       <h4>Торгууль</h4>
       <h4>Бусад</h4>
+      <h4>Талбайн хадгалалт</h4>
+      <h4>Нийт дүн</h4>
       <h4>
         5131240302 <br />
         дансанд шилжүүлсэн <br />
@@ -206,8 +214,10 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
     <>
       <h4></h4> {/* Орсон огноо */}
       <h4></h4> {/* Гарсан огноо */}
-      <h4></h4>{/* Арлын дугаар */}
-      <h4></h4>{/* Ачаа, барааны нэр */}
+      <h4></h4>
+      {/* Арлын дугаар */}
+      <h4></h4>
+      {/* Ачаа, барааны нэр */}
       <h4>{stats.totalWeight} тн</h4>
       <h4>
         <p>Гадна тавцан - {stats.tavtsan.gadna}</p>
@@ -225,8 +235,10 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
         <p>Хоосон өргөлт - {stats.crane.hooson}</p>
         <p>Ачаатай өргөлт - {stats.crane.achaatai}</p>
       </h4>
-      <h4></h4>{/* Торгууль */}
-      <h4></h4>{/* Бусад */}
+      <h4></h4>
+      {/* Торгууль */}
+      <h4></h4>
+      {/* Бусад */}
       <h4>{formatCurrency(stats.totalAmt302)}</h4>
       <h4>{formatCurrency(stats.totalAmt601)}</h4>
       <h4>{formatCurrency(stats.totalAmtWNoat)}</h4>

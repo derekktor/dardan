@@ -600,7 +600,7 @@ input {
 
 .report-container > div:first-child, .report-container > div:last-child {
   display: grid;
-  grid-template-columns: repeat(16, 250px);
+  grid-template-columns: repeat(18, 250px);
   align-items: center;
   /* text-align: center; */
 }
@@ -611,7 +611,7 @@ input {
 
 .report-container > div:nth-child(2) > div {
   display: grid;
-  grid-template-columns: repeat(16, 250px);
+  grid-template-columns: repeat(18, 250px);
   padding: 10px 5px;
   margin: 5px 0px;
 }
@@ -664,12 +664,12 @@ input {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, 200px);
+  grid-template-columns: repeat(6, 200px);
   gap: 10px;
   border: 1px solid black;
   margin: 10px auto;
   padding: 10px;
-  width: 1100px;
+  width: 1300px;
 }
 
 .stats-grid > div {
