@@ -187,10 +187,12 @@ export const extra_infos = {
 };
 
 export const getNumDays = (order) => {
-  const d1 = moment(order.date_entered).startOf("day");
-  const d2 = moment(order.date_left).startOf("day");
+  if (order) {
+    const d1 = moment(order.date_entered).startOf("day");
+    const d2 = moment(order.date_left).startOf("day");
 
-  return d2.diff(d1, "days")
+    return d2.diff(d1, "days");
+  }
 };
 
 export const calculateParkingPrice = (numDays) => {
@@ -325,7 +327,7 @@ const SingleOrder = () => {
     navigate(`/dash/orders/print/${orderId}`);
   };
 
-  console.log(order)
+  console.log(order);
 
   let orderContent;
   if (order?.stage === 0) {
@@ -447,7 +449,11 @@ const SingleOrder = () => {
           </div>
           <div>
             <h4>Гаалийн мэдүүлгийн дугаар</h4>
-            <p>{order?.gaaliin_meduulgiin_dugaar ? order?.gaaliin_meduulgiin_dugaar : "Оруулаагүй"}</p>
+            <p>
+              {order?.gaaliin_meduulgiin_dugaar
+                ? order?.gaaliin_meduulgiin_dugaar
+                : "Оруулаагүй"}
+            </p>
           </div>
         </div>
         <div className="numbers">
@@ -552,7 +558,6 @@ const SingleOrder = () => {
               <div className="flex-row align-center space-between">
                 <p>{extra_infos.other.one.text}</p>
                 <p>{formatCurrency(extra_infos.other.two.price)}</p>
-
               </div>
             ) : (
               <div className="flex-row align-center space-between">
@@ -584,7 +589,6 @@ const SingleOrder = () => {
       </>
     );
   }
-
 
   return (
     <div>

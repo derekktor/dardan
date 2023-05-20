@@ -1,7 +1,7 @@
 import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import ReportExcerpt from "./ReportExcerpt";
 import { formatCurrency } from "../orders/SingleOrder";
-import { useState, useRef } from "react";
+import moment from "moment";
 
 const ReportList = ({ orderIds, orderIdsPrev }) => {
   const { data: orders } = useGetOrdersQuery();
@@ -35,6 +35,17 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       achaatai: 0,
     },
   };
+
+  let orderIdsCurrent = orders.ids.filter((id) => {
+    const orderDateEntered = moment(orders.entities[id].date_entered).startOf("day");
+    const today = moment().startOf("day");
+    
+    const isBefore = orderDateEntered.isSameOrBefore(today);
+    const hasNotLeft = orders.entities[id].stage === 0;
+    // console.log(orders.entities[id].stage, orderDateEntered.format("YYYY-MM-DD"), today.format("YYYY-MM-DD"), orderDateEntered.isBefore(today));
+
+    return isBefore && hasNotLeft;
+  });
 
   if (orderIdsPrev) {
     orderIdsPrevLeft = orderIdsPrev.filter((id) => {
@@ -155,7 +166,7 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
       <div>
         <h4>Одоо байгаа:</h4>
         <h4>
-          {orderIdsEntered.length + orderIdsPrev.length - orderIdsLeft.length}
+          {orderIdsCurrent.length}
         </h4>
       </div>
       <div>
