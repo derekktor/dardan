@@ -2,9 +2,26 @@ import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import ReportExcerpt from "./ReportExcerpt";
 import { formatCurrency } from "../orders/SingleOrder";
 import moment from "moment";
+import { useState, useEffect } from "react";
 
 const ReportList = ({ orderIds, orderIdsPrev, date }) => {
+  const [sticky, setSticky] = useState(false);
   const { data: orders } = useGetOrdersQuery();
+
+  useEffect(() => {
+    const handleSticky = () => {
+      if (window.scrollY >= 242) {
+        setSticky(true);
+      } else {
+        setSticky(false);
+      }
+
+      // console.log(window.scrollY, sticky);
+    };
+
+    window.addEventListener("scroll", handleSticky);
+    return () => window.removeEventListener("scroll", handleSticky);
+  });
 
   let orderIdsEntered;
   let orderIdsStayed;
@@ -37,11 +54,13 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   };
 
   let orderIdsCurrent = orders.ids.filter((id) => {
-    const orderDateEntered = moment(orders.entities[id].date_entered).startOf("day");
+    const orderDateEntered = moment(orders.entities[id].date_entered).startOf(
+      "day"
+    );
     const today = date.startOf("day");
     // const today = moment().startOf("day");
     // console.log(today.format("YYYY-MM-DD"));
-    
+
     const isBefore = orderDateEntered.isSameOrBefore(today);
     const hasNotLeft = orders.entities[id].stage === 0;
     // console.log(orders.entities[id].stage, orderDateEntered.format("YYYY-MM-DD"), today.format("YYYY-MM-DD"), orderDateEntered.isBefore(today));
@@ -167,9 +186,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       </div>
       <div>
         <h4>Одоо байгаа:</h4>
-        <h4>
-          {orderIdsCurrent.length}
-        </h4>
+        <h4>{orderIdsCurrent.length}</h4>
       </div>
       <div>
         <h4>Үлдэгдэл:</h4>
@@ -264,7 +281,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     <div>
       {statsContent}
       <div className="report-container">
-        <div>{header}</div>
+        <div className={sticky && "sticky"}>{header}</div>
         <div>{ordersData}</div>
         <div>{footer}</div>
       </div>

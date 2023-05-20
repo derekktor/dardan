@@ -558,7 +558,6 @@ input {
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
-  
 }
 
 #hintDisplay > div {
@@ -581,15 +580,15 @@ input {
 }
 
 .hidden {
-  display: none!important;
+  display: none !important;
 }
 
 .order-finished {
-  background-color: rgba(119, 241, 174, 0.322)
+  background-color: rgba(119, 241, 174, 0.322);
 }
 
 .order-unfinished {
-  background-color: rgba(0, 0, 0, 0.129)
+  background-color: rgba(0, 0, 0, 0.129);
 }
 
 .report-container {
@@ -598,9 +597,13 @@ input {
   display: grid;
 }
 
-.report-container > div:first-child, .report-container > div:last-child {
+.report-container > div:first-child,
+.report-container > div:last-child {
   display: grid;
-  grid-template-columns: repeat(18, 250px);
+  /* grid-template-columns: repeat(18, 250px); */
+  /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
+  grid-template-columns: repeat(18, minmax(250px, 1fr));
+  grid-auto-rows: minmax(40px, auto);
   align-items: center;
   /* text-align: center; */
 }
@@ -680,4 +683,13 @@ input {
 
 .stats-grid > div > *:last-child {
   text-align: center;
+}
+
+.sticky {
+  position: fixed;
+  top: 56px;
+  z-index: 10;
+  background-color: white;
+  transition: .1s;
+  overflow: auto;
 }

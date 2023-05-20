@@ -39,8 +39,12 @@ const ReportMonthly = () => {
     setYear(parseInt(e.target.value));
   };
 
+  const handleMouseMove = e => {
+    // console.log(e.clientX, e.clientY)
+  }
+
   return (
-    <div>
+    <div onMouseMove={handleMouseMove}>
       <div className="report-monthly-grid">
         <div>
           <label htmlFor="monthInput">Сар</label>
