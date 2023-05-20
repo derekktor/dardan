@@ -83,7 +83,7 @@ const ReportDaily = () => {
       </div>
 
       <div>
-        <ReportList orderIds={ids} orderIdsPrev={idsPrev} />
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev} date={selectedDate}/>
       </div>
     </div>
   );

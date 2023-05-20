@@ -3,11 +3,11 @@ import ReportExcerpt from "./ReportExcerpt";
 import { formatCurrency } from "../orders/SingleOrder";
 import moment from "moment";
 
-const ReportList = ({ orderIds, orderIdsPrev }) => {
+const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const { data: orders } = useGetOrdersQuery();
 
   let orderIdsEntered;
-  let orderIdsPrevLeft;
+  let orderIdsStayed;
   let orderIdsLeft;
   let ordersData;
   let stats = {
@@ -38,7 +38,9 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
 
   let orderIdsCurrent = orders.ids.filter((id) => {
     const orderDateEntered = moment(orders.entities[id].date_entered).startOf("day");
-    const today = moment().startOf("day");
+    const today = date.startOf("day");
+    // const today = moment().startOf("day");
+    // console.log(today.format("YYYY-MM-DD"));
     
     const isBefore = orderDateEntered.isSameOrBefore(today);
     const hasNotLeft = orders.entities[id].stage === 0;
@@ -48,11 +50,11 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
   });
 
   if (orderIdsPrev) {
-    orderIdsPrevLeft = orderIdsPrev.filter((id) => {
+    orderIdsStayed = orderIdsPrev.filter((id) => {
       return orders.entities[id].stage === 0;
     });
 
-    orderIdsPrevLeft.forEach((id) => {
+    orderIdsStayed.forEach((id) => {
       const thisOrder = orders.entities[id];
 
       if (thisOrder.invoice_to_302) {
@@ -153,7 +155,7 @@ const ReportList = ({ orderIds, orderIdsPrev }) => {
     <div className="stats-grid">
       <div>
         <h4>Хоносон:</h4>
-        <h4>{orderIdsPrev.length}</h4>
+        <h4>{orderIdsStayed.length}</h4>
       </div>
       <div>
         <h4>Орсон:</h4>

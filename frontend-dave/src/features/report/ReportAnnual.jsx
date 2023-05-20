@@ -45,7 +45,7 @@ const ReportAnnual = () => {
         />
       </div>
       <div>
-        <ReportList orderIds={ids} orderIdsPrev={idsPrev}/>
+        <ReportList orderIds={ids} orderIdsPrev={idsPrev} date={moment(`${year}-01-01`).endOf("year")} />
       </div>
     </div>
   );
