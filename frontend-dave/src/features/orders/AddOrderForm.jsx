@@ -18,6 +18,8 @@ const AddOrderForm = () => {
         date_entered: new Date(),
         truck_id_digits: "",
         truck_id_letters: "",
+        puulelt: 0,
+        others: 0,
         load_name: "",
         load_weight: 0,
         stage: 0,
@@ -54,7 +56,6 @@ const AddOrderForm = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        console.log(canSave, truckLetValid);
 
         if (canSave) {
             try {
@@ -110,6 +111,20 @@ const AddOrderForm = () => {
                         <option value={0}>Ашиглаагүй</option>
                         <option value={1}>Суудлын машин</option>
                         <option value={2}>Бусад</option>
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="others">Бусад:</label>
+                    <select
+                        name="others"
+                        id="others"
+                        onChange={onChange}
+                        value={orderData.others}
+                        defaultValue={0}
+                    >
+                        <option value={0}>Үгүй</option>
+                        <option value={1}>7.1 - кран</option>
+                        <option value={2}>7.2 - бусад</option>
                     </select>
                 </div>
                 <div>

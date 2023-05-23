@@ -125,6 +125,37 @@ export const getPuulelt = (puuleltData) => {
     return puulelt;
 };
 
+export const getOthers = (othersData) => {
+    let others = { text: "", price: 0, detailed: "" };
+
+    switch (othersData) {
+        case 0:
+            others.text = "Үгүй";
+            others.price = 0;
+            others.detailed = "";
+            break;
+        case 1:
+            others.text = "Кран";
+            others.price = 20000;
+            others.detailed =
+                "7.1 Хүлээн авагч өөрийн  авто кран ГХБ рүү оруулахад";
+            break;
+        case 2:
+            others.text = "Бусад";
+            others.price = 10000;
+            others.detailed =
+                "7.2 Хүлээн авагч өөрийн  ачааны ба бусад машин ГХБ рүү оруулахад";
+            break;
+        default:
+            others.text = "-";
+            others.price = 0;
+            others.detailed = "";
+            break;
+    }
+
+    return others;
+};
+
 export const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleString("en-US", {
@@ -274,15 +305,18 @@ export const getTotalPrice = (order) => {
     }
 
     let otherPrice = 0;
-    if (order?.other1) {
+    if (order?.others === 1) {
         otherPrice += extra_infos.other.one.price;
-    }
-    if (order?.other2) {
+    } else if (order?.others === 2) {
         otherPrice += extra_infos.other.two.price;
     }
 
     if (order?.stage === 2) {
-      return puuleltPrice;
+        return puuleltPrice;
+    }
+
+    if (order?.stage === 3) {
+        return otherPrice;
     }
 
     return (
@@ -313,6 +347,7 @@ const SingleOrder = () => {
     const forklift = getForkliftData(order?.forklift_usage);
     const crane = getCraneData(order?.crane_usage);
     const puulelt = getPuulelt(order?.puulelt);
+    const others = getOthers(order?.others);
 
     const numDays = getNumDays(order);
     const contentForDays = getContentForDaysStayed(numDays);
@@ -463,6 +498,13 @@ const SingleOrder = () => {
             </div>
             <div>
                 <h4>Бусад</h4>
+                <div className="flex-row space-between">
+                    <p>{others.text}</p>
+                    <p>{formatCurrency(others.price)}</p>
+                </div>
+            </div>
+            <div>
+                <h4>Бусад</h4>
                 {order?.other1 ? (
                     <div className="flex-row align-center space-between">
                         <p>{extra_infos.other.one.text}</p>
@@ -496,28 +538,6 @@ const SingleOrder = () => {
             </div>
         </div>
     );
-
-    if (order?.stage === 2) {
-        calculationComp = (
-            <div className="numbers">
-                <div>
-                    <h4>Автомашин пүүлэлт</h4>
-                    <div className="flex-row space-between">
-                        <p>{puulelt.text}</p>
-                        <p>{formatCurrency(puulelt.price)}</p>
-                    </div>
-                </div>
-                <div>
-                    <h3>Нийт дүн</h3>
-                    <p>
-                        {getTotalPrice(order)
-                            ? formatCurrency(getTotalPrice(order))
-                            : "Оруулаагүй"}
-                    </p>
-                </div>
-            </div>
-        );
-    }
 
     let informationalComp = (
         <div className="informational">
@@ -653,19 +673,85 @@ const SingleOrder = () => {
                 </div>
             </div>
         );
+
+        calculationComp = (
+            <div className="numbers">
+                <div>
+                    <h4>Автомашин пүүлэлт</h4>
+                    <div className="flex-row space-between">
+                        <p>{puulelt.text}</p>
+                        <p>{formatCurrency(puulelt.price)}</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Нийт дүн</h3>
+                    <p>
+                        {getTotalPrice(order)
+                            ? formatCurrency(getTotalPrice(order))
+                            : "Оруулаагүй"}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (order?.stage === 3) {
+        informationalComp = (
+            <div className="informational">
+                <div>
+                    <h4>Орсон огноо</h4>
+                    <p>{formatDate(order?.date_entered)}</p>
+                </div>
+                <div>
+                    <h4>Гарсан огноо</h4>
+                    <p>{formatDate(order?.date_left)}</p>
+                </div>
+                <div>
+                    <h4>Арлын дугаар</h4>
+                    <p>
+                        {order?.truck_id_digits} {order?.truck_id_letters}
+                    </p>
+                </div>
+                <div>
+                    <h4>Ачаа, барааны нэр</h4>
+                    <p>{order?.load_name}</p>
+                </div>
+                <div>
+                    <h4>Ачааны жин</h4>
+                    <p>{order?.load_weight} тн</p>
+                </div>
+                <div>
+                    <h4>Бусад</h4>
+                    <p>{others.detailed}</p>
+                </div>
+            </div>
+        );
+
+        calculationComp = (
+            <div className="numbers">
+                <div>
+                    <h4>Бусад</h4>
+                    <div className="flex-row space-between">
+                        <p>{others.text}</p>
+                        <p>{formatCurrency(others.price)}</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Нийт дүн</h3>
+                    <p>
+                        {getTotalPrice(order)
+                            ? formatCurrency(getTotalPrice(order))
+                            : "Оруулаагүй"}
+                    </p>
+                </div>
+            </div>
+        );
     }
 
     let orderContent;
     if (order?.stage === 0) {
         orderContent = <>{basicsComp}</>;
-    } else if (order?.stage === 1) {
-        orderContent = (
-            <>
-                {informationalComp}
-                {calculationComp}
-            </>
-        );
-    } else if (order?.stage === 2) {
+    } else {
         orderContent = (
             <>
                 {informationalComp}

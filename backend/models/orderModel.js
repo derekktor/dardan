@@ -41,6 +41,9 @@ const orderSchema = mongoose.Schema(
     fine2: {
       type: Boolean,
     },
+    others: {
+      type: Number, // 0 - bhgui, 1 - 7.1(crane, 20k), 2 - 7.2(busad, 10k)
+    },
     other1: {
       type: Boolean,
     },
@@ -66,7 +69,7 @@ const orderSchema = mongoose.Schema(
       type: String,
     },
     stage: {
-      type: Number, // 0 || 1 - done | 2 - only puulelt
+      type: Number, // 0, 1 - done, 2 - only puulelt, 3 - others
     },
   },
   {

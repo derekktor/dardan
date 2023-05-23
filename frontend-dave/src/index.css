@@ -510,6 +510,10 @@ input {
   margin-top: 10px;
 }
 
+.mr {
+  margin-right: 20px;
+}
+
 .m {
   margin: 10px;
 }
@@ -702,4 +706,9 @@ input {
   background-color: white;
   transition: .1s;
   overflow: auto;
+}
+
+.span-hint {
+  color: var(--INACTIVE);
+  font-style: italic;
 }

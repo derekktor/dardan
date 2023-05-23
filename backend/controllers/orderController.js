@@ -55,6 +55,7 @@ const createOrder = asyncHandler(async (req, res) => {
         truck_id_letters,
         load_name,
         load_weight,
+        others
     } = req.body;
 
     // check if required data is filled
@@ -65,7 +66,7 @@ const createOrder = asyncHandler(async (req, res) => {
     // }
 
     let newOrder;
-    if (puulelt) {
+    if (puulelt !== 0) {
         newOrder = await Order.create({
             created_by,
             date_entered,
@@ -75,7 +76,21 @@ const createOrder = asyncHandler(async (req, res) => {
             truck_id_letters,
             load_name,
             load_weight,
+            others,
             stage: 2,
+        });
+    } else if (others !== 0) {
+        newOrder = await Order.create({
+            created_by,
+            date_entered,
+            date_left: new Date(),
+            puulelt,
+            truck_id_digits,
+            truck_id_letters,
+            load_name,
+            load_weight,
+            others,
+            stage: 3,
         });
     } else {
         newOrder = await Order.create({
@@ -86,6 +101,7 @@ const createOrder = asyncHandler(async (req, res) => {
             truck_id_letters,
             load_name,
             load_weight,
+            others,
             stage: 0,
         });
     }
