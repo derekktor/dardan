@@ -281,6 +281,10 @@ export const getTotalPrice = (order) => {
         otherPrice += extra_infos.other.two.price;
     }
 
+    if (order?.stage === 2) {
+      return puuleltPrice;
+    }
+
     return (
         parkingPrice +
         tavtsanPrice +
@@ -331,7 +335,7 @@ const SingleOrder = () => {
         navigate(`/dash/orders/print/${orderId}`);
     };
 
-    const basicsComp = (
+    let basicsComp = (
         <>
             <div>
                 <h4>Орсон огноо</h4>
@@ -354,7 +358,7 @@ const SingleOrder = () => {
         </>
     );
 
-    const calculationComp = (
+    let calculationComp = (
         <div className="numbers">
             <div>
                 <h4>Талбайд хоносон хоног</h4>
@@ -493,7 +497,29 @@ const SingleOrder = () => {
         </div>
     );
 
-    const informationalComp = (
+    if (order?.stage === 2) {
+        calculationComp = (
+            <div className="numbers">
+                <div>
+                    <h4>Автомашин пүүлэлт</h4>
+                    <div className="flex-row space-between">
+                        <p>{puulelt.text}</p>
+                        <p>{formatCurrency(puulelt.price)}</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Нийт дүн</h3>
+                    <p>
+                        {getTotalPrice(order)
+                            ? formatCurrency(getTotalPrice(order))
+                            : "Оруулаагүй"}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    let informationalComp = (
         <div className="informational">
             <div>
                 <h4>Орсон огноо</h4>
@@ -518,12 +544,12 @@ const SingleOrder = () => {
                 <p>{order?.load_weight} тн</p>
             </div>
             <div>
-                <h4>Тавцан ашиглалт</h4>
-                <p>{tavtsan.text ? tavtsan.text : "Ашиглаагүй"}</p>
-            </div>
-            <div>
                 <h4>Пүүлэлт</h4>
                 <p>{puulelt.text ? puulelt.text : "Ашиглаагүй"}</p>
+            </div>
+            <div>
+                <h4>Тавцан ашиглалт</h4>
+                <p>{tavtsan.text ? tavtsan.text : "Ашиглаагүй"}</p>
             </div>
             <div>
                 <h4>Сэрээт өргөгч</h4>
@@ -596,6 +622,39 @@ const SingleOrder = () => {
         </div>
     );
 
+    if (order?.stage === 2) {
+        informationalComp = (
+            <div className="informational">
+                <div>
+                    <h4>Орсон огноо</h4>
+                    <p>{formatDate(order?.date_entered)}</p>
+                </div>
+                <div>
+                    <h4>Гарсан огноо</h4>
+                    <p>{formatDate(order?.date_left)}</p>
+                </div>
+                <div>
+                    <h4>Арлын дугаар</h4>
+                    <p>
+                        {order?.truck_id_digits} {order?.truck_id_letters}
+                    </p>
+                </div>
+                <div>
+                    <h4>Ачаа, барааны нэр</h4>
+                    <p>{order?.load_name}</p>
+                </div>
+                <div>
+                    <h4>Ачааны жин</h4>
+                    <p>{order?.load_weight} тн</p>
+                </div>
+                <div>
+                    <h4>Пүүлэлт</h4>
+                    <p>{puulelt.text ? puulelt.text : "Ашиглаагүй"}</p>
+                </div>
+            </div>
+        );
+    }
+
     let orderContent;
     if (order?.stage === 0) {
         orderContent = <>{basicsComp}</>;
@@ -609,18 +668,8 @@ const SingleOrder = () => {
     } else if (order?.stage === 2) {
         orderContent = (
             <>
-                {basicsComp}
-                <div>
-                    <h4>Гарсан огноо</h4>
-                    <p>
-                        <p>{formatDate(order?.date_left)}</p>
-                    </p>
-                </div>
-                <div>
-                    <h4>Пүүлэлт</h4>
-                    <p>{puulelt.text}</p>
-                    <p>{formatCurrency(puulelt.price)}</p>
-                </div>
+                {informationalComp}
+                {calculationComp}
             </>
         );
     }

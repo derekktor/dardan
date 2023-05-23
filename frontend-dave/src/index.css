@@ -448,6 +448,16 @@ input {
 .edit-order-form > div {
   display: flex;
   flex-direction: column;
+  gap: 15px;
+}
+
+.edit-order-form > div > h4 {
+  text-decoration: underline;
+}
+
+.edit-order-form > div > div {
+  display: flex;
+  flex-direction: column;
 }
 
 .flex-row {
