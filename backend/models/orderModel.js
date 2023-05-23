@@ -66,7 +66,7 @@ const orderSchema = mongoose.Schema(
       type: String,
     },
     stage: {
-      type: Number, // 0 || 1 - done
+      type: Number, // 0 || 1 - done | 2 - only puulelt
     },
   },
   {
