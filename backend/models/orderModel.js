@@ -1,74 +1,77 @@
 const mongoose = require("mongoose");
 
-const truckSchema = mongoose.Schema(
+const orderSchema = mongoose.Schema(
   {
     created_by: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User"
+      type: String,
     },
-    truck_num: {
-      digits: {
-        type: String,
-        required: [true, "Арлын дугаарын тоог оруулна уу!"],
-      },
-      letters: {
-        type: String,
-        required: [true, "Арлын дугаарын үсгийг оруулна уу!"],
-      }, 
+    date_entered: {
+      type: Date, 
+    },
+    truck_id_digits: {
+      type: String,
+    },
+    truck_id_letters: {
+      type: String,
     },
     load_name: {
       type: String,
     },
     load_weight: {
-      type: Number
+      type: Number,
     },
     date_left: {
-      type: Date
+      type: Date, 
     },
-    tavtsan_ashiglalt: {
-      type: String
+    tavtsan_usage: {
+      type: String, // '0' || gadna_tavtsan || aguulah_tavtsan
     },
     puulelt: {
-      type: Boolean
+      type: Number, // 0 - hiilgeegui, 1 - suudliin mashin, 2 - busad
     },
     forklift_usage: {
-      type: String
+      type: String, // 'neg' || [0-9]
     },
     crane_usage: {
-      type: Number
+      type: Number, // 0 - ashiglaagui || 1 - hooson orgolt, 100k || 2 - achaatai orgolt, 250k
     },
     fine1: {
-      type: Boolean
+      type: Boolean,
     },
     fine2: {
-      type: Boolean
+      type: Boolean,
     },
     other1: {
-      type: Boolean
+      type: Boolean,
     },
     other2: {
-      type: Boolean
+      type: Boolean,
     },
     invoice_to_302: {
-      type: Number
+      type: Number,
     },
     invoice_to_601: {
-      type: Number
+      type: Number,
     },
     amount_w_noat: {
-      type: Number
+      type: Number,
     },
     amount_wo_noat: {
-      type: Number
+      type: Number,
     },
     client_name: {
-      type: String
-    }
+      type: String,
+    },
+    gaaliin_meduulgiin_dugaar: {
+      type: String,
+    },
+    stage: {
+      type: Number, // 0 || 1 - done
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Truck", truckSchema);
+module.exports = mongoose.model("Order", orderSchema);

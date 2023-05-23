@@ -4,16 +4,21 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Нэрээ оруулна уу?"],
+      // required: [true, "Нэрээ оруулна уу?"],
       unique: true
     },
     password: {
       type: String,
-      required: [true, "Нууц үгээ оруулна уу?"],
+      // required: [true, "Нууц үгээ оруулна уу?"],
     },
-    role: {
-      type: String,
+    roles: {
+      type: Array,
+      default: ["employee"]
     },
+    active: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     timestamps: true,
