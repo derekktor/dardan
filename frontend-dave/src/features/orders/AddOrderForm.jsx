@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { TRUCKLET_REGEX, TRUCKNUM_REGEX } from "./EditOrderForm";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const AddOrderForm = () => {
-    const { name, userId } = useAuth();
+    const { userId } = useAuth();
 
     const navigate = useNavigate();
     const [createOrder, { isLoading }] = useCreateOrderMutation();
@@ -53,6 +54,7 @@ const AddOrderForm = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        console.log(canSave, truckLetValid);
 
         if (canSave) {
             try {
@@ -65,6 +67,19 @@ const AddOrderForm = () => {
                 navigate("/dash/orders");
             } catch (error) {
                 console.error("Бүртгэлийг илгээж чадсангүй", error);
+            }
+        } else {
+            if (!truckNumValid) {
+                toast.error("Арлын дугаар хэтэрхий урт эсвэл богино байна!");
+                // navigate(`/dash/orders/edit/${orderId}`);
+            }
+            if (!truckLetValid) {
+                toast.error("Арлын дугаарын үсэг кирилл 3 үсэг байх ёстой!");
+                // navigate(`/dash/orders/edit/${orderId}`);
+            }
+            if (!orderData.truck_id_digits) {
+                toast.error("Арлын дугаар заавал байх ёстой!");
+                // navigate(`/dash/orders/edit/${orderId}`);
             }
         }
     };
@@ -141,7 +156,7 @@ const AddOrderForm = () => {
                         onChange={onChange}
                     />
                 </div>
-                <button className="button" type="submit" disabled={!canSave}>
+                <button className="button" type="submit">
                     Илгээх
                 </button>
             </form>
