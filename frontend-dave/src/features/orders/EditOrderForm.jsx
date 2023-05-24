@@ -5,6 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { getTotalPrice, formatCurrency } from "./SingleOrder";
 
 export const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
 export const TRUCKLET_REGEX = /^([а-яА-ЯөӨүҮёЁ]{3})?$/;
@@ -92,6 +93,14 @@ const EditOrderForm = () => {
             last_edited_by: name,
         };
 
+        console.log(orderData);
+
+        if (orderData.stage === 2) {
+            sendingData = { ...orderData, stage: 2 };
+        } else if (orderData.stage === 3) {
+            sendingData = { ...orderData, stage: 3 };
+        }
+
         if (orderData.date_left === null) {
             sendingData = { ...sendingData, stage: 0 };
         }
@@ -128,7 +137,10 @@ const EditOrderForm = () => {
 
     const accountForm = (
         <div className="mt">
-            <h4>Тооцоо</h4>
+            <div className="flex-col">
+                <h3>Тооцоо</h3>
+                <p>{formatCurrency(getTotalPrice(orderData))}</p>
+            </div>
             <div>
                 <label htmlFor="invoice_to_302">
                     5131240302 дансанд шилжүүлсэн дүн:
@@ -412,18 +424,32 @@ const EditOrderForm = () => {
         );
     }
 
+    if (orderData.stage === 3) {
+        technicalContent = (
+            <div className="mt">
+                <h4>Техник ашиглалт</h4>
+                <div>
+                    <label htmlFor="others">Бусад:</label>
+                    <select
+                        name="others"
+                        id="others"
+                        onChange={onChange}
+                        value={orderData.others}
+                        defaultValue={0}
+                    >
+                        <option value={0}>Үгүй</option>
+                        <option value={1}>7.1 - кран</option>
+                        <option value={2}>7.2 - бусад</option>
+                    </select>
+                </div>
+            </div>
+        );
+    }
+
     let content;
     if (orderData.stage === 0) {
         content = technicalContent;
-    } else if (orderData.stage === 1) {
-        content = (
-            <>
-                {accountForm}
-                {loadInfo}
-                {technicalContent}
-            </>
-        );
-    } else if (orderData.stage === 2) {
+    } else {
         content = (
             <>
                 {accountForm}
