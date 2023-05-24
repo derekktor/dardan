@@ -44,6 +44,7 @@ const OrderExcerpt = ({ orderId }) => {
         </div>
         <div>{formatDate(order.date_entered)}</div>
         <div>{order.load_name}</div>
+        <div>{order.description}</div>
         <div>
           <div className="buttons">
             <button onClick={() => handleMore(orderId)}>Дэлгэрэнгүй</button>

@@ -14,7 +14,13 @@ const orderSchema = mongoose.Schema(
     truck_id_letters: {
       type: String,
     },
+    truck_type: {
+      type: Number, // 0 - engiin, 1 - gol, 2 - chirguul
+    },
     load_name: {
+      type: String,
+    },
+    description: {
       type: String,
     },
     load_weight: {
@@ -69,7 +75,7 @@ const orderSchema = mongoose.Schema(
       type: String,
     },
     stage: {
-      type: Number, // 0, 1 - done, 2 - only puulelt, 3 - others, 4 - puulelt done, 5 - others done
+      type: Number, // 0 - entered, 1 - done, 2 - only puulelt, 3 - others, 4 - puulelt done, 5 - others done
     },
   },
   {

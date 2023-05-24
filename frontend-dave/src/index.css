@@ -551,7 +551,7 @@ input {
 
 .orders-grid > div {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   padding: 10px;
 }
 
@@ -711,4 +711,42 @@ input {
 .span-hint {
   color: var(--INACTIVE);
   font-style: italic;
+}
+
+.state-title {
+  width: 80vw;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.state-title > span {
+  background-color: lightgray;
+  padding: 10px 10vw;
+}
+
+.state-title.entered > span:nth-child(1) {
+  background-color: rgb(214, 255, 214);
+}
+
+.state-title.entered > span:nth-child(2) {
+  background-color: lightgray;
+}
+
+.state-title.left > span:nth-child(1) {
+  background-color: rgb(214, 255, 214);
+}
+
+.state-title.left > span:nth-child(2) {
+  background-color: rgb(175, 236, 175);
+}
+
+.state-title > span:first-child {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.state-title > span:last-child {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }

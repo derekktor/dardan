@@ -137,7 +137,7 @@ const OrdersList = () => {
   return (
     <>
       {hintVisible && (
-        <div id="hintDisplay" className="">
+        <div id="hintDisplay" >
           <div ref={refHint}>
             <h3>Тусламж</h3>
             <div>
@@ -214,6 +214,7 @@ const OrdersList = () => {
             <h4>Арлын дугаар</h4>
             <h4>Орсон огноо</h4>
             <h4>Барааны нэр</h4>
+            <h4>Тайлбар</h4>
             <h4>Buttons</h4>
           </div>
           {content}
