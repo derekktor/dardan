@@ -26,40 +26,67 @@ const OrderPrint = () => {
   if (order) {
     garahHuudas = (
       <div ref={componentRef} className="garah-huudas">
-        <h3>Гаалийн хяналтын бүсээс гарах зөвшөөрөл</h3>
         <div>
-          <h4>Орсон огноо</h4>
-          <p>{formatDate(order.date_entered)}</p>
+          <h3>Гаалийн хяналтын бүсээс гарах зөвшөөрөл</h3>
+          <div>
+            <h4>Орсон огноо</h4>
+            <p>{formatDate(order.date_entered)}</p>
+          </div>
+          <div>
+            <h4>Гарсан огноо</h4>
+            <p>{formatDate(order.date_left)}</p>
+          </div>
+          <div>
+            <h4>Гаалийн мэдүүлгийн дугаар</h4>
+            <p>
+              {order.gaaliin_meduulgiin_dugaar
+                ? order.gaaliin_meduulgiin_dugaar
+                : "..."}
+            </p>
+          </div>
+          <div>
+            <h4>Тээврийн хэрэгслийн дугаар /Арлын дугаар/</h4>
+            <p>
+              {order.truck_id_digits} {order.truck_id_letters}
+            </p>
+          </div>
+          <div>
+            <h4>Нийт үнэ</h4>
+            <p>{formatCurrency(getTotalPrice(order))}</p>
+          </div>
         </div>
         <div>
-          <h4>Гарсан огноо</h4>
-          <p>{formatDate(order.date_left)}</p>
-        </div>
-        <div>
-          <h4>Гаалийн мэдүүлгийн дугаар</h4>
-          <p>
-            {order.gaaliin_meduulgiin_dugaar
-              ? order.gaaliin_meduulgiin_dugaar
-              : "..."}
-          </p>
-        </div>
-        <div>
-          <h4>Тээврийн хэрэгслийн дугаар</h4>
-          <p>
-            {order.truck_id_digits} {order.truck_id_letters}
-          </p>
-        </div>
-        <div>
-          <h4>ГУАБ</h4>
-          <p>...</p>
-        </div>
-        <div>
-          <h4>ГУБ</h4>
-          <p>...</p>
-        </div>
-        <div>
-          <h4>Нийт үнэ</h4>
-          <p>{formatCurrency(getTotalPrice(order))}</p>
+          <h3>Гаалийн хяналтын бүсээс гарах зөвшөөрөл</h3>
+          <div>
+            <h4>Орсон огноо</h4>
+            <p>{formatDate(order.date_entered)}</p>
+          </div>
+          <div>
+            <h4>Гарсан огноо</h4>
+            <p>{formatDate(order.date_left)}</p>
+          </div>
+          <div>
+            <h4>Гаалийн мэдүүлгийн дугаар</h4>
+            <p>
+              {order.gaaliin_meduulgiin_dugaar
+                ? order.gaaliin_meduulgiin_dugaar
+                : "..."}
+            </p>
+          </div>
+          <div>
+            <h4>Тээврийн хэрэгслийн дугаар /Арлын дугаар/</h4>
+            <p>
+              {order.truck_id_digits} {order.truck_id_letters}
+            </p>
+          </div>
+          <div>
+            <h4>ГУАБ</h4>
+            <p>...</p>
+          </div>
+          <div>
+            <h4>ГУБ</h4>
+            <p>...</p>
+          </div>
         </div>
       </div>
     );

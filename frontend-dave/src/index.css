@@ -635,21 +635,29 @@ input {
 
 .garah-huudas {
   display: flex;
-  flex-direction: column;
-  border: 1px solid black;
-  padding: 10px 5vw;
-  margin: 5px 10vw;
-}
-
-.garah-huudas > h3 {
-  text-align: center;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .garah-huudas > div {
+  width: 40vw;
+  border: 1px solid black;
+  padding: 10px 5vw;
+}
+
+.garah-huudas > div > h3 {
+  text-align: center;
+}
+
+.garah-huudas > div > div {
   display: flex;
   flex-direction: row;
   margin-bottom: 20px;
   justify-content: space-between;
+}
+
+.garah-huudas > div > div > * {
+  flex: 1;
 }
 
 .garah-huudas p {
@@ -704,7 +712,7 @@ input {
   top: 56px;
   z-index: 10;
   background-color: white;
-  transition: .1s;
+  transition: 0.1s;
   overflow: auto;
 }
 
