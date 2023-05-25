@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { TRUCKLET_REGEX, TRUCKNUM_REGEX } from "./EditOrderForm";
+import { TRUCKLET_REGEX, TRUCKNUM_REGEX, FORKLIFT_REGEX } from "./EditOrderForm";
 import moment from "moment";
 import { toast } from "react-toastify";
 

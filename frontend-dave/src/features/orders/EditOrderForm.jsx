@@ -9,6 +9,7 @@ import { getTotalPrice, formatCurrency } from "./SingleOrder";
 
 export const TRUCKNUM_REGEX = /^[0-9]{4,10}$/;
 export const TRUCKLET_REGEX = /^([а-яА-ЯөӨүҮёЁ]{3})?$/;
+export const FORKLIFT_REGEX = /^(neg|нэг|\d+)$/i;
 
 const EditOrderForm = () => {
   const { name } = useAuth();
@@ -44,20 +45,26 @@ const EditOrderForm = () => {
       ? order?.gaaliin_meduulgiin_dugaar
       : "",
   });
-  let content, title = "";
+  let content,
+    title = "";
 
   const [truckNumValid, setTruckNumValid] = useState(false);
   const [truckLetValid, setTruckLetValid] = useState(false);
+  const [forkliftValid, setForkliftValid] = useState(false);
 
+  // verify inputs
   useEffect(() => {
     setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
-  }, [orderData.truck_id_digits]);
-
-  useEffect(() => {
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
-  }, [orderData.truck_id_letters]);
+    setForkliftValid(FORKLIFT_REGEX.test(orderData.forklift_usage));
+    console.log(forkliftValid)
+  }, [
+    orderData.truck_id_digits,
+    orderData.truck_id_letters,
+    orderData.forklift_usage,
+  ]);
 
-  const canSave = [truckLetValid, truckNumValid].every(Boolean) && !isLoading;
+  const canSave = [truckLetValid, truckNumValid, forkliftValid].every(Boolean) && !isLoading;
 
   // // FUNCTIONS
   const handleClearDateLeft = async (e) => {
@@ -92,8 +99,6 @@ const EditOrderForm = () => {
       last_edited_by: name,
     };
 
-    console.log(orderData);
-
     if (orderData.stage === 2) {
       sendingData = { ...orderData, stage: 2 };
     } else if (orderData.stage === 3) {
@@ -124,12 +129,13 @@ const EditOrderForm = () => {
       }
     } else {
       if (!truckNumValid) {
-        toast.error("Арлын дугаар буруу байна");
-        navigate(`/dash/orders/edit/${orderId}`);
+        toast.error("Арлын дугаар зөвхөн тоо байх ёстой!");
       }
       if (!truckLetValid) {
-        toast.error("Арлын дугаарын үсэг буруу байна");
-        navigate(`/dash/orders/edit/${orderId}`);
+        toast.error("Арлын дугаарын үсэг 3 кирилл үсэг байх ёстой!");
+      }
+      if (!forkliftValid) {
+        toast.error("Сэрээт өргөгчийн утга алдаатай байна!");
       }
     }
   };
@@ -453,11 +459,11 @@ const EditOrderForm = () => {
 
   // entered
   if (orderData.stage === 0) {
-    title = "Гарах мэдээлэл бүрдүүлэх"
+    title = "Гарах мэдээлэл бүрдүүлэх";
     content = techUsageComp;
   } else {
     // left
-    title = "Тооцоо хийх"
+    title = "Тооцоо хийх";
     content = (
       <>
         {paymentComp}
