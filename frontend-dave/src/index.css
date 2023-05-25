@@ -762,3 +762,16 @@ input {
 .not-selectable {
   user-select: none;
 }
+
+.pointer {
+  cursor: pointer;
+}
+
+.pointer:hover {
+  color: rgba(0, 0, 0, 0.6);
+  transition: .3s;
+}
+
+.pointer.inactive {
+  color: rgba(0, 0, 0, 0.4);
+}

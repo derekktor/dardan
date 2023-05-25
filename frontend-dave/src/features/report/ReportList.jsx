@@ -29,6 +29,10 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const { data: orders } = useGetOrdersQuery();
 
   // // VARIABLES
+  const [classForStayed, setClassForStayed] = useState("pointer");
+  const [classForEntered, setClassForEntered] = useState("pointer");
+  const [classForLeft, setClassForLeft] = useState("pointer");
+  const [classForCurrent, setClassForCurrent] = useState("pointer");
   let renderedOrders;
   let orderIdsEntered;
   let orderIdsEnteredAndStayed;
@@ -187,6 +191,21 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   }
 
   // // FUNCTIONS
+  const handleFilterStayed = () => {
+    console.log(
+      "showing orders stayed",
+      orderIdsStayed.length,
+      orderIds.length
+    );
+
+    setClassForStayed("pointer")
+    setClassForLeft("pointer inactive")
+    setClassForEntered("pointer inactive")
+    setClassForCurrent("pointer inactive")
+
+    setOrderIdsVar(orderIdsStayed);
+  };
+
   const handleFilterEntered = () => {
     console.log(
       "showing orders entered",
@@ -194,11 +213,21 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       orderIds.length
     );
 
+    setClassForStayed("pointer inactive")
+    setClassForLeft("pointer inactive")
+    setClassForEntered("pointer")
+    setClassForCurrent("pointer inactive")
+
     setOrderIdsVar(orderIdsEnteredAndStayed);
   };
 
   const handleFilterLeft = () => {
     console.log("showing orders left", orderIdsLeft.length, orderIds.length);
+
+    setClassForStayed("pointer inactive")
+    setClassForLeft("pointer")
+    setClassForEntered("pointer inactive")
+    setClassForCurrent("pointer inactive")
 
     setOrderIdsVar(orderIdsLeft);
   };
@@ -206,25 +235,30 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const handleFilterCurrent = () => {
     console.log("showing orders current", orderIdsCurrent.length, orderIds.length);
 
+    setClassForStayed("pointer inactive")
+    setClassForLeft("pointer inactive")
+    setClassForEntered("pointer inactive")
+    setClassForCurrent("pointer")
+
     setOrderIdsVar(orderIdsCurrent);
   };
 
   // // COMPONENTS
   const statsContent = (
     <div className="stats-grid not-selectable">
-      <div>
+      <div className={classForStayed} onDoubleClick={handleFilterStayed}>
         <h4>Хоносон:</h4>
         <h4>{orderIdsStayed.length}</h4>
       </div>
-      <div onDoubleClick={handleFilterEntered}>
+      <div className={classForEntered} onDoubleClick={handleFilterEntered}>
         <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
-      <div onDoubleClick={handleFilterLeft}>
+      <div className={classForLeft} onDoubleClick={handleFilterLeft}>
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
       </div>
-      <div onDoubleClick={handleFilterCurrent}>
+      <div className={classForCurrent} onDoubleClick={handleFilterCurrent}>
         <h4>Одоо байгаа:</h4>
         <h4>{orderIdsCurrent.length}</h4>
       </div>
