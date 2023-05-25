@@ -60,6 +60,7 @@ const createOrder = asyncHandler(async (req, res) => {
     others,
   } = req.body;
 
+  console.log(created_by);
   // check if required data is filled
   // if (!load_name) {
   //   return res
@@ -109,7 +110,7 @@ const createOrder = asyncHandler(async (req, res) => {
       truck_id_letters,
       truck_type,
       load_name,
-      description: `${truck_id_digits} ${truck_id_letters} толгой`,
+      description,
       load_weight,
       others,
       stage: 0,
@@ -141,7 +142,9 @@ const createOrder = asyncHandler(async (req, res) => {
 
     // if order is created, notify
     if (newOrderDuplicate) {
-      res.status(200).json({ message: "Бүртгэл нэмэгдлээ", data: newOrderDuplicate });
+      res
+        .status(200)
+        .json({ message: "Бүртгэл нэмэгдлээ", data: newOrderDuplicate });
     } else {
       return res.status(400).json({ message: "Order data is invalid" });
     }

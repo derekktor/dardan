@@ -70,33 +70,38 @@ const OrdersList = () => {
       filteredIds?.length &&
       filteredIds
         .filter((id) => {
+          const orderDB = orders.entities[id];
           if (searchValue === "") {
             return id;
           } else if (searchValue.startsWith("/")) {
             const userName = searchValue.substring(1);
+
             let filteredUserId = users.ids.filter(
               (id) => users.entities[id].name === userName
             );
-            return orders.entities[id].created_by.includes(filteredUserId[0]);
+
+            if (orderDB.created_by) {
+              return orderDB.created_by.includes(filteredUserId[0]);
+            }
           } else if (searchValue.startsWith("-")) {
             const loadName = searchValue.substring(1);
-            return orders.entities[id].load_name.includes(loadName);
+            return orderDB.load_name.includes(loadName);
           } else if (searchValue.startsWith(">")) {
             const date = searchValue.substring(1);
 
             if (DATE_REGEX.test(date)) {
               const d = new Date(date);
-              return new Date(orders.entities[id].date_entered) > d;
+              return new Date(orderDB.date_entered) > d;
             }
           } else if (searchValue.startsWith("<")) {
             const date = searchValue.substring(1);
 
             if (DATE_REGEX.test(date)) {
               const d = new Date(date);
-              return new Date(orders.entities[id].date_entered) < d;
+              return new Date(orderDB.date_entered) < d;
             }
           } else {
-            return orders.entities[id].truck_id_digits.includes(searchValue);
+            return orderDB.truck_id_digits.includes(searchValue);
           }
         })
         .map((orderId) => <OrderExcerpt key={orderId} orderId={orderId} />);
@@ -137,7 +142,7 @@ const OrdersList = () => {
   return (
     <>
       {hintVisible && (
-        <div id="hintDisplay" >
+        <div id="hintDisplay">
           <div ref={refHint}>
             <h3>Тусламж</h3>
             <div>

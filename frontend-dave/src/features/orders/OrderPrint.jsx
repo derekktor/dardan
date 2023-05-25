@@ -3,12 +3,14 @@ import { useReactToPrint } from "react-to-print";
 import { formatDate } from "./SingleOrder";
 import { useParams } from "react-router-dom";
 import { useGetOrdersQuery } from "./ordersApiSlice";
+import { formatCurrency } from "./SingleOrder";
+import { getTotalPrice } from "./SingleOrder";
 
 const OrderPrint = () => {
   const componentRef = useRef();
-  const {orderId} = useParams();
+  const { orderId } = useParams();
 
-   const { order } = useGetOrdersQuery("ordersList", {
+  const { order } = useGetOrdersQuery("ordersList", {
     selectFromResult: ({ data }) => ({
       order: data?.entities[orderId],
     }),
@@ -35,7 +37,11 @@ const OrderPrint = () => {
         </div>
         <div>
           <h4>Гаалийн мэдүүлгийн дугаар</h4>
-          <p>{order.gaaliin_meduulgiin_dugaar ? order.gaaliin_meduulgiin_dugaar : "..."}</p>
+          <p>
+            {order.gaaliin_meduulgiin_dugaar
+              ? order.gaaliin_meduulgiin_dugaar
+              : "..."}
+          </p>
         </div>
         <div>
           <h4>Тээврийн хэрэгслийн дугаар</h4>
@@ -48,8 +54,12 @@ const OrderPrint = () => {
           <p>...</p>
         </div>
         <div>
-          <h4>ХМХА-ны улсын байцаагч</h4>
+          <h4>ГУБ</h4>
           <p>...</p>
+        </div>
+        <div>
+          <h4>Нийт үнэ</h4>
+          <p>{formatCurrency(getTotalPrice(order))}</p>
         </div>
       </div>
     );

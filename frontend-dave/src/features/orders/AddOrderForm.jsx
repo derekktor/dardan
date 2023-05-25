@@ -43,6 +43,8 @@ const AddOrderForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(userId)
+
     if (canSave) {
       try {
         const orderDataComplete = {

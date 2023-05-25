@@ -10,12 +10,14 @@ const useAuth = () => {
   if (token) {
     const decoded = jwtDecode(token);
     const { userId, name, roles } = decoded.UserInfo;
+    const userIdUsable = userId?.toString();
+    // console.log(userIdUsable, name, roles);
 
     isAdmin = roles.includes("admin");
 
     if (isAdmin) status = "admin";
 
-    return { userId, name, roles, status, isAdmin };
+    return { userIdUsable, name, roles, status, isAdmin };
   }
 
   return { name: "", roles: [], isAdmin, status };

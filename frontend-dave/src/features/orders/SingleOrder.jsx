@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { memo } from "react";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 export const getForkliftData = (data) => {
   let forklift = {
@@ -368,6 +369,10 @@ const SingleOrder = () => {
   };
 
   const handlePrint = () => {
+    if (order.stage === 0) {
+      toast.warning("Гараагүй бүртгэлийг хэвлэх гэж байна!")
+    }
+
     navigate(`/dash/orders/print/${orderId}`);
   };
 
