@@ -477,7 +477,7 @@ const EditOrderForm = () => {
           type="submit"
           // disabled={!canSave}
         >
-          Илгээх
+          Хадгалах
         </button>
       </form>
     </div>

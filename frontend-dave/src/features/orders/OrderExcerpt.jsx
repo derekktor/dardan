@@ -14,11 +14,13 @@ const OrderExcerpt = ({ orderId }) => {
   const order = useSelector((state) => selectOrderById(state, orderId));
 
   const handleDelete = async (orderId) => {
-    try {
-      await deleteOrder(orderId).unwrap();
-      navigate("/dash/orders");
-    } catch (error) {
-      console.error("Бүртгэлийг устгаж чадсангүй", error);
+    if (window.confirm("Та устгахдаа итгэлтэй байна уу?")) {
+      try {
+        await deleteOrder(orderId).unwrap();
+        navigate("/dash/orders");
+      } catch (error) {
+        console.error("Бүртгэлийг устгаж чадсангүй", error);
+      }
     }
   };
 
