@@ -5,28 +5,36 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 
 const ReportList = ({ orderIds, orderIdsPrev, date }) => {
+  // // STICKY BAR, NECESSARY?
+  // useEffect(() => {
+  //   const handleSticky = () => {
+  //     if (window.scrollY >= 242) {
+  //       setSticky(true);
+  //     } else {
+  //       setSticky(false);
+  //     }
+
+  //     // console.log(window.scrollY, sticky);
+  //   };
+
+  //   window.addEventListener("scroll", handleSticky);
+  //   return () => window.removeEventListener("scroll", handleSticky);
+  // }, []);
+
+  useEffect(() => {
+    setOrderIdsVar(orderIds);
+  }, [orderIds]);
+
   const [sticky, setSticky] = useState(false);
   const { data: orders } = useGetOrdersQuery();
 
-  useEffect(() => {
-    const handleSticky = () => {
-      if (window.scrollY >= 242) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
-
-      // console.log(window.scrollY, sticky);
-    };
-
-    window.addEventListener("scroll", handleSticky);
-    return () => window.removeEventListener("scroll", handleSticky);
-  });
-
+  // // VARIABLES
+  let renderedOrders;
   let orderIdsEntered;
+  let orderIdsEnteredAndStayed;
   let orderIdsStayed;
   let orderIdsLeft;
-  let ordersData;
+  let [orderIdsVar, setOrderIdsVar] = useState(orderIds);
   let stats = {
     totalRevenue: 0,
     totalRevenuePrev: 0,
@@ -87,6 +95,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   }
 
   if (orderIds) {
+    // filter orders by its date_entered
     orderIds.sort((a, b) => {
       const dateA = new Date(orders.entities[a].date_entered);
       const dateB = new Date(orders.entities[b].date_entered);
@@ -97,14 +106,19 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       return orders.entities[id].stage === 1 || orders.entities[id].stage === 0;
     });
 
+    orderIdsEnteredAndStayed = orderIds.filter((id) => {
+      return orders.entities[id].stage === 0;
+    });
+
     orderIdsLeft = orderIds.filter((id) => {
       return orders.entities[id].stage === 1;
     });
 
     if (orderIds.length === 0) {
-      ordersData = <h4>Ямар ч бүртгэл байхгүй байна!</h4>;
+      renderedOrders = <h4>Ямар ч бүртгэл байхгүй байна!</h4>;
     }
 
+    // calculate stats for orders entered
     orderIdsEntered.forEach((id) => {
       const thisOrder = orders.entities[id];
 
@@ -138,8 +152,10 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       stats.totalWeight += thisOrder.load_weight;
     });
 
+    // calculate stats for orders left
     orderIdsLeft.forEach((id) => {
       const thisOrder = orders.entities[id];
+
       if (!thisOrder.invoice_to_302) {
         stats.totalAmt302 += 0;
       } else {
@@ -167,24 +183,48 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       }
     });
 
-    ordersData = orderIds.map((id) => <ReportExcerpt key={id} orderId={id} />);
+    // setOrdersData(orderIds);
   }
 
+  // // FUNCTIONS
+  const handleFilterEntered = () => {
+    console.log(
+      "showing orders entered",
+      orderIdsEntered.length,
+      orderIds.length
+    );
+
+    setOrderIdsVar(orderIdsEnteredAndStayed);
+  };
+
+  const handleFilterLeft = () => {
+    console.log("showing orders left", orderIdsLeft.length, orderIds.length);
+
+    setOrderIdsVar(orderIdsLeft);
+  };
+
+  const handleFilterCurrent = () => {
+    console.log("showing orders current", orderIdsCurrent.length, orderIds.length);
+
+    setOrderIdsVar(orderIdsCurrent);
+  };
+
+  // // COMPONENTS
   const statsContent = (
-    <div className="stats-grid">
+    <div className="stats-grid not-selectable">
       <div>
         <h4>Хоносон:</h4>
         <h4>{orderIdsStayed.length}</h4>
       </div>
-      <div>
+      <div onDoubleClick={handleFilterEntered}>
         <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
-      <div>
+      <div onDoubleClick={handleFilterLeft}>
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
       </div>
-      <div>
+      <div onDoubleClick={handleFilterCurrent}>
         <h4>Одоо байгаа:</h4>
         <h4>{orderIdsCurrent.length}</h4>
       </div>
@@ -277,12 +317,16 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     </>
   );
 
+  renderedOrders = orderIdsVar.map((id) => (
+    <ReportExcerpt key={id} orderId={id} />
+  ));
+
   return (
     <div>
       {statsContent}
       <div className="report-container">
         <div className={sticky && "sticky"}>{header}</div>
-        <div>{ordersData}</div>
+        <div>{renderedOrders}</div>
         <div>{footer}</div>
       </div>
     </div>

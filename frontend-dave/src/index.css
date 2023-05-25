@@ -750,3 +750,7 @@ input {
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
 }
+
+.not-selectable {
+  user-select: none;
+}

@@ -39,9 +39,9 @@ const ReportMonthly = () => {
     setYear(parseInt(e.target.value));
   };
 
-  const handleMouseMove = e => {
+  const handleMouseMove = (e) => {
     // console.log(e.clientX, e.clientY)
-  }
+  };
 
   return (
     <div onMouseMove={handleMouseMove}>
