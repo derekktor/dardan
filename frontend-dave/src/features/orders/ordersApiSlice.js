@@ -71,6 +71,20 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         { type: "Order", id: arg },
       ],
     }),
+    deleteTests: builder.mutation({
+      query: () => ({
+        url: `/orders/tests`,
+        method: "DELETE",
+      }),
+      transformResponse: (responseData) => {
+        console.log("inside orders api", responseData)
+        return responseData;
+      },
+      // invalidatesTags: (result, error, arg) => [
+      //   // {type: "Order", id: arg.id}
+      //   { type: "Order", id: arg },
+      // ],
+    }),
   }),
 });
 
@@ -80,6 +94,7 @@ export const {
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
+  useDeleteTestsMutation
 } = extendedOrdersApiSlice;
 
 // returns the response from the api, array of orders

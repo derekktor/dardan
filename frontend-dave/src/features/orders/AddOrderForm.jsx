@@ -7,7 +7,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 
 const AddOrderForm = () => {
-  const { userId } = useAuth();
+  const { userIdUsable } = useAuth();
 
   const navigate = useNavigate();
   const [createOrder, { isLoading }] = useCreateOrderMutation();
@@ -32,6 +32,13 @@ const AddOrderForm = () => {
     [orderData.truck_id_digits, truckLetValid, truckNumValid].every(Boolean) &&
     !isLoading;
 
+  useEffect(() => {
+    setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
+    setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
+    console.log(orderData.truck_id_digits, orderData.truck_id_letters)
+    console.log(truckNumValid, truckLetValid, ", can save: ", canSave)
+  }, [orderData.truck_id_digits, orderData.truck_id_letters]);
+
   // // FUNCTIONS
   const onChange = (e) => {
     setOrderData((prev) => ({
@@ -43,18 +50,21 @@ const AddOrderForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(userId)
-
     if (canSave) {
+      console.log(canSave, truckLetValid, truckNumValid, orderData.truck_id_digits)
       try {
+      console.log("can try")
         const orderDataComplete = {
           ...orderData,
-          created_by: userId,
+          created_by: userIdUsable,
         };
+
+        console.log(orderDataComplete)
 
         await createOrder(orderDataComplete).unwrap();
         navigate("/dash/orders");
       } catch (error) {
+      console.log("cant try")
         console.error("Бүртгэлийг илгээж чадсангүй", error);
       }
     } else {
@@ -70,6 +80,8 @@ const AddOrderForm = () => {
         toast.error("Арлын дугаар заавал байх ёстой!");
         // navigate(`/dash/orders/edit/${orderId}`);
       }
+
+      toast.error("Бүртгэл илгээхэд алдаа гарлаа!")
     }
   };
 
@@ -199,11 +211,6 @@ const AddOrderForm = () => {
       Илгээх
     </button>
   );
-
-  useEffect(() => {
-    setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
-    setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
-  }, [orderData.truck_id_digits, orderData.truck_id_letters]);
 
   let content = (
     <div className="add-order-form-container">

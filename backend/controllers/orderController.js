@@ -60,7 +60,8 @@ const createOrder = asyncHandler(async (req, res) => {
     others,
   } = req.body;
 
-  console.log(created_by);
+  console.log("create order called")
+
   // check if required data is filled
   // if (!load_name) {
   //   return res
@@ -70,7 +71,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
   let newOrder, newOrderDuplicate;
   // if only puulelt was done
-  if (puulelt !== 0) {
+  if (puulelt === "1") {
     newOrder = await Order.create({
       created_by,
       date_entered,
@@ -86,7 +87,7 @@ const createOrder = asyncHandler(async (req, res) => {
       stage: 2,
     });
     // if util car was entered
-  } else if (others !== 0) {
+  } else if (others === "1") {
     newOrder = await Order.create({
       created_by,
       date_entered,
@@ -118,8 +119,10 @@ const createOrder = asyncHandler(async (req, res) => {
 
     // if order is created, notify
     if (newOrder) {
+      console.log("order created")
       res.status(200).json({ message: "Бүртгэл нэмэгдлээ", data: newOrder });
     } else {
+      console.log("order failed")
       return res.status(400).json({ message: "Order data is invalid" });
     }
   }
@@ -265,4 +268,27 @@ const deleteOrder = asyncHandler(async (req, res) => {
   // }
 });
 
-module.exports = { getOrders, createOrder, updateOrder, deleteOrder };
+// @route     DELETE /orders/tests
+// @payload   {  }
+// @response  { message, data }
+// @access    Public
+// @desc      Delete test orders
+const deleteTests = asyncHandler(async (req, res) => {
+  try {
+    const userTest = await User.findOne({name: "test"});
+
+    if (!userTest) {
+      return res.status(404).json({message: "test user not found!"});
+    }
+
+    const testDeletions = await Order.deleteMany({created_by: userTest._id.toString()})
+
+    if (testDeletions) {
+      return res.status(200).json({message: "test orders deleted", data: testDeletions});
+    }
+  } catch (error) {
+      return res.status(500).json({message: "failed to delete test orders", error: error.message});
+  }
+});
+
+module.exports = { getOrders, createOrder, updateOrder, deleteOrder, deleteTests };
