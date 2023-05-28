@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useCreateOrderMutation } from "./ordersApiSlice";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { TRUCKLET_REGEX, TRUCKNUM_REGEX, FORKLIFT_REGEX } from "./EditOrderForm";
+import {
+  TRUCKLET_REGEX,
+  TRUCKNUM_REGEX,
+  FORKLIFT_REGEX,
+} from "./EditOrderForm";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -27,17 +31,21 @@ const AddOrderForm = () => {
     load_weight: 0,
     stage: 0,
   });
+  let [classForButton, setClassForButton] = useState("button");
 
-  const canSave =
+  let canSave =
     [orderData.truck_id_digits, truckLetValid, truckNumValid].every(Boolean) &&
     !isLoading;
 
   useEffect(() => {
     setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
+    // console.log(canSave)
+  }, [orderData.truck_id_digits])
+
+  useEffect(() => {
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
-    console.log(orderData.truck_id_digits, orderData.truck_id_letters)
-    console.log(truckNumValid, truckLetValid, ", can save: ", canSave)
-  }, [orderData.truck_id_digits, orderData.truck_id_letters]);
+    // console.log(canSave)
+  }, [orderData.truck_id_letters])
 
   // // FUNCTIONS
   const onChange = (e) => {
@@ -51,9 +59,7 @@ const AddOrderForm = () => {
     e.preventDefault();
 
     if (canSave) {
-      console.log(canSave, truckLetValid, truckNumValid, orderData.truck_id_digits)
       try {
-      console.log("can try")
         const orderDataComplete = {
           ...orderData,
           created_by: userIdUsable,
@@ -64,7 +70,6 @@ const AddOrderForm = () => {
         await createOrder(orderDataComplete).unwrap();
         navigate("/dash/orders");
       } catch (error) {
-      console.log("cant try")
         console.error("Бүртгэлийг илгээж чадсангүй", error);
       }
     } else {
@@ -81,7 +86,7 @@ const AddOrderForm = () => {
         // navigate(`/dash/orders/edit/${orderId}`);
       }
 
-      toast.error("Бүртгэл илгээхэд алдаа гарлаа!")
+      toast.error("Бүртгэл илгээхэд алдаа гарлаа!");
     }
   };
 
@@ -207,7 +212,7 @@ const AddOrderForm = () => {
   );
 
   let button = (
-    <button className="button" type="submit">
+    <button className={classForButton} type="submit">
       Илгээх
     </button>
   );

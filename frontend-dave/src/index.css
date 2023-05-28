@@ -317,6 +317,10 @@ input {
   color: navy;
 }
 
+.button.error {
+  background-color: var(--ERROR);
+}
+
 /* || FORM - GENERAL */
 
 .form {

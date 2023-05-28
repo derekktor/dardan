@@ -60,8 +60,6 @@ const createOrder = asyncHandler(async (req, res) => {
     others,
   } = req.body;
 
-  console.log("create order called")
-
   // check if required data is filled
   // if (!load_name) {
   //   return res
@@ -116,15 +114,15 @@ const createOrder = asyncHandler(async (req, res) => {
       others,
       stage: 0,
     });
+  }
 
-    // if order is created, notify
-    if (newOrder) {
-      console.log("order created")
-      res.status(200).json({ message: "Бүртгэл нэмэгдлээ", data: newOrder });
-    } else {
-      console.log("order failed")
-      return res.status(400).json({ message: "Order data is invalid" });
-    }
+  // if order is created, notify
+  if (newOrder) {
+    console.log("order created");
+    res.status(200).json({ message: "Бүртгэл нэмэгдлээ", data: newOrder });
+  } else {
+    console.log("order failed");
+    return res.status(400).json({ message: "Order data is invalid" });
   }
 
   // add extra order for chirguul
@@ -275,20 +273,32 @@ const deleteOrder = asyncHandler(async (req, res) => {
 // @desc      Delete test orders
 const deleteTests = asyncHandler(async (req, res) => {
   try {
-    const userTest = await User.findOne({name: "test"});
+    const userTest = await User.findOne({ name: "test" });
 
     if (!userTest) {
-      return res.status(404).json({message: "test user not found!"});
+      return res.status(404).json({ message: "test user not found!" });
     }
 
-    const testDeletions = await Order.deleteMany({created_by: userTest._id.toString()})
+    const testDeletions = await Order.deleteMany({
+      created_by: userTest._id.toString(),
+    });
 
     if (testDeletions) {
-      return res.status(200).json({message: "test orders deleted", data: testDeletions});
+      return res
+        .status(200)
+        .json({ message: "test orders deleted", data: testDeletions });
     }
   } catch (error) {
-      return res.status(500).json({message: "failed to delete test orders", error: error.message});
+    return res
+      .status(500)
+      .json({ message: "failed to delete test orders", error: error.message });
   }
 });
 
-module.exports = { getOrders, createOrder, updateOrder, deleteOrder, deleteTests };
+module.exports = {
+  getOrders,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  deleteTests,
+};
