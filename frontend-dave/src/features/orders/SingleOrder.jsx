@@ -394,8 +394,6 @@ const SingleOrder = () => {
         break;
   }
 
-  console.log(order.stage)
-
   let basicsComp = (
     <>
       <div>

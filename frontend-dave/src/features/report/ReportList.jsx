@@ -29,14 +29,15 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const { data: orders } = useGetOrdersQuery();
 
   // // VARIABLES
-  const [classForStayed, setClassForStayed] = useState("pointer");
-  const [classForEntered, setClassForEntered] = useState("pointer");
-  const [classForLeft, setClassForLeft] = useState("pointer");
-  const [classForCurrent, setClassForCurrent] = useState("pointer");
+  const [classForStayed, setClassForStayed] = useState(true);
+  const [classForEntered, setClassForEntered] = useState();
+  const [classForLeft, setClassForLeft] = useState();
+  const [classForCurrent, setClassForCurrent] = useState();
   let renderedOrders;
   let orderIdsEntered;
   let orderIdsEnteredAndStayed;
-  let orderIdsStayed;
+  let orderIdsEh;
+  let orderIdsEts;
   let orderIdsLeft;
   let [orderIdsVar, setOrderIdsVar] = useState(orderIds);
   let stats = {
@@ -65,7 +66,8 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     },
   };
 
-  let orderIdsCurrent = orders.ids.filter((id) => {
+  // etssiin uldegdel
+  orderIdsEts = orders.ids.filter((id) => {
     const orderDateEntered = moment(orders.entities[id].date_entered).startOf(
       "day"
     );
@@ -80,12 +82,24 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     return isBefore && hasNotLeft;
   });
 
+  // ehnii uldegdel
   if (orderIdsPrev) {
-    orderIdsStayed = orderIdsPrev.filter((id) => {
-      return orders.entities[id].stage === 0;
+    // get every every order that entered the d/m/y before but havent left
+    // orderIdsEh = orderIdsPrev.filter((id) => {
+    //   return orders.entities[id].stage === 0;
+    // });
+
+    orderIdsEh = orders.ids.filter((id) => {
+      const order = orders.entities[id];
+      if (moment(order.date_entered).isBefore(date)) {
+        if (order.stage === 0) {
+          return true;
+        }
+      }
     });
 
-    orderIdsStayed.forEach((id) => {
+    // calculate remainder from the d/m/y before
+    orderIdsEh.forEach((id) => {
       const thisOrder = orders.entities[id];
 
       if (thisOrder.invoice_to_302) {
@@ -106,6 +120,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       return dateA - dateB;
     });
 
+    // get orders that entered and possibly left today
     orderIdsEntered = orderIds.filter((id) => {
       return orders.entities[id].stage === 1 || orders.entities[id].stage === 0;
     });
@@ -114,6 +129,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       return orders.entities[id].stage === 0;
     });
 
+    // get orders that left today
     orderIdsLeft = orderIds.filter((id) => {
       return orders.entities[id].stage === 1;
     });
@@ -186,24 +202,18 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
         stats.totalAmtWoNoat += thisOrder.amount_wo_noat;
       }
     });
-
-    // setOrdersData(orderIds);
   }
 
   // // FUNCTIONS
   const handleFilterStayed = () => {
-    console.log(
-      "showing orders stayed",
-      orderIdsStayed.length,
-      orderIds.length
-    );
+    console.log("showing orders stayed", orderIdsEh.length, orderIds.length);
 
-    setClassForStayed("pointer")
-    setClassForLeft("pointer inactive")
-    setClassForEntered("pointer inactive")
-    setClassForCurrent("pointer inactive")
+    setClassForStayed(true);
+    setClassForLeft(false);
+    setClassForEntered(false);
+    setClassForCurrent(false);
 
-    setOrderIdsVar(orderIdsStayed);
+    setOrderIdsVar(orderIdsEh);
   };
 
   const handleFilterEntered = () => {
@@ -213,10 +223,10 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       orderIds.length
     );
 
-    setClassForStayed("pointer inactive")
-    setClassForLeft("pointer inactive")
-    setClassForEntered("pointer")
-    setClassForCurrent("pointer inactive")
+    setClassForStayed(false);
+    setClassForLeft(false);
+    setClassForEntered(true);
+    setClassForCurrent(false);
 
     setOrderIdsVar(orderIdsEnteredAndStayed);
   };
@@ -224,43 +234,55 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const handleFilterLeft = () => {
     console.log("showing orders left", orderIdsLeft.length, orderIds.length);
 
-    setClassForStayed("pointer inactive")
-    setClassForLeft("pointer")
-    setClassForEntered("pointer inactive")
-    setClassForCurrent("pointer inactive")
+    setClassForStayed(false);
+    setClassForLeft(true);
+    setClassForEntered(false);
+    setClassForCurrent(false);
 
     setOrderIdsVar(orderIdsLeft);
   };
 
   const handleFilterCurrent = () => {
-    console.log("showing orders current", orderIdsCurrent.length, orderIds.length);
+    console.log("showing orders current", orderIdsEts.length, orderIds.length);
 
-    setClassForStayed("pointer inactive")
-    setClassForLeft("pointer inactive")
-    setClassForEntered("pointer inactive")
-    setClassForCurrent("pointer")
+    setClassForStayed(false);
+    setClassForLeft(false);
+    setClassForEntered(false);
+    setClassForCurrent(true);
 
-    setOrderIdsVar(orderIdsCurrent);
+    setOrderIdsVar(orderIdsEts);
   };
 
   // // COMPONENTS
   const statsContent = (
     <div className="stats-grid not-selectable">
-      <div className={classForStayed} onDoubleClick={handleFilterStayed}>
-        <h4>Хоносон:</h4>
-        <h4>{orderIdsStayed.length}</h4>
+      <div
+        className={classForStayed ? "pointer" : "pointer inactive"}
+        onDoubleClick={handleFilterStayed}
+      >
+        <h4>Эхний үлдэгдэл:</h4>
+        <h4>{orderIdsEh.length}</h4>
       </div>
-      <div className={classForEntered} onDoubleClick={handleFilterEntered}>
+      <div
+        className={classForEntered ? "pointer" : "pointer inactive"}
+        onDoubleClick={handleFilterEntered}
+      >
         <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
-      <div className={classForLeft} onDoubleClick={handleFilterLeft}>
+      <div
+        className={classForLeft ? "pointer" : "pointer inactive"}
+        onDoubleClick={handleFilterLeft}
+      >
         <h4>Гарсан:</h4>
         <h4>{orderIdsLeft.length}</h4>
       </div>
-      <div className={classForCurrent} onDoubleClick={handleFilterCurrent}>
-        <h4>Одоо байгаа:</h4>
-        <h4>{orderIdsCurrent.length}</h4>
+      <div
+        className={classForCurrent ? "pointer" : "pointer inactive"}
+        onDoubleClick={handleFilterCurrent}
+      >
+        <h4>Эцсийн үлдэгдэл:</h4>
+        <h4>{orderIdsEts.length}</h4>
       </div>
       <div>
         <h4>Үлдэгдэл:</h4>

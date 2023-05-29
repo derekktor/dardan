@@ -76,8 +76,11 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         url: `/orders/tests`,
         method: "DELETE",
       }),
+      invalidatesTags: (result, error, arg) => [
+        // {type: "Order", id: arg.id}
+        { type: "Order", id: arg },
+      ],
       transformResponse: (responseData) => {
-        console.log("inside orders api", responseData)
         return responseData;
       },
       // invalidatesTags: (result, error, arg) => [

@@ -6,7 +6,7 @@ import moment from "moment";
 const ReportDaily = () => {
   const { data: orders } = useGetOrdersQuery();
 
-  const [selectedDate, setSelectedDate] = useState(moment());
+  const [selectedDate, setSelectedDate] = useState(moment().set('hour', 7).set('minute', 0).set('second', 0));
 
   const handleDateChange = (e) => {
     let y = selectedDate.format("YYYY");
@@ -19,9 +19,9 @@ const ReportDaily = () => {
       m = e.target.value;
     } else if (e.target.name === "year") {
       y = e.target.value;
-    }
+    } 
 
-    const newDate = moment(`${y}-${m}-${d}`, "YYYY-MM-DD");
+    const newDate = moment(`${y}-${m}-${d} 07:00:00`, "YYYY-MM-DD HH:mm:ss");
     setSelectedDate(newDate);
   };
 
