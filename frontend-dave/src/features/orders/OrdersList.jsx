@@ -10,6 +10,7 @@ import { FaCalendarAlt, FaQuestionCircle, FaTrash } from "react-icons/fa";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { toast } from "react-toastify";
 
 const DATE_REGEX =
   /^((0[1-9]|1[0-2])|([1-9]|1[0-2]))\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
@@ -146,6 +147,7 @@ const OrdersList = () => {
 
   const handleDeleteTests = async () => {
     try {
+      toast.warning("Deleting test orders...")
       await deleteTests().unwrap();
     } catch (error) {
       console.error("Unable to delete test orders", error);

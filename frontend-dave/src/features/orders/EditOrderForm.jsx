@@ -57,14 +57,15 @@ const EditOrderForm = () => {
     setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
     setForkliftValid(FORKLIFT_REGEX.test(orderData.forklift_usage));
-    console.log(forkliftValid)
+    console.log(forkliftValid);
   }, [
     orderData.truck_id_digits,
     orderData.truck_id_letters,
     orderData.forklift_usage,
   ]);
 
-  const canSave = [truckLetValid, truckNumValid, forkliftValid].every(Boolean) && !isLoading;
+  const canSave =
+    [truckLetValid, truckNumValid, forkliftValid].every(Boolean) && !isLoading;
 
   // // FUNCTIONS
   const handleClearDateLeft = async (e) => {
@@ -460,7 +461,11 @@ const EditOrderForm = () => {
   // entered
   if (orderData.stage === 0) {
     title = "Гарах мэдээлэл бүрдүүлэх";
-    content = techUsageComp;
+    content = (
+      <>
+        {loadInfoComp} {techUsageComp}
+      </>
+    );
   } else {
     // left
     title = "Тооцоо хийх";

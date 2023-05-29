@@ -69,7 +69,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
   let newOrder, newOrderDuplicate;
   // if only puulelt was done
-  if (puulelt === "1") {
+  if (puulelt === "1" || puulelt === "2") {
     newOrder = await Order.create({
       created_by,
       date_entered,
@@ -85,7 +85,7 @@ const createOrder = asyncHandler(async (req, res) => {
       stage: 2,
     });
     // if util car was entered
-  } else if (others === "1") {
+  } else if (others === "1" || others === "2") {
     newOrder = await Order.create({
       created_by,
       date_entered,
