@@ -788,6 +788,8 @@ const SingleOrder = () => {
     );
   }
 
+  console.log("single order: ", order)
+
   return (
     <div>
       <div className={classForTitle}>{titleForState}</div>

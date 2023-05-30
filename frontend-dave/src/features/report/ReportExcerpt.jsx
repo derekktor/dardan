@@ -48,10 +48,12 @@ const ReportExcerpt = ({ orderId }) => {
     navigate(`/dash/orders/${orderId}`);
   };
 
+  console.log("report excerpt: ", order);
+
   return (
     <div onDoubleClick={handleNavigateToEdit} className={containerClass}>
       <p>{moment(order.date_entered).format("YYYY-MM-DD")}</p>
-      <p>{moment(order.date_left).format("YYYY-MM-DD")}</p>
+      <p>{order.date_left && moment(order.date_left).format("YYYY-MM-DD")}</p>
       <p>
         {order.truck_id_digits}{" "}
         {order.truck_id_letters ? order.truck_id_letters : ""}

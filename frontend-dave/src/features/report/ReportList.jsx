@@ -68,9 +68,8 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
 
   // etssiin uldegdel
   orderIdsEts = orders.ids.filter((id) => {
-    const orderDateEntered = moment(orders.entities[id].date_entered).startOf(
-      "day"
-    );
+    const orderDB = orders.entities[id];
+    const orderDateEntered = moment(orderDB.date_entered).startOf("day");
     const today = date.startOf("day");
     // const today = moment().startOf("day");
     // console.log(today.format("YYYY-MM-DD"));
@@ -122,8 +121,10 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
 
     // get orders that entered and possibly left today
     orderIdsEntered = orderIds.filter((id) => {
+      console.log(orders.entities[id])
       return orders.entities[id].stage === 1 || orders.entities[id].stage === 0;
     });
+
 
     orderIdsEnteredAndStayed = orderIds.filter((id) => {
       return orders.entities[id].stage === 0;
@@ -228,7 +229,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     setClassForEntered(true);
     setClassForCurrent(false);
 
-    setOrderIdsVar(orderIdsEnteredAndStayed);
+    setOrderIdsVar(orderIdsEntered);
   };
 
   const handleFilterLeft = () => {

@@ -186,9 +186,9 @@ const updateOrder = asyncHandler(async (req, res) => {
 
   // check if data entered is valid
   // if (!truck_num_digits || !truck_num_letters || !load_name || !date_entered || !date_left) {
-  if (!(load_name || client_name)) {
-    return res.status(400).json({ message: "Өөрчлөлт хийнэ үү" });
-  }
+  // if (!(load_name || client_name)) {
+  //   return res.status(400).json({ message: "Өөрчлөлт хийнэ үү" });
+  // }
 
   // check if order exists
   const order = await Order.findById(req.params.id);
