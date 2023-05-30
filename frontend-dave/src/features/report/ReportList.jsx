@@ -383,7 +383,7 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
       {statsContent}
       <div className="report-container">
         <div className={sticky && "sticky"}>{header}</div>
-        <div>{renderedOrders}</div>
+        <div className="report-list">{renderedOrders}</div>
         <div>{footer}</div>
       </div>
     </div>
