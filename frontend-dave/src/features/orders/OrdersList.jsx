@@ -65,8 +65,8 @@ const OrdersList = () => {
     }
 
     filteredIds = filteredIds.sort((a, b) => {
-      const dateA = new Date(entities[a].createdAt);
-      const dateB = new Date(entities[b].createdAt);
+      const dateA = new Date(entities[a].date_entered);
+      const dateB = new Date(entities[b].date_entered);
       return dateB - dateA;
     });
 
@@ -147,7 +147,7 @@ const OrdersList = () => {
 
   const handleDeleteTests = async () => {
     try {
-      toast.warning("Deleting test orders...")
+      toast.warning("Deleting test orders...");
       await deleteTests().unwrap();
     } catch (error) {
       console.error("Unable to delete test orders", error);
@@ -194,6 +194,7 @@ const OrdersList = () => {
       </div>
     </div>
   );
+
   const buttonsComp = (
     <div style={{ flex: 1 }}>
       <span className="pointer" onClick={() => setOpen((open) => !open)}>
@@ -212,6 +213,7 @@ const OrdersList = () => {
       )}
     </div>
   );
+
   const searchComp = (
     <div className="flex-row align-center space-evenly gap10 mb">
       <input
@@ -243,7 +245,11 @@ const OrdersList = () => {
         <div className="orders-grid">
           <div>
             <h4>Арлын дугаар</h4>
-            <h4>Орсон огноо</h4>
+            <h4
+              className="not-selectable pointer"
+            >
+              Орсон огноо
+            </h4>
             <h4>Барааны нэр</h4>
             <h4>Тайлбар</h4>
             <h4>Buttons</h4>

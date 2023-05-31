@@ -370,7 +370,7 @@ const SingleOrder = () => {
 
   const handlePrint = () => {
     if (order.stage === 0) {
-      toast.warning("Гараагүй бүртгэлийг хэвлэх гэж байна!")
+      toast.warning("Гараагүй бүртгэлийг хэвлэх гэж байна!");
     }
 
     navigate(`/dash/orders/print/${orderId}`);
@@ -384,14 +384,11 @@ const SingleOrder = () => {
     </>
   );
 
-  let classForTitle = ""
-  switch (order?.stage) {
-    case 0:
-        classForTitle = "state-title entered";
-        break;
-    case 1:
-        classForTitle = "state-title left";
-        break;
+  let classForTitle = "";
+  if (order?.stage === 0) {
+    classForTitle = "state-title entered";
+  } else {
+    classForTitle = "state-title left";
   }
 
   let basicsComp = (
@@ -669,7 +666,6 @@ const SingleOrder = () => {
   // // CONDITIONS
   // only puulelt
   if (order?.stage === 2) {
-    classForTitle = ""
     informationalComp = (
       <div className="informational">
         <div>
@@ -788,7 +784,7 @@ const SingleOrder = () => {
     );
   }
 
-  console.log("single order: ", order)
+  console.log("single order: ", order);
 
   return (
     <div>

@@ -4,27 +4,7 @@ import { formatCurrency } from "../orders/SingleOrder";
 import moment from "moment";
 import { useState, useEffect } from "react";
 
-const ReportList = ({ orderIds, orderIdsPrev, date }) => {
-  // // STICKY BAR, NECESSARY?
-  // useEffect(() => {
-  //   const handleSticky = () => {
-  //     if (window.scrollY >= 242) {
-  //       setSticky(true);
-  //     } else {
-  //       setSticky(false);
-  //     }
-
-  //     // console.log(window.scrollY, sticky);
-  //   };
-
-  //   window.addEventListener("scroll", handleSticky);
-  //   return () => window.removeEventListener("scroll", handleSticky);
-  // }, []);
-
-  useEffect(() => {
-    setOrderIdsVar(orderIds);
-  }, [orderIds]);
-
+const ReportList = ({ date }) => {
   const [sticky, setSticky] = useState(false);
   const { data: orders } = useGetOrdersQuery();
 
@@ -33,13 +13,15 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
   const [classForEntered, setClassForEntered] = useState();
   const [classForLeft, setClassForLeft] = useState();
   const [classForCurrent, setClassForCurrent] = useState();
-  let renderedOrders;
+
   let orderIdsEntered;
-  let orderIdsEnteredAndStayed;
+  let orderIdsForADay;
   let orderIdsEh;
   let orderIdsEts;
   let orderIdsLeft;
-  let [orderIdsVar, setOrderIdsVar] = useState(orderIds);
+
+  let renderedOrders;
+  let [orderIdsVar, setOrderIdsVar] = useState([]);
   let stats = {
     totalRevenue: 0,
     totalRevenuePrev: 0,
@@ -66,191 +48,302 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
     },
   };
 
-  // etssiin uldegdel
-  orderIdsEts = orders.ids.filter((id) => {
-    const orderDB = orders.entities[id];
-    const orderDateEntered = moment(orderDB.date_entered).startOf("day");
-    const today = date.startOf("day");
-    // const today = moment().startOf("day");
-    // console.log(today.format("YYYY-MM-DD"));
+  if (orders) {
+    // orson
+    orderIdsEntered = orders.ids.filter((id) => {
+      const orderDB = orders.entities[id];
 
-    const isBefore = orderDateEntered.isSameOrBefore(today);
-    const hasNotLeft = orders.entities[id].stage === 0;
-    // console.log(orders.entities[id].stage, orderDateEntered.format("YYYY-MM-DD"), today.format("YYYY-MM-DD"), orderDateEntered.isBefore(today));
+      const dateEntered = moment(orderDB.date_entered).startOf("day");
+      const today = date.startOf("day");
+      const isSame = dateEntered.isSame(today);
 
-    return isBefore && hasNotLeft;
-  });
+      if (isSame) {
+        // console.log(
+        //   `${orderDB.truck_id_digits} - ${dateEntered.format(
+        //     "YYYY-MM-DD"
+        //   )} - ${today.format("YYYY-MM-DD")} - ${isSame} - ${orderDB.stage}`
+        // );
 
-  // ehnii uldegdel
-  if (orderIdsPrev) {
-    // get every every order that entered the d/m/y before but havent left
-    // orderIdsEh = orderIdsPrev.filter((id) => {
-    //   return orders.entities[id].stage === 0;
-    // });
+        return true;
+      }
+    });
 
-    orderIdsEh = orders.ids.filter((id) => {
-      const order = orders.entities[id];
-      if (moment(order.date_entered).isBefore(date)) {
-        if (order.stage === 0) {
+    // garsan
+    orderIdsLeft = orders.ids.filter((id) => {
+      const orderDB = orders.entities[id];
+
+      let dateLeft;
+      const today = date.startOf("day");
+      if (orderDB.date_left) {
+        dateLeft = moment(orderDB.date_left).startOf("day");
+        const isSame = dateLeft.isSame(today);
+
+        if (isSame) {
+          // console.log(
+          //   `${orderDB.truck_id_digits} - ${dateLeft.format(
+          //     "YYYY-MM-DD"
+          //   )} - ${today.format("YYYY-MM-DD")} - ${isSame} - ${orderDB.stage}`
+          // );
+
           return true;
         }
       }
     });
 
-    // calculate remainder from the d/m/y before
-    orderIdsEh.forEach((id) => {
-      const thisOrder = orders.entities[id];
+    // odortoo garsan
+    orderIdsForADay = orderIdsEntered.filter((id) => {
+      const orderDB = orders.entities[id];
 
-      if (thisOrder.invoice_to_302) {
-        stats.totalRevenuePrev += thisOrder.invoice_to_302;
+      const dateEntered = moment(orderDB.date_entered).startOf("day");
+      const today = date.startOf("day");
+      const isSame = dateEntered.isSame(today);
+      let dateLeft;
+      if (orderDB.date_left) {
+        dateLeft = moment(orderDB.date_left).format("YYYY-MM-DD HH:mm");
+      } else {
+        // console.log(
+        //   `${orderDB.truck_id_digits} - ${dateEntered.format(
+        //     "YYYY-MM-DD"
+        //   )} - ${today.format("YYYY-MM-DD")} - ${isSame} - ${orderDB.stage}`
+        // );
+
+        return true;
       }
+    });
 
-      if (thisOrder.invoice_to_601) {
-        stats.totalRevenuePrev += thisOrder.invoice_to_601;
+    // ehnii uldegdel
+    orderIdsEh = orders.ids.filter((id) => {
+      const orderDB = orders.entities[id];
+
+      const dateEntered = moment(orderDB.date_entered).startOf("day");
+      let dateLeft;
+      const today = date.startOf("day");
+
+      const isBefore = dateEntered.isBefore(today);
+      const didntLeave = orderDB.stage === 0;
+      let leftToday, leftLater;
+      if (orderDB.date_left) {
+        dateLeft = moment(orderDB.date_left).startOf("day");
+        leftToday = dateLeft.isSame(today);
+        leftLater = dateLeft.isAfter(today);
+
+        if (leftToday) {
+          const onlyToday = dateEntered.isSame(dateLeft);
+          if (!onlyToday) {
+            return true;
+          }
+        }
+
+        if (isBefore && leftLater) {
+          return true;
+        }
+      } else {
+        if (isBefore && didntLeave) {
+          return true;
+        }
+      }
+    });
+
+    // etssiin uldegdel
+    orderIdsEts = orders.ids.filter((id) => {
+      const orderDB = orders.entities[id];
+
+      const dateEntered = moment(orderDB.date_entered).startOf("day");
+      let dateLeft;
+      const today = date.startOf("day");
+
+      const isSameOrBefore = dateEntered.isSameOrBefore(today);
+      let leftAfter;
+
+      if (isSameOrBefore) {
+        if (!orderDB.date_left) {
+          return true;
+        } else {
+          dateLeft = moment(orderDB.date_left).startOf("day");
+          leftAfter = dateLeft.isAfter(today);
+
+          if (leftAfter) {
+            return true;
+          }
+        }
       }
     });
   }
 
-  if (orderIds) {
-    // filter orders by its date_entered
-    orderIds.sort((a, b) => {
-      const dateA = new Date(orders.entities[a].date_entered);
-      const dateB = new Date(orders.entities[b].date_entered);
-      return dateA - dateB;
-    });
+  // orderIdsEntered.forEach((id) => {
+  //   const orderDB = orders.entities[id];
 
-    // get orders that entered and possibly left today
-    orderIdsEntered = orderIds.filter((id) => {
-      console.log(orders.entities[id])
-      return orders.entities[id].stage === 1 || orders.entities[id].stage === 0;
-    });
+  //   const dateEntered = moment(orderDB.date_entered).format("YYYY-MM-DD HH:mm");
+  //   let dateLeft;
+  //   if (orderDB.date_left) {
+  //     dateLeft = moment(orderDB.date_left).format("YYYY-MM-DD HH:mm");
+  //   }
 
+  //   console.log(
+  //     `${orderDB.truck_id_digits} - ${dateEntered} - ${dateLeft} - ${orderDB.stage}`
+  //   );
+  // });
 
-    orderIdsEnteredAndStayed = orderIds.filter((id) => {
-      return orders.entities[id].stage === 0;
-    });
+  // calculate stats for orders entered
+  orderIdsEntered.forEach((id) => {
+    const thisOrder = orders.entities[id];
 
-    // get orders that left today
-    orderIdsLeft = orderIds.filter((id) => {
-      return orders.entities[id].stage === 1;
-    });
-
-    if (orderIds.length === 0) {
-      renderedOrders = <h4>Ямар ч бүртгэл байхгүй байна!</h4>;
+    if (thisOrder.tavtsan_usage === "aguulah_tavtsan") {
+      stats.tavtsan.aguulah += 1;
+    } else if (thisOrder.tavtsan_usage === "gadna_tavtsan") {
+      stats.tavtsan.gadna += 1;
     }
 
-    // calculate stats for orders entered
-    orderIdsEntered.forEach((id) => {
-      const thisOrder = orders.entities[id];
+    if (thisOrder.puulelt === 1) {
+      stats.puulelt.suudliin += 1;
+    } else if (thisOrder.puulelt === 2) {
+      stats.puulelt.busad += 1;
+    }
 
-      if (thisOrder.tavtsan_usage === "aguulah_tavtsan") {
-        stats.tavtsan.aguulah += 1;
-      } else if (thisOrder.tavtsan_usage === "gadna_tavtsan") {
-        stats.tavtsan.gadna += 1;
-      }
+    if (
+      thisOrder.forklift_usage === "neg" ||
+      thisOrder.forklift_usage === "нэг"
+    ) {
+      stats.forklift.neg += 1;
+    } else if (parseInt(thisOrder.forklift_usage)) {
+      stats.forklift.hours += parseInt(thisOrder.forklift_usage);
+    }
 
-      if (thisOrder.puulelt === 1) {
-        stats.puulelt.suudliin += 1;
-      } else if (thisOrder.puulelt === 2) {
-        stats.puulelt.busad += 1;
-      }
+    if (thisOrder.crane_usage === 1) {
+      stats.crane.hooson += 1;
+    } else if (thisOrder.crane_usage === 2) {
+      stats.crane.achaatai += 1;
+    }
 
-      if (
-        thisOrder.forklift_usage === "neg" ||
-        thisOrder.forklift_usage === "нэг"
-      ) {
-        stats.forklift.neg += 1;
-      } else if (parseInt(thisOrder.forklift_usage)) {
-        stats.forklift.hours += parseInt(thisOrder.forklift_usage);
-      }
+    stats.totalWeight += thisOrder.load_weight;
+  });
 
-      if (thisOrder.crane_usage === 1) {
-        stats.crane.hooson += 1;
-      } else if (thisOrder.crane_usage === 2) {
-        stats.crane.achaatai += 1;
-      }
+  // calculate stats for orders left
+  orderIdsLeft.forEach((id) => {
+    const thisOrder = orders.entities[id];
 
-      stats.totalWeight += thisOrder.load_weight;
-    });
+    if (!thisOrder.invoice_to_302) {
+      stats.totalAmt302 += 0;
+    } else {
+      stats.totalAmt302 += thisOrder.invoice_to_302;
+      stats.totalRevenue += thisOrder.invoice_to_302;
+    }
 
-    // calculate stats for orders left
-    orderIdsLeft.forEach((id) => {
-      const thisOrder = orders.entities[id];
+    if (!thisOrder.invoice_to_601) {
+      stats.totalAmt302 += 0;
+    } else {
+      stats.totalAmt601 += thisOrder.invoice_to_601;
+      stats.totalRevenue += thisOrder.invoice_to_601;
+    }
 
-      if (!thisOrder.invoice_to_302) {
-        stats.totalAmt302 += 0;
-      } else {
-        stats.totalAmt302 += thisOrder.invoice_to_302;
-        stats.totalRevenue += thisOrder.invoice_to_302;
-      }
+    if (!thisOrder.amount_w_noat) {
+      stats.totalAmt302 += 0;
+    } else {
+      stats.totalAmtWNoat += thisOrder.amount_w_noat;
+    }
 
-      if (!thisOrder.invoice_to_601) {
-        stats.totalAmt302 += 0;
-      } else {
-        stats.totalAmt601 += thisOrder.invoice_to_601;
-        stats.totalRevenue += thisOrder.invoice_to_601;
-      }
+    if (!thisOrder.amount_wo_noat) {
+      stats.totalAmt302 += 0;
+    } else {
+      stats.totalAmtWoNoat += thisOrder.amount_wo_noat;
+    }
+  });
 
-      if (!thisOrder.amount_w_noat) {
-        stats.totalAmt302 += 0;
-      } else {
-        stats.totalAmtWNoat += thisOrder.amount_w_noat;
-      }
+  // calculate remainder from the d/m/y before
+  orderIdsEh.forEach((id) => {
+    const thisOrder = orders.entities[id];
 
-      if (!thisOrder.amount_wo_noat) {
-        stats.totalAmt302 += 0;
-      } else {
-        stats.totalAmtWoNoat += thisOrder.amount_wo_noat;
-      }
-    });
-  }
+    if (thisOrder.invoice_to_302) {
+      stats.totalRevenuePrev += thisOrder.invoice_to_302;
+    }
+
+    if (thisOrder.invoice_to_601) {
+      stats.totalRevenuePrev += thisOrder.invoice_to_601;
+    }
+  });
+
+  useEffect(() => {
+    setOrderIdsVar(orderIdsEh);
+  }, []);
+
+  useEffect(() => {
+    if (classForStayed) {
+      setOrderIdsVar(orderIdsEh);
+    } else if (classForEntered) {
+      setOrderIdsVar(orderIdsEntered);
+    } else if (classForLeft) {
+      setOrderIdsVar(orderIdsLeft);
+    } else if (classForCurrent) {
+      setOrderIdsVar(orderIdsEts);
+    }
+  }, [classForStayed, classForEntered, classForLeft, classForCurrent]);
 
   // // FUNCTIONS
-  const handleFilterStayed = () => {
-    console.log("showing orders stayed", orderIdsEh.length, orderIds.length);
+  const logOrderInfo = (ids) => {
+    ids.forEach((id) => {
+      const orderDB = orders.entities[id];
 
+      const dateEntered = moment(orderDB.date_entered).startOf("day");
+      let dateLeft;
+      const today = date.startOf("day");
+
+      if (orderDB.date_left) {
+        dateLeft = moment(orderDB.date_left).startOf("day");
+
+        console.log(
+          `${orderDB.truck_id_digits} - ${dateEntered.format(
+            "YYYY-MM-DD"
+          )} - ${dateLeft.format("YYYY-MM-DD")} - ${today.format(
+            "YYYY-MM-DD"
+          )} - ${orderDB.stage}`
+        );
+      } else {
+        console.log(
+          `${orderDB.truck_id_digits} - ${dateEntered.format(
+            "YYYY-MM-DD"
+          )} - not leave - ${today.format("YYYY-MM-DD")} - ${orderDB.stage}`
+        );
+      }
+    });
+  };
+
+  const handleFilterStayed = () => {
     setClassForStayed(true);
     setClassForLeft(false);
     setClassForEntered(false);
     setClassForCurrent(false);
 
+    logOrderInfo(orderIdsEh);
     setOrderIdsVar(orderIdsEh);
   };
 
   const handleFilterEntered = () => {
-    console.log(
-      "showing orders entered",
-      orderIdsEntered.length,
-      orderIds.length
-    );
-
     setClassForStayed(false);
     setClassForLeft(false);
     setClassForEntered(true);
     setClassForCurrent(false);
 
+    logOrderInfo(orderIdsEntered);
     setOrderIdsVar(orderIdsEntered);
   };
 
   const handleFilterLeft = () => {
-    console.log("showing orders left", orderIdsLeft.length, orderIds.length);
-
     setClassForStayed(false);
     setClassForLeft(true);
     setClassForEntered(false);
     setClassForCurrent(false);
 
+    logOrderInfo(orderIdsLeft);
     setOrderIdsVar(orderIdsLeft);
   };
 
   const handleFilterCurrent = () => {
-    console.log("showing orders current", orderIdsEts.length, orderIds.length);
-
     setClassForStayed(false);
     setClassForLeft(false);
     setClassForEntered(false);
     setClassForCurrent(true);
 
+    logOrderInfo(orderIdsEts);
     setOrderIdsVar(orderIdsEts);
   };
 
@@ -271,6 +364,10 @@ const ReportList = ({ orderIds, orderIdsPrev, date }) => {
         <h4>Орсон:</h4>
         <h4>{orderIdsEntered.length}</h4>
       </div>
+      {/* <div>
+        <h4>Өдөртөө гарсан:</h4>
+        <h4>{orderIdsForADay.length}</h4>
+      </div> */}
       <div
         className={classForLeft ? "pointer" : "pointer inactive"}
         onDoubleClick={handleFilterLeft}

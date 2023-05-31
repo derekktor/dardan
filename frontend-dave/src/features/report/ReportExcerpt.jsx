@@ -20,7 +20,7 @@ const ReportExcerpt = ({ orderId }) => {
   const order = orders.entities[orderId];
 
   const containerClass = `round-border ${
-    order.stage === 1 ? "order-finished" : "order-unfinished"
+    order.stage === 0 ? "order-unfinished" : "order-finished"
   }`;
 
   const tavtsan = getTavtsan(order.tavtsan_usage);
@@ -48,7 +48,7 @@ const ReportExcerpt = ({ orderId }) => {
     navigate(`/dash/orders/${orderId}`);
   };
 
-  console.log("report excerpt: ", order);
+  // console.log("report excerpt: ", order);
 
   return (
     <div onDoubleClick={handleNavigateToEdit} className={containerClass}>

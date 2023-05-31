@@ -640,7 +640,7 @@ input {
 .report-list {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 50vh;
+  height: 30vh;
 }
 
 .garah-huudas {
@@ -699,7 +699,7 @@ input {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(6, 200px);
+  grid-template-columns: repeat(7, 200px);
   gap: 10px;
   border: 1px solid black;
   margin: 10px auto;

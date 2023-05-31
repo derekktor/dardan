@@ -279,9 +279,12 @@ const deleteTests = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "test user not found!" });
     }
 
+    
     const testDeletions = await Order.deleteMany({
       created_by: userTest._id.toString(),
     });
+    
+    console.log(`deleting tests: test_user(${userTest}), records(${testDeletions})`)
 
     if (testDeletions) {
       return res

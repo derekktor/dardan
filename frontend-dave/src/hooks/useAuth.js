@@ -16,6 +16,8 @@ const useAuth = () => {
 
     if (isAdmin) status = "admin";
 
+    // console.log(`useAuth: ${userId} - ${userIdUsable} - ${decoded}`)
+
     return { userIdUsable, name, roles, status, isAdmin };
   }
 

@@ -55,9 +55,11 @@ const AddOrderForm = () => {
     }));
   };
 
+  console.log(useAuth())
+
   const onSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (canSave) {
       try {
         const orderDataComplete = {

@@ -25,7 +25,7 @@ const login = asyncHandler(async (req, res) => {
 
   if (!match) return res.status(401).json({ message: "Нууц үг буруу байна" });
 
-  console.log(foundUser._id.toString(), foundUser.name)
+  console.log("authController: ", foundUser);
 
   const accessToken = jwt.sign(
     {
