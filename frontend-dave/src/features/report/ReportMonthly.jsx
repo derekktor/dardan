@@ -72,7 +72,7 @@ const ReportMonthly = () => {
       <div>
         <ReportList
           orderIds={ids}
-          orderIdsPrev={idsPrev}
+          orderIdsPrev={idsPrev} type={"m"}
           date={moment(`${year}-${month.toString().padStart(2, "0")}-01`).endOf(
             "month"
           )}

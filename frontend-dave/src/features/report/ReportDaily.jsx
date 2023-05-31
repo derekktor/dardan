@@ -83,7 +83,7 @@ const ReportDaily = () => {
       </div>
 
       <div>
-        <ReportList date={selectedDate}/>
+        <ReportList date={selectedDate} type={"d"}/>
       </div>
     </div>
   );

@@ -699,7 +699,7 @@ input {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(7, 200px);
+  grid-template-columns: repeat(6, 200px);
   gap: 10px;
   border: 1px solid black;
   margin: 10px auto;
