@@ -2,11 +2,14 @@ import { useState } from "react";
 import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import ReportList from "./ReportList";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const ReportDaily = () => {
   const { data: orders } = useGetOrdersQuery();
 
   const [selectedDate, setSelectedDate] = useState(moment().set('hour', 7).set('minute', 0).set('second', 0));
+
+  const navigate = useNavigate();
 
   const handleDateChange = (e) => {
     let y = selectedDate.format("YYYY");
@@ -24,6 +27,12 @@ const ReportDaily = () => {
     const newDate = moment(`${y}-${m}-${d} 07:00:00`, "YYYY-MM-DD HH:mm:ss");
     setSelectedDate(newDate);
   };
+  
+  const handlePrint = (date) => {
+    console.log("handle print: ", moment(date).format("YYYY-MM-DD"));
+    navigate(`/dash/orders/test/${date}`);
+  };
+
 
   const previousDate = selectedDate.clone().subtract(1, "day");
 
@@ -85,6 +94,8 @@ const ReportDaily = () => {
       <div>
         <ReportList date={selectedDate} type={"d"}/>
       </div>
+
+        <button onClick={() => handlePrint(selectedDate)}>Хэвлэх</button>
     </div>
   );
 };

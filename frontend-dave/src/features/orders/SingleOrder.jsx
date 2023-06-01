@@ -370,7 +370,7 @@ const SingleOrder = () => {
     navigate(`/dash/orders/edit/${orderId}`);
   };
 
-  const handlePrint = () => {
+  const handlePrint = (orderId) => {
     if (order.stage === 0) {
       toast.warning("Гараагүй бүртгэлийг хэвлэх гэж байна!");
     }
@@ -770,9 +770,9 @@ const SingleOrder = () => {
   }
 
   useEffect(() => {
-    if (order.stage === 0) {
+    if (order?.stage === 0) {
       setTitleForEditBtn("Төлбөр бодох");
-    } else if (order.stage === 1) {
+    } else if (order?.stage === 1) {
       setTitleForEditBtn("Тооцоо хийх");
     } else {
       setTitleForEditBtn("Өөрчлөх");

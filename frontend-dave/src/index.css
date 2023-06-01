@@ -804,3 +804,7 @@ input {
 .pointer.inactive {
   color: rgba(0, 0, 0, 0.4);
 }
+
+.orders-print {
+  display: grid;
+}

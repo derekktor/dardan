@@ -21,6 +21,8 @@ import PersistLogin from "./features/auth/PersistLogin";
 import RequireAuth from "./features/auth/RequireAuth";
 import { ROLES } from "./config/roles";
 import OrderPrint from "./features/orders/OrderPrint";
+import OrdersLeftPrint from "./features/orders/OrderPrint";
+import OrdersTest from "./features/orders/OrdersTest";
 
 const App = () => {
   return (
@@ -40,9 +42,11 @@ const App = () => {
 
                 <Route path="orders">
                   <Route index element={<OrdersList />} />
+                  <Route path="test/:date" element={<OrdersTest />} />
                   <Route path="add" element={<AddOrderForm />} />
                   <Route path="edit/:orderId" element={<EditOrderForm />} />
                   <Route path="print/:orderId" element={<OrderPrint />} />
+                  <Route path="print/day/:date" element={<OrdersLeftPrint />} />
                   <Route path=":orderId" element={<SingleOrder />} />
                 </Route>
 
@@ -64,7 +68,7 @@ const App = () => {
             </Route>
           </Route>
         </Route>
-        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   );
