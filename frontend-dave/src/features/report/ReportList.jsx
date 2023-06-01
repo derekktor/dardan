@@ -450,12 +450,12 @@ const ReportList = ({ date, type }) => {
         <h4>{orderIdsEts.length}</h4>
       </div>
       <div>
-        <h4>Үлдэгдэл:</h4>
-        <h4>{formatCurrency(stats.totalRevenuePrev)}</h4>
-      </div>
-      <div>
         <h4>Орлого:</h4>
         <h4>{formatCurrency(stats.totalRevenue)}</h4>
+      </div>
+      <div>
+        <h4>Үлдэгдэл:</h4>
+        <h4>{formatCurrency(stats.totalRevenuePrev)}</h4>
       </div>
     </div>
   );
