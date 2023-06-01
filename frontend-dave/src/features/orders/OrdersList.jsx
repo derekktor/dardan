@@ -56,13 +56,14 @@ const OrdersList = () => {
     const { ids, entities } = orders ? orders : { ids: [] };
 
     let filteredIds;
-    if (isAdmin) {
-      filteredIds = [...ids];
-    } else {
-      filteredIds = ids.filter(
-        (orderId) => entities[orderId].created_by === userIdUsable
-      );
-    }
+    filteredIds = [...ids];
+    // if (isAdmin) {
+    //   filteredIds = [...ids];
+    // } else {
+    //   filteredIds = ids.filter(
+    //     (orderId) => entities[orderId].created_by === userIdUsable
+    //   );
+    // }
 
     filteredIds = filteredIds.sort((a, b) => {
       const dateA = new Date(entities[a].date_entered);
@@ -245,11 +246,7 @@ const OrdersList = () => {
         <div className="orders-grid">
           <div>
             <h4>Арлын дугаар</h4>
-            <h4
-              className="not-selectable pointer"
-            >
-              Орсон огноо
-            </h4>
+            <h4 className="not-selectable pointer">Орсон огноо</h4>
             <h4>Барааны нэр</h4>
             <h4>Тайлбар</h4>
             <h4>Buttons</h4>
