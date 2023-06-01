@@ -36,7 +36,7 @@ const OrderExcerpt = ({ orderId }) => {
     return (
       <div
         className={
-          order.stage === 0
+          (order.stage === 0)
             ? "order-unfinished orders-grid"
             : "order-finished orders-grid"
         }

@@ -699,12 +699,12 @@ input {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(6, 200px);
+  justify-content: space-evenly;
+  grid-template-columns: repeat(5, 200px);
   gap: 10px;
   border: 1px solid black;
   margin: 10px auto;
   padding: 10px;
-  width: 1300px;
 }
 
 .stats-grid > div {
@@ -740,7 +740,7 @@ input {
 
 .state-title > span {
   background-color: lightgray;
-  padding: 10px 10vw;
+  padding: 10px 4vw;
 }
 
 .state-title.entered > span:nth-child(1) {
@@ -751,11 +751,30 @@ input {
   background-color: lightgray;
 }
 
-.state-title.left > span:nth-child(1) {
+.state-title.tookBill > span:nth-child(1) {
   background-color: rgb(214, 255, 214);
 }
 
-.state-title.left > span:nth-child(2) {
+.state-title.tookBill > span:nth-child(2) {
+  background-color: rgb(175, 236, 175);
+}
+
+.state-title.paid > span:nth-child(1),
+.state-title.paid > span:nth-child(2) {
+  background-color: rgb(214, 255, 214);
+}
+
+.state-title.paid > span:nth-child(3) {
+  background-color: rgb(175, 236, 175);
+}
+
+.state-title.left > span:nth-child(1),
+.state-title.left > span:nth-child(2),
+.state-title.left > span:nth-child(3) {
+  background-color: rgb(214, 255, 214);
+}
+
+.state-title.left > span:nth-child(4) {
   background-color: rgb(175, 236, 175);
 }
 

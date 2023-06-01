@@ -320,18 +320,18 @@ const ReportList = ({ date, type }) => {
     }
   });
 
-  // calculate remainder from the d/m/y before
-  orderIdsEh.forEach((id) => {
-    const thisOrder = orders.entities[id];
+  // // calculate remainder from the d/m/y before
+  // orderIdsEh.forEach((id) => {
+  //   const thisOrder = orders.entities[id];
 
-    if (thisOrder.invoice_to_302) {
-      stats.totalRevenuePrev += thisOrder.invoice_to_302;
-    }
+  //   if (thisOrder.invoice_to_302) {
+  //     stats.totalRevenuePrev += thisOrder.invoice_to_302;
+  //   }
 
-    if (thisOrder.invoice_to_601) {
-      stats.totalRevenuePrev += thisOrder.invoice_to_601;
-    }
-  });
+  //   if (thisOrder.invoice_to_601) {
+  //     stats.totalRevenuePrev += thisOrder.invoice_to_601;
+  //   }
+  // });
 
   useEffect(() => {
     setOrderIdsVar(orderIdsEh);
@@ -453,10 +453,10 @@ const ReportList = ({ date, type }) => {
         <h4>Орлого:</h4>
         <h4>{formatCurrency(stats.totalRevenue)}</h4>
       </div>
-      <div>
+      {/* <div>
         <h4>Үлдэгдэл:</h4>
         <h4>{formatCurrency(stats.totalRevenuePrev)}</h4>
-      </div>
+      </div> */}
     </div>
   );
 

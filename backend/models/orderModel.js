@@ -75,7 +75,7 @@ const orderSchema = mongoose.Schema(
       type: String,
     },
     stage: {
-      type: Number, // 0 - entered, 1 - done, 2 - only puulelt, 3 - others, 4 - puulelt done, 5 - others done
+      type: Number, // 0 - entered, 1 - done, 2 - only puulelt, 3 - others, 4 - paid, 5 - really left
     },
   },
   {

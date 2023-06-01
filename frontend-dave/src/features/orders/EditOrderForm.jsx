@@ -57,7 +57,6 @@ const EditOrderForm = () => {
     setTruckNumValid(TRUCKNUM_REGEX.test(orderData.truck_id_digits));
     setTruckLetValid(TRUCKLET_REGEX.test(orderData.truck_id_letters));
     setForkliftValid(FORKLIFT_REGEX.test(orderData.forklift_usage));
-    console.log(forkliftValid);
   }, [
     orderData.truck_id_digits,
     orderData.truck_id_letters,
@@ -68,6 +67,46 @@ const EditOrderForm = () => {
     [truckLetValid, truckNumValid, forkliftValid].every(Boolean) && !isLoading;
 
   // // FUNCTIONS
+  const handleReallyLeft = async () => {
+    toast.warning("Хашаанаас гарж байна...");
+
+    let sendingData = {
+      ...orderData,
+      stage: 5,
+      last_edited_by: name,
+    };
+
+    console.log("editorder: sendingData - ", sendingData);
+
+    if (
+      moment(orderData.date_entered).startOf("day") >
+      moment(orderData.date_left).startOf("day")
+    ) {
+      alert("Гарсан огноо орсноосоо эрт байна");
+      setOrderData({ ...orderData, date_left: new Date() });
+      return;
+    }
+
+    if (canSave) {
+      try {
+        await updateOrder(sendingData);
+        navigate(`/dash/orders/${orderId}`);
+      } catch (error) {
+        console.error("Бүртгэлийг өөрчилж чадсангүй", error);
+      }
+    } else {
+      if (!truckNumValid) {
+        toast.error("Арлын дугаар зөвхөн тоо байх ёстой!");
+      }
+      if (!truckLetValid) {
+        toast.error("Арлын дугаарын үсэг 3 кирилл үсэг байх ёстой!");
+      }
+      if (!forkliftValid) {
+        toast.error("Сэрээт өргөгчийн утга алдаатай байна!");
+      }
+    }
+  };
+
   const handleClearDateLeft = async (e) => {
     setOrderData({ ...orderData, date_left: null, stage: 0 });
   };
@@ -87,8 +126,6 @@ const EditOrderForm = () => {
       date = moment(new Date(e.target.value)).format("YYYY-MM-DD");
     }
     setOrderData({ ...orderData, [e.target.name]: date });
-
-    console.log(orderData);
   };
 
   const onSubmit = async (e) => {
@@ -100,9 +137,21 @@ const EditOrderForm = () => {
       last_edited_by: name,
     };
 
-    if (orderData.stage === 2) {
+    // when entering tech usage
+    if (orderData.stage === 0) {
+
+    }
+    // when getting paid
+    else if (orderData.stage === 1) {
+      console.log(orderData.invoice_to_302, orderData.invoice_to_601)
+      sendingData = { ...orderData, stage: 4 };
+    } 
+    // when handling only puulelt
+    else if (orderData.stage === 2) {
       sendingData = { ...orderData, stage: 2 };
-    } else if (orderData.stage === 3) {
+    } 
+    // when handling only others
+    else if (orderData.stage === 3) {
       sendingData = { ...orderData, stage: 3 };
     }
 
@@ -110,7 +159,7 @@ const EditOrderForm = () => {
       sendingData = { ...sendingData, stage: 0 };
     }
 
-    console.log(sendingData);
+    console.log("editorder: sendingData - ", sendingData);
 
     if (
       moment(orderData.date_entered).startOf("day") >
@@ -463,7 +512,8 @@ const EditOrderForm = () => {
     title = "Гарах мэдээлэл бүрдүүлэх";
     content = (
       <>
-        {loadInfoComp} {techUsageComp}
+        {techUsageComp}
+        {loadInfoComp}
       </>
     );
   } else {
@@ -478,18 +528,21 @@ const EditOrderForm = () => {
     );
   }
 
+  console.log("editorder: ", order);
+
   return (
     <div>
       <h2>{title}</h2>
       <form className="edit-order-form" onSubmit={onSubmit}>
         {content}
-        <button
-          className="button"
-          type="submit"
-          // disabled={!canSave}
-        >
-          Хадгалах
-        </button>
+        <div>
+          <button className="button" type="submit">
+            Хадгалах
+          </button>
+          <button className="button" onClick={handleReallyLeft}>
+            Хашаанаас гарсан
+          </button>
+        </div>
       </form>
     </div>
   );

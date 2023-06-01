@@ -1,6 +1,6 @@
 import { useDeleteOrderMutation, useGetOrdersQuery } from "./ordersApiSlice";
 import { useParams, useNavigate } from "react-router-dom";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { toast } from "react-toastify";
@@ -349,6 +349,8 @@ const SingleOrder = () => {
   const crane = getCraneData(order?.crane_usage);
   const puulelt = getPuulelt(order?.puulelt);
   const others = getOthers(order?.others);
+  let [titleForEditBtn, setTitleForEditBtn] = useState("");
+  // let titleForEditBtn = "";
 
   const numDays = getNumDays(order);
   const contentForDays = getContentForDaysStayed(numDays);
@@ -380,16 +382,11 @@ const SingleOrder = () => {
   let titleForState = (
     <>
       <span>Орсон</span>
-      <span>Гарсан</span>
+      <span>Гарах хуудас авсан</span>
+      <span>Тооцоо хийсэн</span>
+      <span>Хашаанаас гарсан</span>
     </>
   );
-
-  let classForTitle = "";
-  if (order?.stage === 0) {
-    classForTitle = "state-title entered";
-  } else {
-    classForTitle = "state-title left";
-  }
 
   let basicsComp = (
     <>
@@ -772,10 +769,39 @@ const SingleOrder = () => {
     );
   }
 
+  useEffect(() => {
+    if (order.stage === 0) {
+      setTitleForEditBtn("Төлбөр бодох");
+    } else if (order.stage === 1) {
+      setTitleForEditBtn("Тооцоо хийх");
+    } else {
+      setTitleForEditBtn("Өөрчлөх");
+    } 
+  }, []);
+
+  let classForTitle = "";
   let orderContent;
   if (order?.stage === 0) {
+    classForTitle = "state-title entered";
     orderContent = <>{basicsComp}</>;
-  } else {
+  } else if (order?.stage === 1) {
+    classForTitle = "state-title tookBill";
+    orderContent = (
+      <>
+        {informationalComp}
+        {calculationComp}
+      </>
+    );
+  } else if (order?.stage === 4) {
+    classForTitle = "state-title paid";
+    orderContent = (
+      <>
+        {informationalComp}
+        {calculationComp}
+      </>
+    );
+  } else if (order?.stage === 5) {
+    classForTitle = "state-title left";
     orderContent = (
       <>
         {informationalComp}
@@ -791,7 +817,7 @@ const SingleOrder = () => {
       <div className={classForTitle}>{titleForState}</div>
       <div className="order-info-container">{orderContent}</div>
       <div className="buttons">
-        <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
+        <button onClick={() => handleEdit(orderId)}>{titleForEditBtn}</button>
         <button onClick={() => handlePrint(orderId)}>Хэвлэх</button>
         {isAdmin && (
           <button onClick={() => handleDelete(orderId)}>Устгах</button>
