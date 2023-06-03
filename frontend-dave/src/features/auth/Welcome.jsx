@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 const Welcome = () => {
-  const { userId, name, isAdmin } = useAuth();
+  const { userIdUsable, name, isAdmin } = useAuth();
 
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const Welcome = () => {
         <Link to="/dash/orders/add">Бүртгэл нэмэх</Link>
       </p>
       <p>
-        <Link to={`/dash/users/edit/${userId}`}>Өөрийн мэдээллийг өөрчлөх</Link>
+        <Link to={`/dash/users/edit/${userIdUsable}`}>Өөрийн мэдээллийг өөрчлөх</Link>
       </p>
     </section>
   );
