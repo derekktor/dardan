@@ -266,6 +266,27 @@ const deleteOrder = asyncHandler(async (req, res) => {
   // }
 });
 
+// @route     DELETE /orders/all
+// @payload   {  }
+// @response  { message, data }
+// @access    Public
+// @desc      Delete all records
+const deleteAll = asyncHandler(async (req, res) => {
+  try {
+    const testDeletions = await Order.deleteMany();
+
+    if (testDeletions) {
+      return res
+        .status(200)
+        .json({ message: "all orders deleted", data: testDeletions });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "failed to delete test orders", error: error.message });
+  }
+});
+
 // @route     DELETE /orders/tests
 // @payload   {  }
 // @response  { message, data }
@@ -304,4 +325,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   deleteTests,
+  deleteAll
 };

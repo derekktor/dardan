@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useGetOrdersQuery } from "./ordersApiSlice";
+import { useDeleteAllMutation, useGetOrdersQuery } from "./ordersApiSlice";
 import { useGetUsersQuery } from "../users/usersApiSlice";
 import { useDeleteTestsMutation } from "./ordersApiSlice";
 import OrderExcerpt from "./OrderExcerpt";
@@ -18,6 +18,7 @@ const DATE_REGEX =
 const OrdersList = () => {
   const { name, userIdUsable, isAdmin } = useAuth();
   const [deleteTests] = useDeleteTestsMutation();
+  const [deleteAll] = useDeleteAllMutation();
 
   // // VARIABLES
   const [searchValue, setSearchValue] = useState("");
@@ -155,6 +156,15 @@ const OrdersList = () => {
     }
   };
 
+  const handleDeleteAll = async () => {
+    try {
+      toast.warning("Deleting everything...");
+      await deleteAll().unwrap();
+    } catch (error) {
+      console.error("Unable to delete test orders", error);
+    }
+  };
+
   // // COMPONENTS
   const hintComp = hintVisible && (
     <div id="hintDisplay">
@@ -208,9 +218,14 @@ const OrdersList = () => {
         <FaQuestionCircle />
       </span>
       {name === "test" && (
+        <>
         <span className="pointer" onClick={() => handleDeleteTests()}>
           <FaTrash />
         </span>
+        <span className="pointer" onClick={() => handleDeleteAll()}>
+          Delete All
+        </span>
+        </>
       )}
     </div>
   );
