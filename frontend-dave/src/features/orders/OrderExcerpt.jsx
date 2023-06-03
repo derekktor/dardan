@@ -36,7 +36,7 @@ const OrderExcerpt = ({ orderId }) => {
     return (
       <div
         className={
-          (order.stage === 0)
+          order.stage === 0
             ? "order-unfinished orders-grid"
             : "order-finished orders-grid"
         }
@@ -51,9 +51,7 @@ const OrderExcerpt = ({ orderId }) => {
           <div className="buttons">
             <button onClick={() => handleMore(orderId)}>Дэлгэрэнгүй</button>
             <button onClick={() => handleEdit(orderId)}>Өөрчлөх</button>
-            {isAdmin && (
-              <button onClick={() => handleDelete(orderId)}>Устгах</button>
-            )}
+            <button onClick={() => handleDelete(orderId)}>Устгах</button>
           </div>
         </div>
       </div>
