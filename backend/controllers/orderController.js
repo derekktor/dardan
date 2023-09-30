@@ -174,6 +174,7 @@ const updateOrder = asyncHandler(async (req, res) => {
     fine2,
     other1,
     other2,
+    transfer,
     invoice_to_302,
     invoice_to_601,
     amount_w_noat,
@@ -217,6 +218,7 @@ const updateOrder = asyncHandler(async (req, res) => {
   order.fine2 = fine2 ? fine2 : false;
   order.other1 = other1 ? other1 : false;
   order.other2 = other2 ? other2 : false;
+  order.transfer = transfer ? transfer : false;
   order.invoice_to_302 = invoice_to_302 ? invoice_to_302 : order.invoice_to_302;
   order.invoice_to_601 = invoice_to_601 ? invoice_to_601 : order.invoice_to_601;
   order.amount_w_noat = amount_w_noat ? amount_w_noat : order.amount_w_noat;

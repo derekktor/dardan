@@ -24,6 +24,8 @@ const EditOrderForm = () => {
     }),
   });
 
+  console.log("editorder: from db - ", order)
+
   // // VARIABLES
   const [orderData, setOrderData] = useState({
     ...order,
@@ -36,6 +38,7 @@ const EditOrderForm = () => {
     fine2: order?.fine2 ? order?.fine2 : false,
     other1: order?.other1 ? order?.other1 : false,
     other2: order?.other2 ? order?.other2 : false,
+    transfer: order?.transfer ? order?.transfer : false,
     invoice_to_302: order?.invoice_to_302 ? order?.invoice_to_302 : 0,
     invoice_to_601: order?.invoice_to_601 ? order?.invoice_to_601 : 0,
     amount_w_noat: order?.amount_w_noat ? order?.amount_w_noat : 0,
@@ -328,8 +331,8 @@ const EditOrderForm = () => {
           defaultValue={"0"}
         >
           <option value="0">Ашиглаагүй</option>
-          <option value="gadna_tavtsan">Гадна тавцан</option>
-          <option value="aguulah_tavtsan">Агуулахын тавцан</option>
+          <option value="gadna_tavtsan">Гадна тавцан (20'000₮)</option>
+          <option value="aguulah_tavtsan">Агуулахын тавцан (10'000₮)</option>
         </select>
       </div>
       <div>
@@ -429,6 +432,25 @@ const EditOrderForm = () => {
             setOrderData({
               ...orderData,
               other2: !orderData.other2,
+            })
+          }
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="transfer"
+          title="Шилжүүлэн ачилт"
+        >
+          Шилжүүлэн ачилт:
+        </label>
+        <input
+          type="checkbox"
+          name="transfer"
+          checked={orderData.transfer}
+          onChange={() =>
+            setOrderData({
+              ...orderData,
+              transfer: !orderData.transfer,
             })
           }
         />

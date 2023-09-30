@@ -156,6 +156,21 @@ export const getOthers = (othersData) => {
   return others;
 };
 
+export const getTransfer = (transferData) => {
+  let transfer = { text: "", price: 0 };
+
+  switch (transferData) {
+    case true:
+      transfer.text = "Үгүй";
+      transfer.price = 0;
+      break;
+    case false:
+      transfer.text = "Үгүй";
+      transfer.price = 0;
+      break;
+  }
+}
+
 export const formatDate = (dateStr) => {
   const date = new Date(dateStr);
   return date.toLocaleString("en-US", {
@@ -200,6 +215,9 @@ export const extra_infos = {
       text: "7.2 Хүлээн авагч өөрийн  ачааны ба бусад машин ГХБ рүү оруулахад",
       price: 10000,
     },
+  },
+  transfer: {
+    price: 600000,
   },
   days: {
     one: {
@@ -270,16 +288,14 @@ const getContentForDaysStayed = (numDays) => {
 
   if (numDays >= 3) {
     contentDays.push(
-      `\n${
-        extra_infos.days.three.text
+      `\n${extra_infos.days.three.text
       } ${extra_infos.days.three.price.toLocaleString("de-CH")}₮`
     );
   }
 
   if (numDays >= 4) {
     contentDays.push(
-      `\n${
-        extra_infos.days.four.text
+      `\n${extra_infos.days.four.text
       } ${extra_infos.days.four.price.toLocaleString("de-CH")}₮`
     );
   }
@@ -295,6 +311,7 @@ export const getTotalPrice = (order) => {
   const { price: forkliftPrice } = getForkliftData(order?.forklift_usage);
   const { price: cranePrice } = getCraneData(order?.crane_usage);
   const { price: puuleltPrice } = getPuulelt(order?.puulelt);
+  const transferPrice = order?.transfer ? extra_infos.transfer.price : 0;
 
   let finePrice = 0;
   if (order?.fine1) {
@@ -305,9 +322,9 @@ export const getTotalPrice = (order) => {
   }
 
   let otherPrice = 0;
-  if (order?.others === 1) {
+  if (order?.other1) {
     otherPrice += extra_infos.other.one.price;
-  } else if (order?.others === 2) {
+  } else if (order?.other2) {
     otherPrice += extra_infos.other.two.price;
   }
 
@@ -326,7 +343,8 @@ export const getTotalPrice = (order) => {
     cranePrice +
     puuleltPrice +
     finePrice +
-    otherPrice
+    otherPrice +
+    transferPrice
   );
 };
 
@@ -349,6 +367,7 @@ const SingleOrder = () => {
   const crane = getCraneData(order?.crane_usage);
   const puulelt = getPuulelt(order?.puulelt);
   const others = getOthers(order?.others);
+  const transfer = getTransfer(order?.transfer);
   let [titleForEditBtn, setTitleForEditBtn] = useState("");
   // let titleForEditBtn = "";
 
@@ -510,13 +529,13 @@ const SingleOrder = () => {
           </div>
         )}
       </div>
-      <div>
+      {/* <div>
         <h4>Бусад</h4>
         <div className="flex-row space-between">
           <p>{others.text}</p>
           <p>{formatCurrency(others.price)}</p>
         </div>
-      </div>
+      </div> */}
       <div>
         <h4>Бусад</h4>
         {order?.other1 ? (
@@ -538,6 +557,20 @@ const SingleOrder = () => {
         ) : (
           <div className="flex-row align-center space-between">
             <p>{extra_infos.other.two.text}</p>
+            <p>Байхгүй</p>
+          </div>
+        )}
+      </div>
+      <div>
+        <h4>Шилжүүлэн ачилт</h4>
+        {order?.transfer ? (
+          <div className="flex-row align-center space-between">
+            <p>Тийм</p>
+            <p>{formatCurrency(extra_infos.transfer.price)}</p>
+          </div>
+        ) : (
+          <div className="flex-row align-center space-between">
+            <p>Үгүй</p>
             <p>Байхгүй</p>
           </div>
         )}
@@ -611,6 +644,12 @@ const SingleOrder = () => {
           {order?.other1 ? extra_infos.other.one.text : "Үгүй"}
           <br />
           {order?.other2 ? extra_infos.other.two.text : "Үгүй"}
+        </p>
+      </div>
+      <div>
+        <h4>Шилжүүлэн ачилт</h4>
+        <p>
+          {order?.transfer ? "Тийм" : "Үгүй"}
         </p>
       </div>
       <div>
@@ -776,7 +815,7 @@ const SingleOrder = () => {
       setTitleForEditBtn("Тооцоо хийх");
     } else {
       setTitleForEditBtn("Өөрчлөх");
-    } 
+    }
   }, []);
 
   let classForTitle = "";

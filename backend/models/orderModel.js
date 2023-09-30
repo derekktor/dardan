@@ -56,6 +56,9 @@ const orderSchema = mongoose.Schema(
     other2: {
       type: Boolean,
     },
+    transfer: {
+      type: Boolean,
+    },
     invoice_to_302: {
       type: Number,
     },
