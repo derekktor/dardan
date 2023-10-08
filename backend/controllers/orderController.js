@@ -1,6 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const Order = require("../models/orderModel.js");
 const User = require("../models/userModel.js");
+// JSON to CSV
+const { parse } = require("json2csv");
+const fs = require("fs");
 
 // @route     GET /orders
 // @payload   {  }
@@ -37,6 +40,49 @@ const getOrders = asyncHandler(async (req, res) => {
     length: orders.length,
     data: ordersRenamed,
   });
+});
+
+// @route     GET /orders/export/
+// @payload   { year, month }
+// @response  { message, numbers, orders }
+// @access    Public
+// @desc      Get orders within a specific time range
+const getOrdersWithDate = asyncHandler(async (req, res) => {
+  let orders;
+
+  const {year, month} = req.query;
+
+  // const startDate = new Date(new Date().getFullYear(), month - 1, 1);
+
+  // orders = await Order.find({
+  //   date_entered: {$gte: startDate}
+  // });
+  orders = await Order.find({id: "64e8423bb807a2934747e1d5"});
+  const order = await Order.findById("64e8423bb807a2934747e1d5")
+
+
+  const fields = ["date_entered", "date_left", "truck_id_digits", "truck_id_letters", "load_name", "load_weight", "tavtsan_usage", "puulelt", "forklift_usage", "crane_usage", "fine1", "fine2", "other1", "other2"];
+  // const fields = ["date_entered", "date_left"];
+  const opts = {fields}
+  let csv;
+
+  let orderIdsEntered;
+  let orderIdsEh;
+  let orderIdsEts;
+  let orderIdsLeft;
+
+  try {
+    csv = parse(order, opts);
+    // console.log(csv);
+  } catch (error) {
+    console.error(error);
+  }
+
+  res.status(200).json({
+    message: "Export endpoint hit",
+    date: `${year} - ${month}`,
+    orders, csv, order
+  }).header('Content-Type', 'application/json; charset=utf-8');
 });
 
 // @route     POST /orders
@@ -323,6 +369,7 @@ const deleteTests = asyncHandler(async (req, res) => {
 
 module.exports = {
   getOrders,
+  getOrdersWithDate,
   createOrder,
   updateOrder,
   deleteOrder,

@@ -23,6 +23,7 @@ import { ROLES } from "./config/roles";
 import OrderPrint from "./features/orders/OrderPrint";
 import OrdersLeftPrint from "./features/orders/OrderPrint";
 import OrdersTest from "./features/orders/OrdersTest";
+import OrdersExport from "./features/orders/OrdersExport";
 
 const App = () => {
   return (
@@ -42,6 +43,7 @@ const App = () => {
 
                 <Route path="orders">
                   <Route index element={<OrdersList />} />
+                  <Route path="export" element={<OrdersExport />} />
                   <Route path="test/:date" element={<OrdersTest />} />
                   <Route path="add" element={<AddOrderForm />} />
                   <Route path="edit/:orderId" element={<EditOrderForm />} />

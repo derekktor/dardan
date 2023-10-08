@@ -11,6 +11,8 @@ const cookieParser = require("cookie-parser");
 const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/db.js");
 const mongoose = require("mongoose");
+
+
 const PORT = process.env.PORT || 5001;
 
 connectDB();

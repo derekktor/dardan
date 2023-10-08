@@ -2,8 +2,12 @@ import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import { useState } from "react";
 import moment from "moment";
 import ReportList from "./ReportList";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ReportMonthly = () => {
+  // VARIABLES
+  const navigate = useNavigate();
   const { data: orders } = useGetOrdersQuery();
 
   const todayMonth = Number(new Date().getMonth() + 1);
@@ -31,6 +35,7 @@ const ReportMonthly = () => {
     });
   }
 
+  // FUNCTIONS
   const handleMonth = (e) => {
     setMonth(parseInt(e.target.value));
   };
@@ -39,12 +44,18 @@ const ReportMonthly = () => {
     setYear(parseInt(e.target.value));
   };
 
-  const handleMouseMove = (e) => {
-    // console.log(e.clientX, e.clientY)
-  };
+  const handleCSVParsing = (year, month) => {
+    axios.get(`/dash/orders/export/`, {year, month})
+      .then(res => {
+        console.log(res.data)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   return (
-    <div onMouseMove={handleMouseMove}>
+    <div>
       <div className="report-monthly-grid">
         <div>
           <label htmlFor="monthInput">Сар</label>
@@ -78,6 +89,7 @@ const ReportMonthly = () => {
           )}
         />
       </div>
+      <button onClick={() => {handleCSVParsing(month, year)}}>Excel-рүү хөрвүүлэх</button>
     </div>
   );
 };

@@ -45,6 +45,7 @@ const DashHeader = () => {
           <Link to="/dash/orders/">Бүртгэлүүд</Link>
           <Link to="/dash/orders/add">Бүртгэл нэмэх</Link>
           <Link to="/dash/report">Тайлан</Link>
+          <Link to="/dash/orders/export">Export</Link>
           <button title="log out" onClick={() => sendLogout()}>
             Гарах
           </button>

@@ -29,6 +29,11 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: "Order", id: "LIST" }];
       },
     }),
+    getOrdersByDate: builder.query({
+      query: (date) => {
+        return `/orders/export/?year=${date.year}&month=${date.month}`;
+      }
+    }),
     getOrdersByUserId: builder.query({
       query: (id) => `/orders/?userId=${id}`,
       transformResponse: (responseData) => {
@@ -110,6 +115,7 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetOrdersQuery,
+  useGetOrdersByDateQuery,
   useGetOrdersByUserIdQuery,
   useCreateOrderMutation,
   useUpdateOrderMutation,
