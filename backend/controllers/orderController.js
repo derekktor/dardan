@@ -3,6 +3,138 @@ const Order = require("../models/orderModel.js");
 const User = require("../models/userModel.js");
 // JSON to CSV
 const { parse } = require("json2csv");
+// xlsx populate
+const XlsxlPopulate = require("xlsx-populate");
+
+// addCalculatedProperties
+const addCalculatedProperties = (order) => {
+  // deep copy order data coming from mongoose
+  let temp = JSON.parse(JSON.stringify(order))
+
+  // test
+  // let order = await Order.findById("647ae72714f8ad31d9175b8b") // 2
+  // let order = await Order.findById("647ae77e14f8ad31d9175b93") // puulelt 2
+  // let order = await Order.findById("647ae8c114f8ad31d9175baf") // puulelt 1
+  // let order = await Order.findById("64984b223439d08c58758c47") // puulelt 0
+  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // f1 0 f2 0 o1 0 o2 0
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // f1 1 f2 1 o1 1 o2 1
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // tavtsan "0"
+  // let order = await Order.findById("647ae65314f8ad31d9175b7b") // tavtsan "aguulah_tavtsan"
+  // let order = await Order.findById("647af95014f8ad31d9175cd0") // tavtsan "gadna_tavtsan"
+  // let order = await Order.findById("647af95014f8ad31d9175cd0") // forklift 0
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // forklift neg 20k
+  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // forklift нэг 20k
+  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // forklift 19 1m900k
+  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // crane empty
+  // let order = await Order.findById("64a94452efc6fcf7011006ef") // crane 0 0
+  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // crane 1 hooson 100k
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
+  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // transfer true
+  // let order = await Order.findById("653b6fde6e0f6d0f1a339491") // total 85k
+  // let order = await Order.findById("64e841e9b807a2934747e1bd") // total 65k
+
+
+  // initialize price object with zeros
+  let price = {
+    parking: 0,
+    puulelt: 0,
+    tavtsan: 0,
+    forklift: 0,
+    crane: 0,
+    other: 0,
+    fine: 0,
+    transfer: 0,
+    total: 0
+  }
+  let numDays = 0;
+
+  // CALCULATION
+  // parking
+  // subbing shows ms, dividing by 86'400'000 shows days
+  numDays = Math.round((order.date_left - order.date_entered) / 86400000);
+
+  if (numDays >= 1 || numDays === 0) {
+    price.parking = 25000;
+  }
+
+  if (numDays >= 2) {
+    price.parking += 20000;
+  }
+
+  if (numDays >= 3) {
+    price.parking += 15000;
+  }
+
+  if (numDays >= 4) {
+    price.parking += 10000 * (numDays - 3);
+  }
+
+  // puulelt
+  if (order.puulelt == 1) {
+    // add 20k if puulelt 1 (suudliin mashin)
+    price.puulelt = 10000;
+  } else if (order.puulelt == 2) {
+    // add 10k if puulelt 2 (busad)
+    price.puulelt = 20000;
+  }
+
+  // fine
+  if (order.fine1) {
+    price.fine += 50000;
+  }
+  if (order.fine2) {
+    price.fine += 25000;
+  }
+
+  // other
+  if (order.other1) {
+    price.other += 20000;
+  }
+  if (order.other2) {
+    price.other += 10000;
+  }
+
+  // tavtsan
+  if (order.tavtsan_usage == "aguulah_tavtsan") {
+    price.tavtsan = 40000;
+  } else if (order.tavtsan_usage == "gadna_tavtsan") {
+    price.tavtsan = 20000;
+  }
+
+  // forklift
+  if (order.forklift_usage == "neg" || order.forklift_usage == "нэг") {
+    price.forklift = 20000;
+  } else {
+    let forkHours = parseInt(order.forklift_usage);
+    price.forklift = forkHours * 100000;
+  }
+
+  // crane
+  if (order.crane_usage == 0) {
+    price.crane = 0
+  } else if (order.crane_usage == 1) {
+    price.crane = 100000
+  } else if (order.crane_usage == 2) {
+    price.crane = 250000
+  } else {
+    price.crane = 0
+  }
+
+  // transfer => 600k
+  if (order.transfer == null) {
+    order.transfer = 0
+  }
+  price.transfer = order.transfer ? 600000 : 0
+
+  // total price
+  price.total = price.parking + price.puulelt + price.tavtsan + price.forklift + price.crane + price.other + price.fine + price.transfer
+
+  temp = { ...temp, numDays, total: price.total }
+
+  return temp
+
+}
 
 // @route     GET /orders
 // @payload   {  }
@@ -47,181 +179,106 @@ const getOrders = asyncHandler(async (req, res) => {
 // @access    Public
 // @desc      Get orders within a specific time range
 const getOrdersWithDate = asyncHandler(async (req, res) => {
-  let orders;
-
-  const { year, month } = req.query;
-
-  // const startDate = new Date(new Date().getFullYear(), month - 1, 1);
-
-  // orders = await Order.find({
-  //   date_entered: {$gte: startDate}
-  // });
-
-  // test
-  let order = await Order.findById("647ae1dd14f8ad31d9175b52") // 66.4d
-  // let order = await Order.findById("647ae72714f8ad31d9175b8b") // 2
-  // let order = await Order.findById("647ae77e14f8ad31d9175b93") // puulelt 2
-  // let order = await Order.findById("647ae8c114f8ad31d9175baf") // puulelt 1
-  // let order = await Order.findById("64984b223439d08c58758c47") // puulelt 0
-  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // f1 0 f2 0 o1 0 o2 0
-  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // f1 1 f2 1 o1 1 o2 1
-  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // tavtsan "0"
-  // let order = await Order.findById("647ae65314f8ad31d9175b7b") // tavtsan "aguulah_tavtsan"
-  // let order = await Order.findById("647af95014f8ad31d9175cd0") // tavtsan "gadna_tavtsan"
-  // let order = await Order.findById("647af95014f8ad31d9175cd0") // forklift 0
-  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // forklift neg 20k
-  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // forklift нэг 20k
-  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // forklift 19 1m900k
-  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // crane empty
-  // let order = await Order.findById("64a94452efc6fcf7011006ef") // crane 0 0
-  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // crane 1 hooson 100k
-  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
-  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
-  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // transfer true
-  // let order = await Order.findById("653b6fde6e0f6d0f1a339491") // total 85k
-  // let order = await Order.findById("64e841e9b807a2934747e1bd") // total 65k
-
-
-  // Deep copy order data coming from mongoose
-  let temp = JSON.parse(JSON.stringify(order))
-
-  // initialize price object with zeros
-  let price = {
-    parking: 0,
-    puulelt: 0,
-    tavtsan: 0,
-    forklift: 0,
-    crane: 0,
-    other: 0,
-    fine: 0,
-    transfer: 0,
-    total: 0
-  }
-  let numDays = 0;
-
-  // CALCULATION
-  // parking
-  // subbing shows ms, dividing by 86'400'000 shows days
-  if (order) {
-    numDays = Math.round((order.date_left - order.date_entered) / 86400000);
-
-    if (numDays >= 1 || numDays === 0) {
-      price.parking = 25000;
-    }
-
-    if (numDays >= 2) {
-      price.parking += 20000;
-    }
-
-    if (numDays >= 3) {
-      price.parking += 15000;
-    }
-
-    if (numDays >= 4) {
-      price.parking += 10000 * (numDays - 3);
-    }
-
-    // puulelt
-    if (order.puulelt == 1) {
-      // add 20k if puulelt 1 (suudliin mashin)
-      price.puulelt = 10000;
-    } else if (order.puulelt == 2) {
-      // add 10k if puulelt 2 (busad)
-      price.puulelt = 20000;
-    }
-
-    // fine
-    if (order.fine1) {
-      price.fine += 50000;
-    }
-    if (order.fine2) {
-      price.fine += 25000;
-    }
-
-    // other
-    if (order.other1) {
-      price.other += 20000;
-    }
-    if (order.other2) {
-      price.other += 10000;
-    }
-
-    // tavtsan
-    if (order.tavtsan_usage == "aguulah_tavtsan") {
-      price.tavtsan = 40000;
-    } else if (order.tavtsan_usage == "gadna_tavtsan") {
-      price.tavtsan = 20000;
-    }
-
-    // forklift
-    if (order.forklift_usage == "neg" || order.forklift_usage == "нэг") {
-      price.forklift = 20000;
-    } else {
-      let forkHours = parseInt(order.forklift_usage);
-      price.forklift = forkHours * 100000;
-    }
-
-    // crane
-    if (order.crane_usage == 0) {
-      price.crane = 0
-    } else if (order.crane_usage == 1) {
-      price.crane = 100000
-    } else if (order.crane_usage == 2) {
-      price.crane = 250000
-    } else {
-      price.crane = 0
-    }
-
-    // transfer => 600k
-    if (order.transfer == null) {
-      order.transfer = 0
-    }
-    price.transfer = order.transfer ? 600000 : 0
-
-    // total price
-    price.total = price.parking + price.puulelt + price.tavtsan + price.forklift + price.crane + price.other + price.fine + price.transfer
-  }
-
-  // ADDING CALCULATED PROPERTIES
-  temp = {...temp,
-    numDays, total: price.total
-  }
-
-  // LOGGING
-  // console.log("date_en: ", order.date_entered);
-  // console.log("date_le: ", order.date_left);
-  // console.log("fine1: ", order.fine1);
-  // console.log("fine2: ", order.fine2);
-  // console.log("other1: ", order.other1);
-  // console.log("other2: ", order.other2);
-  // console.log("tavtsan: ", order.tavtsan_usage);
-  // console.log("forklift: ", order.forklift_usage);
-  // console.log("crane: ", order.crane_usage);
-  // console.log("transfer: ", order);
-  console.log("temp: ", temp);
-  console.log("date: ", year, month)
-
   // PREPARING CSV
   const fields = ["date_entered", "date_left", "truck_id_digits", "truck_id_letters", "load_name", "load_weight", "tavtsan_usage", "puulelt", "forklift_usage", "crane_usage", "fine1", "fine2", "other1", "other2", "numDays", "total"];
   const opts = { fields }
-  let csv;
+  let csvEh, csvOrson, csvGarsan, csvEts;
 
-  let orderIdsEntered;
-  let orderIdsEh;
-  let orderIdsEts;
-  let orderIdsLeft;
+  // initialize different types of orders
+  let ordersEntered, ordersEh, ordersEts, ordersLeft;
+
+  const { year, month } = req.query;
+
+  const startDate = new Date(new Date().getFullYear(), month - 1, 1);
+
+  // ORDERS ENTERED: date_entered.month = month && date_entered.year = year
+  ordersEntered = await Order.find({
+    $expr: {
+      $and: [
+        { $eq: [{ $year: "$date_entered" }, year] },
+        { $eq: [{ $month: "$date_entered" }, month] },
+      ]
+    }
+  });
+
+  // ORDERS LEFT: date_left.month = month && date_left.year = year
+  ordersLeft = await Order.find({
+    $expr: {
+      $and: [
+        { $eq: [{ $year: "$date_left" }, year] },
+        { $eq: [{ $month: "$date_left" }, month] },
+      ]
+    }
+  });
+
+  // ORDERS EH
+  // date_en.month = month - 1 && date_left.year = year AND
+  // date_left.month = month && date_left.year = year
+  ordersEh = await Order.find({
+    $and: [
+      { date_entered: { $lt: startDate } }, // Entered before June 2023
+      {
+        $or: [
+          { date_left: { $gt: startDate } }, // Left after June 2023
+          { date_left: { $exists: false } }    // Or date_left is not set (null)
+        ]
+      }
+    ]
+  });
+
+  // ORDERS ETS
+  ordersEts = await Order.find({
+    $and: [
+      { date_entered: { $lte: startDate } }, // Entered before or in given date
+      {
+        $or: [
+          { date_left: { $gt: startDate } }, // Left after given date
+          { date_left: { $exists: false } } // Or date_left is not set (null)
+        ]
+      }
+    ]
+  });
+
+  ordersEh = ordersEh.map(order => {
+    return addCalculatedProperties(order);
+  })
+
+  ordersEntered = ordersEntered.map(order => {
+    return addCalculatedProperties(order);
+  })
+
+  ordersLeft = ordersLeft.map(order => {
+    return addCalculatedProperties(order);
+  })
+
+  ordersEts = ordersEts.map(order => {
+    return addCalculatedProperties(order);
+  })
+
 
   try {
-    csv = parse(temp, opts);
+    csvEh = parse(ordersEh, opts)
+    csvOrson = parse(ordersEntered, opts)
+    csvGarsan = parse(ordersLeft, opts)
+    csvEts = parse(ordersEts, opts)
   } catch (error) {
     console.error(error);
   }
 
+
   res.status(200).json({
     message: "Export endpoint hit",
     date: `${year} - ${month}`,
-    orders, csv, order
+    ordersEnCount: ordersEntered.length,
+    ordersLeftCount: ordersLeft.length,
+    ordersEhCount: ordersEh.length,
+    ordersEtsCount: ordersEts.length,
+    eh: csvEh,
+    orson: csvOrson,
+    garsan: csvGarsan,
+    ets: csvEts
   });
+
 });
 
 // @route     POST /orders
