@@ -24,7 +24,7 @@ const EditOrderForm = () => {
     }),
   });
 
-  console.log("editorder: from db - ", order)
+  // console.log("editorder: from db - ", order)
 
   // // VARIABLES
   const [orderData, setOrderData] = useState({
@@ -79,7 +79,7 @@ const EditOrderForm = () => {
       last_edited_by: name,
     };
 
-    console.log("editorder: sendingData - ", sendingData);
+    // console.log("editorder: sendingData - ", sendingData);
 
     if (
       moment(orderData.date_entered).startOf("day") >
@@ -146,7 +146,7 @@ const EditOrderForm = () => {
     }
     // when getting paid
     else if (orderData.stage === 1) {
-      console.log(orderData.invoice_to_302, orderData.invoice_to_601)
+      // console.log(orderData.invoice_to_302, orderData.invoice_to_601)
       sendingData = { ...orderData, stage: 4 };
     } 
     // when handling only puulelt
@@ -162,7 +162,7 @@ const EditOrderForm = () => {
       sendingData = { ...sendingData, stage: 0 };
     }
 
-    console.log("editorder: sendingData - ", sendingData);
+    // console.log("editorder: sendingData - ", sendingData);
 
     if (
       moment(orderData.date_entered).startOf("day") >
@@ -332,7 +332,7 @@ const EditOrderForm = () => {
         >
           <option value="0">Ашиглаагүй</option>
           <option value="gadna_tavtsan">Гадна тавцан (20'000₮)</option>
-          <option value="aguulah_tavtsan">Агуулахын тавцан (10'000₮)</option>
+          <option value="aguulah_tavtsan">Агуулахын тавцан (40'000₮)</option>
         </select>
       </div>
       <div>
@@ -550,7 +550,7 @@ const EditOrderForm = () => {
     );
   }
 
-  console.log("editorder: ", order);
+  // console.log("editorder: ", order);
 
   return (
     <div>

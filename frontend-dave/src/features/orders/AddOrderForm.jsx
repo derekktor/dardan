@@ -55,7 +55,7 @@ const AddOrderForm = () => {
     }));
   };
 
-  console.log(useAuth())
+  // console.log(useAuth())
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +67,7 @@ const AddOrderForm = () => {
           created_by: userIdUsable,
         };
 
-        console.log(orderDataComplete)
+        // console.log(orderDataComplete)
 
         await createOrder(orderDataComplete).unwrap();
         navigate("/dash/orders");

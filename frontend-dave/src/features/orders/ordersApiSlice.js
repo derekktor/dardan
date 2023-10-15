@@ -31,7 +31,7 @@ export const extendedOrdersApiSlice = apiSlice.injectEndpoints({
     }),
     getOrdersByDate: builder.query({
       query: (date) => {
-        return `/orders/export/?year=${date.year}&month=${date.month}`;
+        return `/orders/export?year=${date.year}&month=${date.month}`;
       }
     }),
     getOrdersByUserId: builder.query({

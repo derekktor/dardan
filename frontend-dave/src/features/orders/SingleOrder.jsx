@@ -529,13 +529,6 @@ const SingleOrder = () => {
           </div>
         )}
       </div>
-      {/* <div>
-        <h4>Бусад</h4>
-        <div className="flex-row space-between">
-          <p>{others.text}</p>
-          <p>{formatCurrency(others.price)}</p>
-        </div>
-      </div> */}
       <div>
         <h4>Бусад</h4>
         {order?.other1 ? (
@@ -849,7 +842,7 @@ const SingleOrder = () => {
     );
   }
 
-  console.log("single order: ", order);
+  // console.log("single order: ", order);
 
   return (
     <div>

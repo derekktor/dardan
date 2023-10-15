@@ -3,7 +3,6 @@ const Order = require("../models/orderModel.js");
 const User = require("../models/userModel.js");
 // JSON to CSV
 const { parse } = require("json2csv");
-const fs = require("fs");
 
 // @route     GET /orders
 // @payload   {  }
@@ -42,28 +41,169 @@ const getOrders = asyncHandler(async (req, res) => {
   });
 });
 
-// @route     GET /orders/export/
-// @payload   { year, month }
+// @route     GET /orders/export?year&month
+// @params    year, month
 // @response  { message, numbers, orders }
 // @access    Public
 // @desc      Get orders within a specific time range
 const getOrdersWithDate = asyncHandler(async (req, res) => {
   let orders;
 
-  const {year, month} = req.query;
+  const { year, month } = req.query;
 
   // const startDate = new Date(new Date().getFullYear(), month - 1, 1);
 
   // orders = await Order.find({
   //   date_entered: {$gte: startDate}
   // });
-  orders = await Order.find({id: "64e8423bb807a2934747e1d5"});
-  const order = await Order.findById("64e8423bb807a2934747e1d5")
+
+  // test
+  let order = await Order.findById("647ae1dd14f8ad31d9175b52") // 66.4d
+  // let order = await Order.findById("647ae72714f8ad31d9175b8b") // 2
+  // let order = await Order.findById("647ae77e14f8ad31d9175b93") // puulelt 2
+  // let order = await Order.findById("647ae8c114f8ad31d9175baf") // puulelt 1
+  // let order = await Order.findById("64984b223439d08c58758c47") // puulelt 0
+  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // f1 0 f2 0 o1 0 o2 0
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // f1 1 f2 1 o1 1 o2 1
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // tavtsan "0"
+  // let order = await Order.findById("647ae65314f8ad31d9175b7b") // tavtsan "aguulah_tavtsan"
+  // let order = await Order.findById("647af95014f8ad31d9175cd0") // tavtsan "gadna_tavtsan"
+  // let order = await Order.findById("647af95014f8ad31d9175cd0") // forklift 0
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // forklift neg 20k
+  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // forklift нэг 20k
+  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // forklift 19 1m900k
+  // let order = await Order.findById("647ae1dd14f8ad31d9175b52") // crane empty
+  // let order = await Order.findById("64a94452efc6fcf7011006ef") // crane 0 0
+  // let order = await Order.findById("652b6f926e0f6d0f1a339488") // crane 1 hooson 100k
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
+  // let order = await Order.findById("652b6a5c14a4f8cb6066419e") // crane 2 achaatai 250k 
+  // let order = await Order.findById("652b6fde6e0f6d0f1a339491") // transfer true
+  // let order = await Order.findById("653b6fde6e0f6d0f1a339491") // total 85k
+  // let order = await Order.findById("64e841e9b807a2934747e1bd") // total 65k
 
 
-  const fields = ["date_entered", "date_left", "truck_id_digits", "truck_id_letters", "load_name", "load_weight", "tavtsan_usage", "puulelt", "forklift_usage", "crane_usage", "fine1", "fine2", "other1", "other2"];
-  // const fields = ["date_entered", "date_left"];
-  const opts = {fields}
+  // Deep copy order data coming from mongoose
+  let temp = JSON.parse(JSON.stringify(order))
+
+  // initialize price object with zeros
+  let price = {
+    parking: 0,
+    puulelt: 0,
+    tavtsan: 0,
+    forklift: 0,
+    crane: 0,
+    other: 0,
+    fine: 0,
+    transfer: 0,
+    total: 0
+  }
+  let numDays = 0;
+
+  // CALCULATION
+  // parking
+  // subbing shows ms, dividing by 86'400'000 shows days
+  if (order) {
+    numDays = Math.round((order.date_left - order.date_entered) / 86400000);
+
+    if (numDays >= 1 || numDays === 0) {
+      price.parking = 25000;
+    }
+
+    if (numDays >= 2) {
+      price.parking += 20000;
+    }
+
+    if (numDays >= 3) {
+      price.parking += 15000;
+    }
+
+    if (numDays >= 4) {
+      price.parking += 10000 * (numDays - 3);
+    }
+
+    // puulelt
+    if (order.puulelt == 1) {
+      // add 20k if puulelt 1 (suudliin mashin)
+      price.puulelt = 10000;
+    } else if (order.puulelt == 2) {
+      // add 10k if puulelt 2 (busad)
+      price.puulelt = 20000;
+    }
+
+    // fine
+    if (order.fine1) {
+      price.fine += 50000;
+    }
+    if (order.fine2) {
+      price.fine += 25000;
+    }
+
+    // other
+    if (order.other1) {
+      price.other += 20000;
+    }
+    if (order.other2) {
+      price.other += 10000;
+    }
+
+    // tavtsan
+    if (order.tavtsan_usage == "aguulah_tavtsan") {
+      price.tavtsan = 40000;
+    } else if (order.tavtsan_usage == "gadna_tavtsan") {
+      price.tavtsan = 20000;
+    }
+
+    // forklift
+    if (order.forklift_usage == "neg" || order.forklift_usage == "нэг") {
+      price.forklift = 20000;
+    } else {
+      let forkHours = parseInt(order.forklift_usage);
+      price.forklift = forkHours * 100000;
+    }
+
+    // crane
+    if (order.crane_usage == 0) {
+      price.crane = 0
+    } else if (order.crane_usage == 1) {
+      price.crane = 100000
+    } else if (order.crane_usage == 2) {
+      price.crane = 250000
+    } else {
+      price.crane = 0
+    }
+
+    // transfer => 600k
+    if (order.transfer == null) {
+      order.transfer = 0
+    }
+    price.transfer = order.transfer ? 600000 : 0
+
+    // total price
+    price.total = price.parking + price.puulelt + price.tavtsan + price.forklift + price.crane + price.other + price.fine + price.transfer
+  }
+
+  // ADDING CALCULATED PROPERTIES
+  temp = {...temp,
+    numDays, total: price.total
+  }
+
+  // LOGGING
+  // console.log("date_en: ", order.date_entered);
+  // console.log("date_le: ", order.date_left);
+  // console.log("fine1: ", order.fine1);
+  // console.log("fine2: ", order.fine2);
+  // console.log("other1: ", order.other1);
+  // console.log("other2: ", order.other2);
+  // console.log("tavtsan: ", order.tavtsan_usage);
+  // console.log("forklift: ", order.forklift_usage);
+  // console.log("crane: ", order.crane_usage);
+  // console.log("transfer: ", order);
+  console.log("order: ", order);
+  console.log("temp: ", temp);
+
+  // PREPARING CSV
+  const fields = ["date_entered", "date_left", "truck_id_digits", "truck_id_letters", "load_name", "load_weight", "tavtsan_usage", "puulelt", "forklift_usage", "crane_usage", "fine1", "fine2", "other1", "other2", "numDays", "total"];
+  const opts = { fields }
   let csv;
 
   let orderIdsEntered;
@@ -72,8 +212,7 @@ const getOrdersWithDate = asyncHandler(async (req, res) => {
   let orderIdsLeft;
 
   try {
-    csv = parse(order, opts);
-    // console.log(csv);
+    csv = parse(temp, opts);
   } catch (error) {
     console.error(error);
   }
@@ -82,7 +221,7 @@ const getOrdersWithDate = asyncHandler(async (req, res) => {
     message: "Export endpoint hit",
     date: `${year} - ${month}`,
     orders, csv, order
-  }).header('Content-Type', 'application/json; charset=utf-8');
+  });
 });
 
 // @route     POST /orders
@@ -106,15 +245,8 @@ const createOrder = asyncHandler(async (req, res) => {
     others,
   } = req.body;
 
-  // check if required data is filled
-  // if (!load_name) {
-  //   return res
-  //     .status(400)
-  //     .json({ message: "Хэрэгтэй бүх мэдээллийг оруулна уу" });
-  // }
-
   let newOrder, newOrderDuplicate;
-  // if only puulelt was done
+  // if only puulelt was done, stage = 2
   if (puulelt === "1" || puulelt === "2") {
     newOrder = await Order.create({
       created_by,
@@ -130,7 +262,7 @@ const createOrder = asyncHandler(async (req, res) => {
       others,
       stage: 2,
     });
-    // if util car was entered
+    // if util car was entered, stage = 3
   } else if (others === "1" || others === "2") {
     newOrder = await Order.create({
       created_by,
@@ -171,7 +303,7 @@ const createOrder = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Order data is invalid" });
   }
 
-  // add extra order for chirguul
+  // if truck type = 1, add extra order for chirguul
   if (truck_type === "1") {
     newOrderDuplicate = await Order.create({
       created_by,
@@ -348,11 +480,11 @@ const deleteTests = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "test user not found!" });
     }
 
-    
+
     const testDeletions = await Order.deleteMany({
       created_by: userTest._id.toString(),
     });
-    
+
     console.log(`deleting tests: test_user(${userTest}), records(${testDeletions})`)
 
     if (testDeletions) {
