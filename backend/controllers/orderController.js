@@ -198,8 +198,8 @@ const getOrdersWithDate = asyncHandler(async (req, res) => {
   // console.log("forklift: ", order.forklift_usage);
   // console.log("crane: ", order.crane_usage);
   // console.log("transfer: ", order);
-  console.log("order: ", order);
   console.log("temp: ", temp);
+  console.log("date: ", year, month)
 
   // PREPARING CSV
   const fields = ["date_entered", "date_left", "truck_id_digits", "truck_id_letters", "load_name", "load_weight", "tavtsan_usage", "puulelt", "forklift_usage", "crane_usage", "fine1", "fine2", "other1", "other2", "numDays", "total"];
