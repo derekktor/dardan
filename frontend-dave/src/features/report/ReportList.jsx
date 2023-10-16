@@ -9,7 +9,7 @@ const ReportList = ({ date, type }) => {
   const { data: orders } = useGetOrdersQuery();
 
   useEffect(() => {
-    console.log(`reportslist: ${type} - ${date}`);
+    // console.log(`reportslist: ${type} - ${date}`);
   }, [type]);
 
   // // VARIABLES
@@ -291,7 +291,7 @@ const ReportList = ({ date, type }) => {
   orderIdsLeft.forEach((id) => {
     const thisOrder = orders.entities[id];
 
-    console.log("orders left: ", thisOrder.truck_id_digits, getTotalPrice(thisOrder), stats.totalRevenue)
+    // console.log("orders left: ", thisOrder.truck_id_digits, getTotalPrice(thisOrder), stats.totalRevenue)
 
     if (!thisOrder.invoice_to_302) {
       stats.totalAmt302 += 0;
@@ -361,19 +361,19 @@ const ReportList = ({ date, type }) => {
       if (orderDB.date_left) {
         dateLeft = moment(orderDB.date_left).startOf("day");
 
-        console.log(
-          `${orderDB.truck_id_digits} - ${dateEntered.format(
-            "YYYY-MM-DD"
-          )} - ${dateLeft.format("YYYY-MM-DD")} - ${today.format(
-            "YYYY-MM-DD"
-          )} - ${orderDB.stage}`
-        );
+        // console.log(
+        //   `${orderDB.truck_id_digits} - ${dateEntered.format(
+        //     "YYYY-MM-DD"
+        //   )} - ${dateLeft.format("YYYY-MM-DD")} - ${today.format(
+        //     "YYYY-MM-DD"
+        //   )} - ${orderDB.stage}`
+        // );
       } else {
-        console.log(
-          `${orderDB.truck_id_digits} - ${dateEntered.format(
-            "YYYY-MM-DD"
-          )} - not leave - ${today.format("YYYY-MM-DD")} - ${orderDB.stage}`
-        );
+        // console.log(
+        //   `${orderDB.truck_id_digits} - ${dateEntered.format(
+        //     "YYYY-MM-DD"
+        //   )} - not leave - ${today.format("YYYY-MM-DD")} - ${orderDB.stage}`
+        // );
       }
     });
   };

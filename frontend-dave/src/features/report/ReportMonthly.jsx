@@ -1,20 +1,22 @@
-import { useGetOrdersQuery } from "../orders/ordersApiSlice";
+import { useGetOrdersByDateQuery, useGetOrdersQuery } from "../orders/ordersApiSlice";
 import { useState } from "react";
 import moment from "moment";
 import ReportList from "./ReportList";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { handleClick, downloadCSV } from "../orders/OrdersExport";
 
 const ReportMonthly = () => {
   // VARIABLES
   const navigate = useNavigate();
   const { data: orders } = useGetOrdersQuery();
-
+  
   const todayMonth = Number(new Date().getMonth() + 1);
   const todayYear = Number(new Date().getFullYear());
   const [month, setMonth] = useState(todayMonth);
   const [year, setYear] = useState(todayYear);
 
+  const { data: ordersExport } = useGetOrdersByDateQuery({year, month});
+  
   let ids;
   let idsPrev;
   if (orders) {
@@ -43,16 +45,6 @@ const ReportMonthly = () => {
   const handleYear = (e) => {
     setYear(parseInt(e.target.value));
   };
-
-  const handleCSVParsing = (year, month) => {
-    axios.get(`/dash/orders/export/`, {year, month})
-      .then(res => {
-        console.log(res.data)
-      })
-      .catch(err => {
-        console.error(err)
-      })
-  }
 
   return (
     <div>
@@ -89,7 +81,10 @@ const ReportMonthly = () => {
           )}
         />
       </div>
-      <button onClick={() => {handleCSVParsing(month, year)}}>Excel-рүү хөрвүүлэх</button>
+      <button onClick={() => handleClick(ordersExport, year, month, "eh")}>Ehnii uldegdel</button>
+      <button onClick={() => handleClick(ordersExport, year, month, "orson")}>Orson</button>
+      <button onClick={() => handleClick(ordersExport, year, month, "garsan")}>Garsan</button>
+      <button onClick={() => handleClick(ordersExport, year, month, "ets")}>Etssiin uldegdel</button>
     </div>
   );
 };
