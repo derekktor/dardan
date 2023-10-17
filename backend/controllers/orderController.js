@@ -191,53 +191,99 @@ const getOrdersWithDate = asyncHandler(async (req, res) => {
 
   const startDate = new Date(new Date().getFullYear(), month - 1, 1);
 
-  // ORDERS ENTERED: date_entered.month = month && date_entered.year = year
-  ordersEntered = await Order.find({
-    $expr: {
-      $and: [
-        { $eq: [{ $year: "$date_entered" }, year] },
-        { $eq: [{ $month: "$date_entered" }, month] },
-      ]
-    }
-  });
+  if (month == 0) {
+    // ANNUAL ORDERS
+    // ORDERS ENTERED: date_entered.month = month && date_entered.year = year
+    ordersEntered = await Order.find({
+      $expr: {
+        $eq: [{ $year: "$date_entered" }, year]
+      }
+    });
 
-  // ORDERS LEFT: date_left.month = month && date_left.year = year
-  ordersLeft = await Order.find({
-    $expr: {
-      $and: [
-        { $eq: [{ $year: "$date_left" }, year] },
-        { $eq: [{ $month: "$date_left" }, month] },
-      ]
-    }
-  });
+    // ORDERS LEFT: date_left.month = month && date_left.year = year
+    ordersLeft = await Order.find({
+      $expr: {
+        $eq: [{ $year: "$date_left" }, year]
+      }
+    });
 
-  // ORDERS EH
-  // date_en.month = month - 1 && date_left.year = year AND
-  // date_left.month = month && date_left.year = year
-  ordersEh = await Order.find({
-    $and: [
-      { date_entered: { $lt: startDate } }, // Entered before June 2023
-      {
-        $or: [
-          { date_left: { $gt: startDate } }, // Left after June 2023
-          { date_left: { $exists: false } }    // Or date_left is not set (null)
+    // ORDERS EH
+    ordersEh = await Order.find({
+      $and: [
+        { date_entered: { $lt: new Date(year, 0, 1) } }, // Entered before year
+        {
+          $or: [
+            { date_left: { $gt: new Date(year, 11, 31) } }, // Left after year
+            { date_left: { $exists: false } }    // Or date_left is not set (null)
+          ]
+        }
+      ]
+    });
+
+    // ORDERS ETS
+    ordersEts = await Order.find({
+      $and: [
+        { date_entered: { $lte: new Date(year, 0, 1) } }, // Entered before year
+        {
+          $or: [
+            { date_left: { $gt: new Date(year, 11, 31) } }, // Left after year
+            { date_left: { $exists: false } } // Or date_left is not set (null)
+          ]
+        }
+      ]
+    });
+
+  } else {
+    // MONTHLY ORDERS
+    // ORDERS ENTERED: date_entered.month = month && date_entered.year = year
+    ordersEntered = await Order.find({
+      $expr: {
+        $and: [
+          { $eq: [{ $year: "$date_entered" }, year] },
+          { $eq: [{ $month: "$date_entered" }, month] },
         ]
       }
-    ]
-  });
+    });
 
-  // ORDERS ETS
-  ordersEts = await Order.find({
-    $and: [
-      { date_entered: { $lte: startDate } }, // Entered before or in given date
-      {
-        $or: [
-          { date_left: { $gt: startDate } }, // Left after given date
-          { date_left: { $exists: false } } // Or date_left is not set (null)
+    // ORDERS LEFT: date_left.month = month && date_left.year = year
+    ordersLeft = await Order.find({
+      $expr: {
+        $and: [
+          { $eq: [{ $year: "$date_left" }, year] },
+          { $eq: [{ $month: "$date_left" }, month] },
         ]
       }
-    ]
-  });
+    });
+
+    // ORDERS EH
+    // date_en.month = month - 1 && date_left.year = year AND
+    // date_left.month = month && date_left.year = year
+    ordersEh = await Order.find({
+      $and: [
+        { date_entered: { $lt: startDate } }, // Entered before June 2023
+        {
+          $or: [
+            { date_left: { $gt: startDate } }, // Left after June 2023
+            { date_left: { $exists: false } }    // Or date_left is not set (null)
+          ]
+        }
+      ]
+    });
+
+    // ORDERS ETS
+    ordersEts = await Order.find({
+      $and: [
+        { date_entered: { $lte: startDate } }, // Entered before or in given date
+        {
+          $or: [
+            { date_left: { $gt: startDate } }, // Left after given date
+            { date_left: { $exists: false } } // Or date_left is not set (null)
+          ]
+        }
+      ]
+    });
+  }
+
 
   ordersEh = ordersEh.map(order => {
     return addCalculatedProperties(order);
