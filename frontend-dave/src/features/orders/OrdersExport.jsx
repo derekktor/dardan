@@ -2,9 +2,12 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { selectCurrentToken } from '../auth/authSlice'
 
+const baseUrl = "https://dardan-api.onrender.com"
+// const baseUrl = "https://localhost:5000"
+
 export const downloadCSV = async (token, y, m, type) => {
   try {
-    const res = await fetch(`http://localhost:5000/orders/export?year=${y}&month=${m}`, {
+    const res = await fetch(`${baseUrl}/orders/export?year=${y}&month=${m}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
