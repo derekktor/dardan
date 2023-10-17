@@ -1,22 +1,24 @@
-import { useGetOrdersByDateQuery, useGetOrdersQuery } from "../orders/ordersApiSlice";
+import { useGetOrdersQuery } from "../orders/ordersApiSlice";
 import { useState } from "react";
 import moment from "moment";
 import ReportList from "./ReportList";
 import { useNavigate } from "react-router-dom";
-import { handleClick, downloadCSV } from "../orders/OrdersExport";
+import { downloadCSV } from "../orders/OrdersExport";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../auth/authSlice";
 
 const ReportMonthly = () => {
   // VARIABLES
   const navigate = useNavigate();
+  const token = useSelector(selectCurrentToken);
   const { data: orders } = useGetOrdersQuery();
-  
+
   const todayMonth = Number(new Date().getMonth() + 1);
   const todayYear = Number(new Date().getFullYear());
   const [month, setMonth] = useState(todayMonth);
   const [year, setYear] = useState(todayYear);
 
-  const { data: ordersExport } = useGetOrdersByDateQuery({year, month});
-  
+
   let ids;
   let idsPrev;
   if (orders) {
@@ -81,10 +83,13 @@ const ReportMonthly = () => {
           )}
         />
       </div>
-      <button onClick={() => handleClick(ordersExport, year, month, "eh")}>Ehnii uldegdel</button>
-      <button onClick={() => handleClick(ordersExport, year, month, "orson")}>Orson</button>
-      <button onClick={() => handleClick(ordersExport, year, month, "garsan")}>Garsan</button>
-      <button onClick={() => handleClick(ordersExport, year, month, "ets")}>Etssiin uldegdel</button>
+      <div>
+        <h3>Хэвлэх</h3>
+        <button className="button" onClick={() => downloadCSV(token, year, month, "eh")}>Эхний үлдэгдэл</button>
+        <button className="button" onClick={() => downloadCSV(token, year, month, "orson")}>Орсон</button>
+        <button className="button" onClick={() => downloadCSV(token, year, month, "garsan")}>Гарсан</button>
+        <button className="button" onClick={() => downloadCSV(token, year, month, "ets")}>Эцсийн үлдэгдэл</button>
+      </div>
     </div>
   );
 };

@@ -312,6 +312,10 @@ input {
   color: white;
 }
 
+.button:active {
+  transform: translateY(5px);
+}
+
 .button:visited {
   background-color: white;
   color: navy;
